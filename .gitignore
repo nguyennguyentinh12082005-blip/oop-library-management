@@ -1,0 +1,21 @@
+# Compiled executables
+*.exe
+*.out
+*.o
+*.obj
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc

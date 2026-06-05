@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản lý Thư viện OOP C++</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-brand">
+        <img src="logo.png" alt="Logo thư viện" class="login-logo">
+        <h1>Thư viện OOP</h1>
+        <p>Hệ thống quản lý thư viện C++</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Tài khoản thư viện">
+        <button class="auth-tab active" type="button" data-auth-tab="login">Đăng nhập</button>
+        <button class="auth-tab" type="button" data-auth-tab="signup">Đăng ký độc giả</button>
+      </div>
+
+      <div class="auth-panel active" id="loginPanel">
+        <form id="loginForm" class="login-form">
+          <label>Tài khoản
+            <input id="loginUsername" type="text" placeholder="Nhập tài khoản" required autocomplete="off">
+          </label>
+          <label>Mật khẩu
+            <input id="loginPassword" type="password" placeholder="Nhập mật khẩu" required>
+          </label>
+          <button class="primary-button login-btn" type="submit">Đăng nhập</button>
+          <p class="login-error" id="loginError"></p>
+        </form>
+        <div class="login-hint">
+          <p><strong>Tài khoản mẫu:</strong></p>
+          <table class="hint-table">
+            <tr><td>Quản trị viên</td><td><code>admin</code></td><td><code>admin</code></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="auth-panel" id="signupPanel">
+        <form id="publicReaderForm" class="login-form">
+          <label>Nhóm người đọc
+            <select name="type" required>
+              <option value="Sinh viên">Sinh viên</option>
+              <option value="Viên chức">Viên chức</option>
+              <option value="Giảng viên">Giảng viên</option>
+              <option value="Nghiên cứu viên">Nghiên cứu viên</option>
+              <option value="Học viên cao học">Học viên cao học</option>
+              <option value="Khách ngoài trường">Khách ngoài trường</option>
+            </select>
+          </label>
+          <div class="form-grid">
+            <label>Mã độc giả <input name="id" required autocomplete="off"></label>
+            <label>Mã định danh <input name="code" required autocomplete="off"></label>
+          </div>
+          <label>Họ tên <input name="name" required autocomplete="name"></label>
+          <div class="form-grid">
+            <label>Ngày sinh <input name="birth" type="date" required></label>
+            <label>Giới tính
+              <select name="gender" required>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </label>
+          </div>
+          <label>Số điện thoại <input name="phone" required autocomplete="tel"></label>
+          <label>Địa chỉ <input name="address" required autocomplete="street-address"></label>
+          <div class="form-grid">
+            <label>Tài khoản <input name="username" required autocomplete="off"></label>
+            <label>Mật khẩu <input name="password" type="password" required></label>
+          </div>
+          <button class="primary-button login-btn" type="submit">Tạo tài khoản độc giả</button>
+          <p class="login-error" id="signupError"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell" id="appShell" style="display:none">
+    <aside class="sidebar" aria-label="Điều hướng chính">
+      <div class="brand">
+        <div class="brand-mark">TV</div>
+        <div>
+          <strong>Thư viện OOP</strong>
+          <span>Hệ thống C++</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item active" type="button" data-page="dashboard"><span>Tổng quan</span></button>
+        <button class="nav-item" type="button" data-page="readerPortal"><span>Trang độc giả</span></button>
+        <button class="nav-item" type="button" data-page="documents"><span>Tài liệu</span></button>
+        <button class="nav-item" type="button" data-page="readers"><span>Con người</span></button>
+        <button class="nav-item" type="button" data-page="loans"><span>Mượn / Trả</span></button>
+        <button class="nav-item" type="button" data-page="inventory"><span>Nhập / Xuất</span></button>
+        <button class="nav-item" type="button" data-page="transactions"><span>Giao dịch</span></button>
+      </nav>
+
+      <div class="sidebar-footer" id="sidebarUser">
+        <span id="userRole">Chưa đăng nhập</span>
+        <strong id="userName">---</strong>
+        <button class="logout-btn" type="button" id="logoutBtn">Đăng xuất</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Hệ thống quản lý thư viện</p>
+          <h1 id="pageTitle">Tổng quan</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="secondary-button" type="button" id="resetDataBtn">Nạp lại mẫu</button>
+          <button class="primary-button" type="button" data-jump="loans">Mượn sách</button>
+        </div>
+      </header>
+
+      <section class="page active" id="dashboardPage" data-title="Tổng quan">
+        <div class="dashboard-grid">
+          <section class="summary-panel">
+            <div class="summary-copy">
+              <p class="eyebrow">Bài cuối kỳ OOP</p>
+              <h2>Quản lý thư viện</h2>
+              <p>Người đọc, tài liệu, phiếu mượn và lịch sử giao dịch được tổ chức theo đúng mô hình lớp C++.</p>
+            </div>
+            <img src="assets/library-visual.svg" alt="Giá sách trong thư viện" class="summary-art">
+          </section>
+
+          <section class="stats-grid" id="statsGrid" aria-label="Thống kê"></section>
+        </div>
+
+        <div class="two-column">
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Phiếu mượn đang mở</h2>
+              <button class="text-button" type="button" data-jump="loans">Xử lý</button>
+            </div>
+            <div id="openLoansList" class="loan-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Giao dịch gần đây</h2>
+              <button class="text-button" type="button" data-jump="transactions">Xem tất cả</button>
+            </div>
+            <div id="recentTransactions" class="activity-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="readerPortalPage" data-title="Trang độc giả">
+        <div class="two-column">
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Thông tin thẻ</h2>
+            </div>
+            <div id="readerPortalInfo" class="reader-info"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Tóm tắt mượn trả</h2>
+            </div>
+            <div id="readerPortalStats" class="reader-stats"></div>
+          </section>
+        </div>
+
+        <section class="panel table-panel">
+          <div class="section-heading">
+            <h2>Tài liệu đang mượn</h2>
+            <span class="counter" id="readerLoanCount">0 phiếu</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã phiếu</th>
+                  <th>Tài liệu</th>
+                  <th>Ngày mượn</th>
+                  <th>Hẹn trả</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="readerLoansTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="section-heading">
+            <h2>Lịch sử của tôi</h2>
+            <span class="counter" id="readerTransactionCount">0 giao dịch</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Loại</th>
+                  <th>Ngày</th>
+                  <th>Tài liệu</th>
+                  <th>Phạt / Chi phí</th>
+                </tr>
+              </thead>
+              <tbody id="readerTransactionsTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="documentsPage" data-title="Tài liệu">
+        <div class="toolbar">
+          <label class="search-field">
+            <span>Tìm tài liệu</span>
+            <input id="documentSearch" type="search" placeholder="Nhập mã, tên, tác giả">
+          </label>
+          <label class="select-field">
+            <span>Loại</span>
+            <select id="documentTypeFilter">
+              <option value="all">Tất cả</option>
+              <option value="Giáo trình">Giáo trình</option>
+              <option value="Sách tham khảo">Sách tham khảo</option>
+              <option value="Sách khác">Sách khác</option>
+              <option value="Báo/tạp chí">Báo/tạp chí</option>
+              <option value="Bài nghiên cứu">Bài nghiên cứu</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="two-column wide-left">
+          <section class="panel table-panel">
+            <div class="section-heading">
+              <h2>Kho tài liệu</h2>
+              <span class="counter" id="documentCount">0 mục</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Bìa</th>
+                    <th>Mã</th>
+                    <th>Tên tài liệu</th>
+                    <th>Loại</th>
+                    <th>Số lượng</th>
+                    <th>File sách</th>
+                    <th>Chi tiết</th>
+                  </tr>
+                </thead>
+                <tbody id="documentsTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Thêm tài liệu</h2>
+            </div>
+            <form id="documentForm" class="stacked-form">
+              <label>Loại tài liệu
+                <select name="kind" id="documentKind" required>
+                  <option value="Giáo trình">Giáo trình</option>
+                  <option value="Sách tham khảo">Sách tham khảo</option>
+                  <option value="Sách khác">Sách khác</option>
+                  <option value="Báo/tạp chí">Báo/tạp chí</option>
+                  <option value="Bài nghiên cứu">Bài nghiên cứu</option>
+                </select>
+              </label>
+              <label>Mã tài liệu <input name="id" required></label>
+              <label>Tên tài liệu <input name="title" required></label>
+              <div class="form-grid">
+                <label>Năm xuất bản <input name="year" type="number" min="1900" max="2100" value="2026" required></label>
+                <label>Số lượng <input name="quantity" type="number" min="0" value="1" required></label>
+              </div>
+              <label>Tác giả <input name="author" required></label>
+              <label>Nhà xuất bản <input name="publisher" required></label>
+              <label>Thể loại <input name="category" required></label>
+              <label>Ảnh bìa <input name="coverImage" type="file" accept="image/*" required></label>
+              <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub"></label>
+              <label>Đường dẫn/link file sách <input name="fileUrl" placeholder="Có thể bổ sung sau"></label>
+              <div id="documentExtraFields" class="extra-fields"></div>
+              <button class="primary-button" type="submit">Thêm tài liệu</button>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="readersPage" data-title="Con người">
+        <div class="two-column wide-left">
+          <section class="panel table-panel">
+            <div class="section-heading">
+              <h2>Danh sách người đọc</h2>
+              <span class="counter" id="readerCount">0 người</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã</th>
+                    <th>Họ tên</th>
+                    <th>Nhóm</th>
+                    <th>Thẻ</th>
+                    <th>Sách đang mượn</th>
+                  </tr>
+                </thead>
+                <tbody id="readersTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Đăng ký người đọc</h2>
+            </div>
+            <form id="readerForm" class="stacked-form">
+              <label>Nhóm người đọc
+                <select name="type" required>
+                  <option value="Sinh viên">Sinh viên</option>
+                  <option value="Viên chức">Viên chức</option>
+                  <option value="Giảng viên">Giảng viên</option>
+                  <option value="Nghiên cứu viên">Nghiên cứu viên</option>
+                  <option value="Học viên cao học">Học viên cao học</option>
+                  <option value="Khách ngoài trường">Khách ngoài trường</option>
+                </select>
+              </label>
+              <label>Mã người đọc <input name="id" required></label>
+              <label>Họ tên <input name="name" required></label>
+              <div class="form-grid">
+                <label>Ngày sinh <input name="birth" type="date" required></label>
+                <label>Giới tính
+                  <select name="gender" required>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-grid">
+                <label>Ngày đăng ký <input name="registered" type="date" required></label>
+                <label>Ngày hết hạn <input name="expires" type="date" required></label>
+              </div>
+              <label>Số điện thoại <input name="phone" required></label>
+              <label>Địa chỉ <input name="address" required></label>
+              <label>Mã định danh <input name="code" required></label>
+              <div class="form-grid">
+                <label>Tài khoản đăng nhập <input name="username" autocomplete="off" required></label>
+                <label>Mật khẩu <input name="password" type="password" required></label>
+              </div>
+              <button class="primary-button" type="submit">Đăng ký người đọc</button>
+            </form>
+          </section>
+        </div>
+
+        <section class="panel table-panel admin-only">
+          <div class="section-heading">
+            <h2>Tất cả người trong hệ thống</h2>
+            <span class="counter" id="peopleCount">0 người</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Họ tên</th>
+                  <th>Vai trò</th>
+                  <th>Liên hệ</th>
+                  <th>Thông tin riêng</th>
+                </tr>
+              </thead>
+              <tbody id="peopleTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="two-column admin-only">
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Thêm nhân viên</h2>
+            </div>
+            <form id="staffForm" class="stacked-form">
+              <label>Mã nhân viên <input name="id" required></label>
+              <label>Họ tên <input name="name" required></label>
+              <div class="form-grid">
+                <label>Ngày sinh <input name="birth" type="date" required></label>
+                <label>Giới tính
+                  <select name="gender" required>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </label>
+              </div>
+              <label>Số điện thoại <input name="phone" required></label>
+              <label>Địa chỉ <input name="address" required></label>
+              <div class="form-grid">
+                <label>Chức vụ <input name="position" value="Thủ thư" required></label>
+                <label>Ca làm việc <input name="shift" value="Sáng" required></label>
+              </div>
+              <label>Lương <input name="salary" type="number" min="0" value="9000000" required></label>
+              <div class="form-grid">
+                <label>Tài khoản <input name="username" required></label>
+                <label>Mật khẩu <input name="password" type="password" required></label>
+              </div>
+              <button class="primary-button" type="submit">Thêm nhân viên</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Thêm quản trị viên</h2>
+            </div>
+            <form id="adminForm" class="stacked-form">
+              <label>Mã quản trị <input name="id" required></label>
+              <label>Họ tên <input name="name" required></label>
+              <div class="form-grid">
+                <label>Ngày sinh <input name="birth" type="date" required></label>
+                <label>Giới tính
+                  <select name="gender" required>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
+                </label>
+              </div>
+              <label>Số điện thoại <input name="phone" required></label>
+              <label>Địa chỉ <input name="address" required></label>
+              <label>Quyền truy cập <input name="permission" value="Full" required></label>
+              <div class="form-grid">
+                <label>Tài khoản <input name="username" required></label>
+                <label>Mật khẩu <input name="password" type="password" required></label>
+              </div>
+              <button class="primary-button" type="submit">Thêm quản trị viên</button>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="loansPage" data-title="Mượn / Trả">
+        <div class="two-column">
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Mượn tài liệu</h2>
+            </div>
+            <form id="borrowForm" class="stacked-form">
+              <label>Người đọc
+                <select name="readerId" id="borrowReaderSelect" required></select>
+              </label>
+              <label>Tài liệu
+                <select name="documentId" id="borrowDocumentSelect" required></select>
+              </label>
+              <label>Mã nhân viên <input name="staffId" value="NV001" required></label>
+              <label>Ngày mượn <input name="borrowDate" type="date" required></label>
+              <button class="primary-button" type="submit">Ghi nhận mượn</button>
+            </form>
+            <p class="form-note" id="borrowHint"></p>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Trả tài liệu</h2>
+            </div>
+            <form id="returnForm" class="stacked-form">
+              <label>Phiếu mượn
+                <select name="loanId" id="returnLoanSelect" required></select>
+              </label>
+              <label>Mã nhân viên <input name="staffId" value="NV001" required></label>
+              <label>Ngày trả <input name="returnDate" type="date" required></label>
+              <button class="primary-button" type="submit">Xác nhận trả</button>
+            </form>
+            <p class="form-note" id="returnHint"></p>
+          </section>
+        </div>
+
+        <section class="panel table-panel">
+          <div class="section-heading">
+            <h2>Phiếu mượn đang mở</h2>
+            <span class="counter" id="loanCount">0 phiếu</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã phiếu</th>
+                  <th>Người đọc</th>
+                  <th>Tài liệu</th>
+                  <th>Ngày mượn</th>
+                  <th>Hẹn trả</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="loansTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="inventoryPage" data-title="Nhập / Xuất">
+        <div class="two-column">
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Nhập thêm tài liệu</h2>
+            </div>
+            <form id="importForm" class="stacked-form">
+              <label>Kiểu nhập
+                <select name="importMode" id="importMode" required>
+                  <option value="existing">Nhập thêm tài liệu đã có</option>
+                  <option value="new">Nhập tài liệu mới từ bên ngoài</option>
+                </select>
+              </label>
+              <div id="importExistingFields" class="extra-fields">
+                <label>Tài liệu
+                  <select name="documentId" id="importDocumentSelect" required></select>
+                </label>
+              </div>
+              <div id="importNewFields" class="extra-fields" hidden>
+                <label>Loại tài liệu
+                  <select name="kind" id="importKind" required disabled>
+                    <option value="Giáo trình">Giáo trình</option>
+                    <option value="Sách tham khảo">Sách tham khảo</option>
+                    <option value="Sách khác">Sách khác</option>
+                    <option value="Báo/tạp chí">Báo/tạp chí</option>
+                    <option value="Bài nghiên cứu">Bài nghiên cứu</option>
+                  </select>
+                </label>
+                <label>Mã tài liệu <input name="id" disabled required></label>
+                <label>Tên tài liệu <input name="title" disabled required></label>
+                <div class="form-grid">
+                  <label>Năm xuất bản <input name="year" type="number" min="1900" max="2100" value="2026" disabled required></label>
+                  <label>Tác giả <input name="author" disabled required></label>
+                </div>
+                <label>Nhà xuất bản <input name="publisher" disabled required></label>
+                <label>Thể loại <input name="category" disabled required></label>
+                <label>Ảnh bìa <input name="coverImage" type="file" accept="image/*" disabled required></label>
+                <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub" disabled></label>
+                <label>Đường dẫn/link file sách <input name="fileUrl" placeholder="Có thể bổ sung sau" disabled></label>
+                <div id="importExtraFields" class="extra-fields"></div>
+              </div>
+              <div class="form-grid">
+                <label>Số lượng nhập <input name="quantity" type="number" min="1" value="1" required></label>
+                <label>Đơn giá nhập <input name="unitPrice" type="number" min="0" value="0" required></label>
+              </div>
+              <label>Nhà cung cấp <input name="supplier" required></label>
+              <label>Mã nhân viên <input name="staffId" value="NV001" required></label>
+              <label>Ngày nhập <input name="date" type="date" required></label>
+              <button class="primary-button" type="submit">Ghi nhận nhập</button>
+            </form>
+            <p class="form-note" id="importHint"></p>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h2>Xuất / thanh lý tài liệu</h2>
+            </div>
+            <form id="exportForm" class="stacked-form">
+              <label>Tài liệu
+                <select name="documentId" id="exportDocumentSelect" required></select>
+              </label>
+              <div class="form-grid">
+                <label>Số lượng xuất <input name="quantity" type="number" min="1" value="1" required></label>
+                <label>Đơn giá thanh lý <input name="unitPrice" type="number" min="0" value="0" required></label>
+              </div>
+              <label>Lý do xuất <input name="reason" required></label>
+              <label>Mã nhân viên <input name="staffId" value="NV001" required></label>
+              <label>Ngày xuất <input name="date" type="date" required></label>
+              <button class="primary-button" type="submit">Ghi nhận xuất</button>
+            </form>
+            <p class="form-note" id="exportHint"></p>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="section-heading">
+            <h2>Cập nhật file sách</h2>
+          </div>
+          <form id="documentFileForm" class="stacked-form">
+            <label>Tài liệu
+              <select name="documentId" id="fileDocumentSelect" required></select>
+            </label>
+            <div class="form-grid">
+              <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub"></label>
+              <label>Đường dẫn/link file sách <input name="fileUrl" placeholder="Dán link hoặc đường dẫn file"></label>
+            </div>
+            <button class="primary-button" type="submit">Cập nhật file sách</button>
+          </form>
+          <p class="form-note" id="fileUpdateHint"></p>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="section-heading">
+            <h2>Tồn kho tài liệu</h2>
+            <span class="counter" id="inventoryCount">0 mục</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bìa</th>
+                  <th>Mã</th>
+                  <th>Tài liệu</th>
+                  <th>Loại</th>
+                  <th>Số lượng</th>
+                  <th>File sách</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="transactionsPage" data-title="Giao dịch">
+        <section class="panel table-panel">
+          <div class="section-heading">
+            <h2>Lịch sử giao dịch</h2>
+            <span class="counter" id="transactionCount">0 giao dịch</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Loại</th>
+                  <th>Ngày</th>
+                  <th>Nhân viên</th>
+                  <th>Nội dung</th>
+                  <th>Phạt / Chi phí</th>
+                </tr>
+              </thead>
+              <tbody id="transactionsTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="documentModal" hidden>
+    <section class="modal-panel" aria-label="Chi tiết tài liệu">
+      <button class="modal-close" type="button" id="closeDocumentModal" aria-label="Đóng">×</button>
+      <div id="documentModalContent"></div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Library shelves</title>
+  <desc id="desc">A compact illustration of library books, a desk lamp, and catalog cards.</desc>
+  <rect width="640" height="360" rx="18" fill="#eef4ff"/>
+  <rect x="48" y="62" width="544" height="236" rx="10" fill="#ffffff" stroke="#ccd8ea" stroke-width="4"/>
+  <rect x="84" y="96" width="472" height="20" rx="4" fill="#263246"/>
+  <rect x="84" y="188" width="472" height="20" rx="4" fill="#263246"/>
+  <rect x="104" y="116" width="32" height="72" rx="4" fill="#2f6fed"/>
+  <rect x="142" y="128" width="26" height="60" rx="4" fill="#0d8f68"/>
+  <rect x="174" y="108" width="30" height="80" rx="4" fill="#f0b429"/>
+  <rect x="212" y="122" width="34" height="66" rx="4" fill="#c2415d"/>
+  <rect x="254" y="112" width="22" height="76" rx="4" fill="#0f91a8"/>
+  <rect x="296" y="132" width="148" height="44" rx="8" fill="#f7fafc" stroke="#dce2ea" stroke-width="3"/>
+  <rect x="320" y="147" width="100" height="7" rx="3.5" fill="#9aa9bd"/>
+  <rect x="104" y="208" width="180" height="54" rx="8" fill="#f7fafc" stroke="#dce2ea" stroke-width="3"/>
+  <rect x="126" y="226" width="126" height="7" rx="3.5" fill="#9aa9bd"/>
+  <rect x="126" y="242" width="88" height="7" rx="3.5" fill="#ccd8ea"/>
+  <rect x="318" y="208" width="28" height="72" rx="4" fill="#0d8f68"/>
+  <rect x="354" y="218" width="28" height="62" rx="4" fill="#2f6fed"/>
+  <rect x="390" y="202" width="28" height="78" rx="4" fill="#f0b429"/>
+  <rect x="426" y="214" width="28" height="66" rx="4" fill="#c2415d"/>
+  <rect x="462" y="224" width="28" height="56" rx="4" fill="#0f91a8"/>
+  <circle cx="510" cy="140" r="34" fill="#f0b429"/>
+  <path d="M510 174v54" stroke="#263246" stroke-width="10" stroke-linecap="round"/>
+  <path d="M476 228h70" stroke="#263246" stroke-width="10" stroke-linecap="round"/>
+</svg>
