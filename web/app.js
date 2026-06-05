@@ -944,6 +944,68 @@ function handleLogin(event) {
   showToast("Xin chào, " + currentUser.name + "!");
 }
 
+function handlePublicReaderSignup(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = Object.fromEntries(new FormData(form).entries());
+  const id = data.id.trim().toUpperCase();
+  const username = data.username.trim().toLowerCase();
+  const error = byId("signupError");
+
+  if (personIdExists(id)) {
+    error.textContent = "Mã độc giả đã tồn tại.";
+    return;
+  }
+  if (state.accounts[username]) {
+    error.textContent = "Tài khoản đã tồn tại.";
+    return;
+  }
+  if (!data.password || data.password.length < 3) {
+    error.textContent = "Mật khẩu phải có ít nhất 3 ký tự.";
+    return;
+  }
+
+  const today = todayISO();
+  const expiresDate = `${new Date().getFullYear()}-12-31`;
+  const readerType = data.type;
+  const limit = readerType === READER_TYPES.STUDENT ? 5 : 10;
+
+  state.readers.push({
+    id,
+    name: data.name.trim(),
+    type: readerType,
+    birth: data.birth,
+    gender: data.gender,
+    registered: today,
+    expires: expiresDate,
+    phone: data.phone.trim(),
+    address: data.address.trim(),
+    code: data.code.trim(),
+    borrowed: 0,
+    limit
+  });
+
+  state.accounts[username] = {
+    password: data.password,
+    role: "reader",
+    name: data.name.trim(),
+    title: "Độc giả",
+    personId: id,
+    readerId: id
+  };
+
+  saveState();
+  error.textContent = "";
+  form.reset();
+  showToast("Đăng ký thành công! Hãy đăng nhập với tài khoản vừa tạo.");
+
+  // Switch back to login tab
+  document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
+  document.querySelector('[data-auth-tab="login"]').classList.add("active");
+  byId("loginPanel").classList.add("active");
+  byId("signupPanel").classList.remove("active");
+}
+
 function handleLogout() {
   currentUser = null;
   byId("loginOverlay").classList.remove("hidden");
@@ -985,6 +1047,20 @@ function bindEvents() {
 
   byId("loginForm").addEventListener("submit", handleLogin);
   byId("logoutBtn").addEventListener("click", handleLogout);
+
+  // Auth tab switching (login / signup)
+  document.querySelectorAll(".auth-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.authTab;
+      byId("loginPanel").classList.toggle("active", target === "login");
+      byId("signupPanel").classList.toggle("active", target === "signup");
+    });
+  });
+
+  // Public reader signup form
+  byId("publicReaderForm").addEventListener("submit", handlePublicReaderSignup);
 }
 
 renderDocumentExtraFields();
