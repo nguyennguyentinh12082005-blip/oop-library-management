@@ -155,7 +155,16 @@ function documentFileUrl(documentItem) {
   return documentItem.fileUrl || documentItem.fileData || "";
 }
 
+function isSourceOnlyCatalogItem(documentItem) {
+  const url = documentFileUrl(documentItem);
+  const fileName = String(documentItem.fileName || "");
+  return Boolean(documentItem.extra?.nguon)
+    || /^https?:\/\/thuvienso\.hcmute\.edu\.vn\//i.test(url)
+    || (fileName === "Mở nguồn" && /^https?:\/\//i.test(url));
+}
+
 function fileCell(documentItem) {
+  if (isSourceOnlyCatalogItem(documentItem)) return `<span class="file-pill">Chưa có file</span>`;
   const url = documentFileUrl(documentItem);
   if (!url) return `<span class="file-pill">Chưa có file</span>`;
   const label = escapeHtml(documentItem.fileName || "Mở file");
@@ -430,7 +439,14 @@ function documentDetail(documentItem) {
 }
 
 function documentPreview(documentItem) {
-  return documentItem.extra?.docTruoc || "";
+  if (documentItem.extra?.docTruoc) return documentItem.extra.docTruoc;
+  if (documentItem.extra?.linhVuc) {
+    return `Đọc trước: tài liệu thuộc lĩnh vực ${documentItem.extra.linhVuc}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
+  }
+  if (isSourceOnlyCatalogItem(documentItem)) {
+    return `Đọc trước: ${documentItem.kind} thuộc thể loại ${documentItem.category || documentDetail(documentItem)}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
+  }
+  return "";
 }
 
 function documentKindLabel(documentItem) {
