@@ -408,6 +408,14 @@ function documentDetail(documentItem) {
   return documentItem.category;
 }
 
+function documentKindLabel(documentItem) {
+  const detail = documentDetail(documentItem);
+  if (documentItem.kind === KINDS.OTHER_BOOK && detail) {
+    return `${documentItem.kind} / ${detail}`;
+  }
+  return documentItem.kind;
+}
+
 function transactionNote(transaction) {
   const documentItem = findDocument(transaction.documentId);
   const documentName = documentItem ? documentItem.title : transaction.documentId;
@@ -471,7 +479,7 @@ function renderDocuments() {
   const keyword = plainText(byId("documentSearch").value.trim());
   const type = byId("documentTypeFilter").value;
   const rows = allDocuments().filter((documentItem) => {
-    const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher}`);
+    const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)}`);
     const matchKeyword = !keyword || haystack.includes(keyword);
     const matchType = type === "all" || documentItem.kind === type;
     return matchKeyword && matchType;
@@ -485,7 +493,7 @@ function renderDocuments() {
       <td>${coverCell(documentItem)}</td>
       <td><strong>${escapeHtml(documentItem.id)}</strong></td>
       <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
-      <td>${escapeHtml(documentItem.kind)}</td>
+      <td>${escapeHtml(documentKindLabel(documentItem))}</td>
       <td>${statusBadge(documentItem.quantity > 0, documentItem.quantity, documentItem.quantity, "warn")}</td>
       <td>${fileCell(documentItem)}</td>
       <td><button class="text-button" type="button" data-detail="${escapeHtml(documentItem.id)}">Chi tiết</button></td>
@@ -602,7 +610,7 @@ function renderInventory() {
       <td>${coverCell(documentItem)}</td>
       <td><strong>${escapeHtml(documentItem.id)}</strong></td>
       <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
-      <td>${escapeHtml(documentItem.kind)}</td>
+      <td>${escapeHtml(documentKindLabel(documentItem))}</td>
       <td>${escapeHtml(documentItem.quantity)}</td>
       <td>${fileCell(documentItem)}</td>
       <td>${statusBadge(documentItem.quantity > 0, "Còn tài liệu", "Hết tài liệu", "warn")}</td>

@@ -76,9 +76,20 @@ function inferYear(coverUrl) {
   return match ? Number(match[1]) : 2026;
 }
 
-function extraFor(kind, category) {
+function otherBookSubtype(title, category) {
+  const text = `${title} ${category}`.toLowerCase();
+  if (["truyện", "truyen", "tiểu thuyết", "tieu thuyet", "cổ tích", "co tich"].some((word) => text.includes(word))) return "Truyện";
+  if (["văn học", "van hoc", "thơ", "tho ", "tác phẩm", "tac pham"].some((word) => text.includes(word))) return "Văn học";
+  if (["kỹ năng", "ky nang", "kĩ năng", "ki nang", "giao tiếp", "lãnh đạo", "lanh dao"].some((word) => text.includes(word))) return "Kỹ năng sống";
+  if (["ngôn ngữ", "ngoại ngữ", "tiếng anh", "english", "japanese", "chinese", "french"].some((word) => text.includes(word))) return "Ngoại ngữ";
+  if (["khoa học tự nhiên", "vật lý", "hóa học", "sinh học", "toán", "khoa học phổ thông"].some((word) => text.includes(word))) return "Khoa học phổ thông";
+  if (["lịch sử", "địa lý", "du lịch", "lich su", "dia ly", "du lich"].some((word) => text.includes(word))) return "Lịch sử - địa lý";
+  return category || "Khác";
+}
+
+function extraFor(kind, category, title) {
   if (kind === "Giáo trình") return { maMonHoc: "HCMUTE", boMon: category };
-  if (kind === "Sách khác") return { loaiSachKhac: category };
+  if (kind === "Sách khác") return { loaiSachKhac: otherBookSubtype(title, category) };
   if (kind === "Báo/tạp chí") return { soPhatHanh: 1, thangPhatHanh: 1 };
   if (kind === "Bài nghiên cứu") {
     return {
@@ -113,7 +124,7 @@ function parseDocuments(html, category, kind) {
       coverImage,
       fileUrl,
       fileName: "Mở nguồn",
-      extra: extraFor(kind, category)
+      extra: extraFor(kind, category, title)
     });
   }
 

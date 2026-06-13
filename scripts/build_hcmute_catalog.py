@@ -96,11 +96,28 @@ def infer_year(cover_url):
     return int(match.group(1)) if match else 2026
 
 
-def extra_for(kind, category):
+def other_book_subtype(title, category):
+    text = f"{title} {category}".lower()
+    if any(word in text for word in ["truyện", "truyen", "tiểu thuyết", "tieu thuyet", "cổ tích", "co tich"]):
+        return "Truyện"
+    if any(word in text for word in ["văn học", "van hoc", "thơ", "tho ", "tác phẩm", "tac pham"]):
+        return "Văn học"
+    if any(word in text for word in ["kỹ năng", "ky nang", "kĩ năng", "ki nang", "giao tiếp", "lanh dao", "lãnh đạo"]):
+        return "Kỹ năng sống"
+    if any(word in text for word in ["ngôn ngữ", "ngoại ngữ", "tiếng anh", "english", "japanese", "chinese", "french"]):
+        return "Ngoại ngữ"
+    if any(word in text for word in ["khoa học tự nhiên", "vật lý", "hóa học", "sinh học", "toán", "khoa học phổ thông"]):
+        return "Khoa học phổ thông"
+    if any(word in text for word in ["lịch sử", "địa lý", "du lịch", "lich su", "dia ly", "du lich"]):
+        return "Lịch sử - địa lý"
+    return category if category else "Khác"
+
+
+def extra_for(kind, category, title):
     if kind == "Giáo trình":
         return {"maMonHoc": "HCMUTE", "boMon": category}
     if kind == "Sách khác":
-        return {"loaiSachKhac": category}
+        return {"loaiSachKhac": other_book_subtype(title, category)}
     if kind == "Báo/tạp chí":
         return {"soPhatHanh": 1, "thangPhatHanh": 1}
     if kind == "Bài nghiên cứu":
@@ -135,7 +152,7 @@ def parse_documents(source_html, category, kind):
             "coverImage": cover,
             "fileUrl": link,
             "fileName": "Mở nguồn",
-            "extra": extra_for(kind, category),
+            "extra": extra_for(kind, category, title),
         })
     return items
 
