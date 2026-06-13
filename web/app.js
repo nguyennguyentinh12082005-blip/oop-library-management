@@ -478,11 +478,14 @@ function renderDashboardLists() {
 function renderDocuments() {
   const keyword = plainText(byId("documentSearch").value.trim());
   const type = byId("documentTypeFilter").value;
+  const otherType = byId("otherBookTypeFilter").value;
   const rows = allDocuments().filter((documentItem) => {
     const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)}`);
     const matchKeyword = !keyword || haystack.includes(keyword);
     const matchType = type === "all" || documentItem.kind === type;
-    return matchKeyword && matchType;
+    const matchOtherType = otherType === "all"
+      || (documentItem.kind === KINDS.OTHER_BOOK && documentDetail(documentItem) === otherType);
+    return matchKeyword && matchType && matchOtherType;
   });
   const visibleRows = rows.slice(0, DOCUMENT_PAGE_SIZE);
   const suffix = rows.length > visibleRows.length ? `, hiển thị ${visibleRows.length} mục đầu` : "";
@@ -1326,7 +1329,18 @@ function bindEvents() {
   });
 
   byId("documentSearch").addEventListener("input", renderDocuments);
-  byId("documentTypeFilter").addEventListener("change", renderDocuments);
+  byId("documentTypeFilter").addEventListener("change", () => {
+    if (byId("documentTypeFilter").value !== KINDS.OTHER_BOOK) {
+      byId("otherBookTypeFilter").value = "all";
+    }
+    renderDocuments();
+  });
+  byId("otherBookTypeFilter").addEventListener("change", () => {
+    if (byId("otherBookTypeFilter").value !== "all") {
+      byId("documentTypeFilter").value = KINDS.OTHER_BOOK;
+    }
+    renderDocuments();
+  });
   byId("documentKind").addEventListener("change", renderDocumentExtraFields);
   byId("documentForm").addEventListener("submit", handleDocumentSubmit);
   byId("readerForm").addEventListener("submit", handleReaderSubmit);
