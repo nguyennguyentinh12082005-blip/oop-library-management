@@ -341,9 +341,16 @@ function findDocument(id) {
 }
 
 function catalogDocuments() {
-  return Array.isArray(window.HCMUTE_CATALOG) && window.HCMUTE_CATALOG.length
-    ? window.HCMUTE_CATALOG
-    : HCMUTE_DOCUMENTS;
+  const catalogs = [];
+  if (Array.isArray(window.HCMUTE_CATALOG) && window.HCMUTE_CATALOG.length) {
+    catalogs.push(...window.HCMUTE_CATALOG);
+  } else {
+    catalogs.push(...HCMUTE_DOCUMENTS);
+  }
+  if (Array.isArray(window.GUTENBERG_CATALOG) && window.GUTENBERG_CATALOG.length) {
+    catalogs.push(...window.GUTENBERG_CATALOG);
+  }
+  return catalogs;
 }
 
 function allDocuments() {
@@ -420,6 +427,10 @@ function documentDetail(documentItem) {
     return `${documentItem.extra.coQuanChuQuan || ""} - ${documentItem.extra.linhVuc || ""}`;
   }
   return documentItem.category;
+}
+
+function documentPreview(documentItem) {
+  return documentItem.extra?.docTruoc || "";
 }
 
 function documentKindLabel(documentItem) {
@@ -1115,6 +1126,7 @@ async function handleDocumentFileSubmit(event) {
 function openDocumentModal(id) {
   const documentItem = findDocument(id);
   if (!documentItem) return;
+  const preview = documentPreview(documentItem);
 
   const rows = [
     ["Mã tài liệu", documentItem.id],
@@ -1139,6 +1151,7 @@ function openDocumentModal(id) {
         <div class="reader-info">
           ${rows.map(([key, value]) => `<div class="info-row"><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
         </div>
+        ${preview ? `<div class="document-preview"><strong>Đọc trước</strong><p>${escapeHtml(preview)}</p></div>` : ""}
         <p class="form-note">File sách: ${fileCell(documentItem)}</p>
       </div>
     </div>
