@@ -38,12 +38,28 @@ const READER_TYPES = {
 };
 
 const otherBookTypes = [
-  "Văn học",
-  "Kỹ năng sống",
-  "Ngoại ngữ",
   "Truyện",
+  "Văn học",
+  "Ngoại ngữ",
   "Khoa học phổ thông",
   "Lịch sử - địa lý",
+  "Kỹ năng sống",
+  "Luật",
+  "Công nghệ thông tin",
+  "Cơ khí chế tạo máy",
+  "Cơ khí động lực",
+  "Điện - Điện tử",
+  "Xây dựng - Kiến trúc",
+  "Kinh tế - Quản lý",
+  "Y học - Sức khỏe",
+  "Nông - Lâm - Ngư nghiệp",
+  "Thực phẩm, Môi trường",
+  "Khoa học xã hội",
+  "Khoa học ứng dụng",
+  "CN May - thời trang",
+  "Nghệ thuật - Ẩm thực",
+  "In - Truyền thông",
+  "Thông tin Thư viện",
   "Khác"
 ];
 
@@ -114,6 +130,8 @@ function plainText(value) {
   return String(value)
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
     .toLowerCase();
 }
 
@@ -161,6 +179,105 @@ function isSourceOnlyCatalogItem(documentItem) {
   return Boolean(documentItem.extra?.nguon)
     || /^https?:\/\/thuvienso\.hcmute\.edu\.vn\//i.test(url)
     || (fileName === "Mở nguồn" && /^https?:\/\//i.test(url));
+}
+
+function sourceText(documentItem) {
+  return plainText([
+    documentItem.id,
+    documentItem.title,
+    documentItem.kind,
+    documentItem.author,
+    documentItem.publisher,
+    documentItem.category,
+    documentItem.extra?.loaiSachKhac,
+    documentItem.extra?.linhVuc,
+    documentItem.extra?.boMon,
+    documentItem.extra?.docTruoc
+  ].filter(Boolean).join(" "));
+}
+
+function hasAny(text, words) {
+  return words.some((word) => text.includes(word));
+}
+
+function sourceKind(documentItem) {
+  const text = sourceText(documentItem);
+  const title = plainText(documentItem.title || "");
+  const category = plainText(`${documentItem.kind || ""} ${documentItem.category || ""} ${documentItem.extra?.linhVuc || ""} ${documentItem.extra?.boMon || ""}`);
+
+  if (hasAny(category, ["tap chi", "bao/tap chi", "ky yeu", "hoi thao"])) return KINDS.MAGAZINE;
+  if (hasAny(category, ["giao trinh"]) || title.startsWith("giao trinh ")) return KINDS.TEXTBOOK;
+  if (hasAny(category, ["tham khao", "reference"])) return KINDS.REFERENCE;
+  if (hasAny(category, ["nghien cuu", "luan van", "luan an", "do an", "khoa luan", "bc nghien cuu"])
+    || hasAny(title, ["nghien cuu ", "bao cao ", "luan van ", "luan an ", "do an ", "khoa luan "])) {
+    return KINDS.RESEARCH;
+  }
+  if (hasAny(text, ["tap chi", "journal", "magazine", "ky yeu hoi thao"])) return KINDS.MAGAZINE;
+  return KINDS.OTHER_BOOK;
+}
+
+function sourceOtherBookType(documentItem) {
+  const text = sourceText(documentItem);
+
+  if (hasAny(text, ["truyen", "fiction", "novel", "stories", "story", "fairy", "adventure", "children"])) return "Truyện";
+  if (hasAny(text, ["van hoc", "literature", "poetry", "poems", "drama", "plays", "essays"])) return "Văn học";
+  if (hasAny(text, ["ngoai ngu", "ngon ngu", "language", "grammar", "dictionary", "english", "french", "german", "spanish"])) return "Ngoại ngữ";
+  if (hasAny(text, ["lich su", "dia ly", "du lich", "history", "geography", "travel", "biography", "memoir"])) return "Lịch sử - địa lý";
+  if (hasAny(text, ["ky nang", "self-help", "conduct of life", "psychology", "ethics", "leadership"])) return "Kỹ năng sống";
+  if (hasAny(text, ["luat", "law", "legal", "constitution"])) return "Luật";
+  if (hasAny(text, ["cong nghe thong tin", "tin hoc", "computer", "software", "programming", "lap trinh", "java", "python", "ai ", "artificial intelligence", "information retrieval"])) return "Công nghệ thông tin";
+  if (hasAny(text, ["co khi che tao may", "manufacturing", "machine design", "cnc", "han ", "welding"])) return "Cơ khí chế tạo máy";
+  if (hasAny(text, ["co khi dong luc", "o to", "automotive", "engine", "vehicle"])) return "Cơ khí động lực";
+  if (hasAny(text, ["dien - dien tu", "dien tu", "electrical", "electronics", "vhdl", "plc", "mach so", "vi mach"])) return "Điện - Điện tử";
+  if (hasAny(text, ["xay dung", "kien truc", "construction", "architecture"])) return "Xây dựng - Kiến trúc";
+  if (hasAny(text, ["kinh te", "quan ly", "business", "management", "marketing", "commerce", "finance"])) return "Kinh tế - Quản lý";
+  if (hasAny(text, ["y hoc", "suc khoe", "medical", "health", "medicine", "breastfeeding"])) return "Y học - Sức khỏe";
+  if (hasAny(text, ["nong - lam - ngu", "nong nghiep", "lam nghiep", "ngu nghiep", "agriculture", "forestry", "fishery"])) return "Nông - Lâm - Ngư nghiệp";
+  if (hasAny(text, ["thuc pham", "moi truong", "food", "environment"])) return "Thực phẩm, Môi trường";
+  if (hasAny(text, ["khoa hoc xa hoi", "social science", "sociology", "education"])) return "Khoa học xã hội";
+  if (hasAny(text, ["khoa hoc ung dung", "applied science", "engineering", "technology"])) return "Khoa học ứng dụng";
+  if (hasAny(text, ["may - thoi trang", "thoi trang", "garment", "fashion", "textile"])) return "CN May - thời trang";
+  if (hasAny(text, ["nghe thuat", "am thuc", "art", "cookery", "cooking", "music"])) return "Nghệ thuật - Ẩm thực";
+  if (hasAny(text, ["in - truyen thong", "truyen thong", "printing", "communication", "media"])) return "In - Truyền thông";
+  if (hasAny(text, ["thong tin thu vien", "library", "catalog", "bibliography"])) return "Thông tin Thư viện";
+  if (hasAny(text, ["khoa hoc tu nhien", "science", "mathematics", "physics", "chemistry", "biology", "nature", "astronomy"])) return "Khoa học phổ thông";
+  return "Khác";
+}
+
+function normalizeSourceDocument(documentItem) {
+  if (!isSourceOnlyCatalogItem(documentItem)) return documentItem;
+
+  const normalized = {
+    ...documentItem,
+    extra: { ...(documentItem.extra || {}) }
+  };
+  normalized.kind = sourceKind(documentItem);
+
+  if (normalized.kind === KINDS.TEXTBOOK) {
+    normalized.extra.maMonHoc = normalized.extra.maMonHoc || "HCMUTE";
+    normalized.extra.boMon = normalized.extra.boMon || normalized.category || "Giáo trình";
+  } else if (normalized.kind === KINDS.REFERENCE) {
+    normalized.category = normalized.category || "Tài liệu tham khảo";
+  } else if (normalized.kind === KINDS.OTHER_BOOK) {
+    normalized.extra.loaiSachKhac = sourceOtherBookType(normalized);
+  } else if (normalized.kind === KINDS.MAGAZINE) {
+    normalized.extra.soPhatHanh = normalized.extra.soPhatHanh || 1;
+    normalized.extra.thangPhatHanh = normalized.extra.thangPhatHanh || 1;
+  } else if (normalized.kind === KINDS.RESEARCH) {
+    normalized.extra.coQuanChuQuan = normalized.extra.coQuanChuQuan || normalized.publisher || "Nguồn catalog";
+    normalized.extra.linhVuc = normalized.extra.linhVuc || normalized.category || "Nghiên cứu";
+  }
+
+  normalized.fileName = "";
+  return normalized;
+}
+
+function normalizeManagedDocument(documentItem) {
+  const normalized = normalizeSourceDocument(documentItem);
+  if (normalized === documentItem) return documentItem;
+  Object.assign(documentItem, normalized);
+  documentItem.extra = normalized.extra;
+  return documentItem;
 }
 
 function fileCell(documentItem) {
@@ -345,8 +462,9 @@ function findReader(id) {
 }
 
 function findDocument(id) {
-  return state.documents.find((documentItem) => documentItem.id === id)
-    || catalogDocuments().find((documentItem) => documentItem.id === id);
+  const managed = state.documents.find((documentItem) => documentItem.id === id);
+  if (managed) return normalizeManagedDocument(managed);
+  return catalogDocuments().find((documentItem) => documentItem.id === id);
 }
 
 function catalogDocuments() {
@@ -359,7 +477,7 @@ function catalogDocuments() {
   if (Array.isArray(window.GUTENBERG_CATALOG) && window.GUTENBERG_CATALOG.length) {
     catalogs.push(...window.GUTENBERG_CATALOG);
   }
-  return catalogs;
+  return catalogs.map(normalizeSourceDocument);
 }
 
 function allDocuments() {
@@ -367,7 +485,7 @@ function allDocuments() {
   const seenIds = new Set();
   const seenUrls = new Set();
 
-  [...state.documents, ...catalogDocuments()].forEach((documentItem) => {
+  [...state.documents.map(normalizeManagedDocument), ...catalogDocuments()].forEach((documentItem) => {
     const url = documentFileUrl(documentItem);
     if (seenIds.has(documentItem.id) || (url && seenUrls.has(url))) return;
     seenIds.add(documentItem.id);
@@ -381,14 +499,14 @@ function allDocuments() {
 function ensureManagedDocument(id) {
   id = String(id || "").trim().toUpperCase();
   const managed = state.documents.find((documentItem) => documentItem.id === id);
-  if (managed) return managed;
+  if (managed) return normalizeManagedDocument(managed);
 
   const catalogItem = catalogDocuments().find((documentItem) => documentItem.id === id);
   if (!catalogItem) return null;
 
   const copy = clone(catalogItem);
   state.documents.push(copy);
-  return copy;
+  return normalizeManagedDocument(copy);
 }
 
 function personIdExists(id) {
@@ -1365,6 +1483,15 @@ function handleLogout() {
   setPage("dashboard");
 }
 
+function renderOtherBookTypeOptions() {
+  const select = byId("otherBookTypeFilter");
+  if (!select) return;
+  select.innerHTML = [
+    `<option value="all">Tất cả</option>`,
+    ...otherBookTypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`)
+  ].join("");
+}
+
 function bindEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.addEventListener("click", () => setPage(button.dataset.page));
@@ -1440,6 +1567,7 @@ function bindEvents() {
 }
 
 renderDocumentExtraFields();
+renderOtherBookTypeOptions();
 toggleImportMode();
 setDefaultDates();
 bindEvents();
