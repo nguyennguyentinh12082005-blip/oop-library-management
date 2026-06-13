@@ -133,9 +133,22 @@ function statusBadge(ok, okText, badText, badClass = "bad") {
 
 function coverCell(documentItem) {
   if (documentItem.coverImage) {
-    return `<img class="cover-thumb" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}" loading="lazy">`;
+    return `<img class="cover-thumb" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}" loading="lazy" onerror="handleCoverError(this)">`;
   }
   return `<span class="cover-thumb" aria-hidden="true"></span>`;
+}
+
+function handleCoverError(img) {
+  const row = img.closest("tr");
+  if (row) {
+    row.remove();
+    return;
+  }
+
+  const placeholder = document.createElement("div");
+  placeholder.className = img.className || "cover-thumb";
+  placeholder.setAttribute("aria-hidden", "true");
+  img.replaceWith(placeholder);
 }
 
 function documentFileUrl(documentItem) {

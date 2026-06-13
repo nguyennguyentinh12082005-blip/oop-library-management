@@ -4,6 +4,9 @@ const BASE = "https://thuvienso.hcmute.edu.vn";
 const TARGET_COUNT = Number(process.env.HCMUTE_LIMIT || 5600);
 const CONCURRENCY = Number(process.env.HCMUTE_CONCURRENCY || 1);
 const OUTPUT = new URL("../web/hcmute-catalog.js", import.meta.url);
+const BROKEN_COVER_URLS = new Set([
+  "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260514/hcmute/ovanke/135x160/hcmute_1778745434.jpg"
+]);
 
 const categories = [
   ["Giáo trình SPKT", "Giáo trình", "https://thuvienso.hcmute.edu.vn/giao-trinh-spkt/tat-ca-tai-lieu-giao-trinh-spkt-9191-0.html"],
@@ -111,7 +114,7 @@ function parseDocuments(html, category, kind) {
     const coverImage = absoluteUrl(attr(img, "src"));
     const fileUrl = absoluteUrl(anchorMatch[1]);
 
-    if (!title || !fileUrl || !coverImage || coverImage.includes("onerror")) continue;
+    if (!title || !fileUrl || !coverImage || coverImage.includes("onerror") || BROKEN_COVER_URLS.has(coverImage)) continue;
 
     documents.push({
       title,

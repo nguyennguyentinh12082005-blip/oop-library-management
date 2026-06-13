@@ -11,6 +11,9 @@ from pathlib import Path
 BASE = "https://thuvienso.hcmute.edu.vn"
 TARGET_COUNT = int(os.environ.get("HCMUTE_LIMIT", "5600"))
 OUTPUT = Path(__file__).resolve().parents[1] / "web" / "hcmute-catalog.js"
+BROKEN_COVER_URLS = {
+    "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260514/hcmute/ovanke/135x160/hcmute_1778745434.jpg",
+}
 
 CATEGORIES = [
     ("Giáo trình SPKT", "Giáo trình", "https://thuvienso.hcmute.edu.vn/giao-trinh-spkt/tat-ca-tai-lieu-giao-trinh-spkt-9191-0.html"),
@@ -139,7 +142,7 @@ def parse_documents(source_html, category, kind):
         title = " ".join(html.unescape(title).split())
         cover = absolute_url(attr(img, "src"))
         link = absolute_url(match.group(1))
-        if not title or not cover or not link or "onerror" in cover:
+        if not title or not cover or not link or "onerror" in cover or cover in BROKEN_COVER_URLS:
             continue
         items.append({
             "title": title,
