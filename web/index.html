@@ -467,8 +467,9 @@
               <label>Người đọc
                 <select name="readerId" id="borrowReaderSelect" required></select>
               </label>
-              <label>Tài liệu
-                <select name="documentId" id="borrowDocumentSelect" required></select>
+              <label>Mã tài liệu
+                <input name="documentId" id="borrowDocumentInput" list="borrowDocumentSelect" placeholder="Nhập mã, ví dụ HCMUTE00001" required autocomplete="off">
+                <datalist id="borrowDocumentSelect"></datalist>
               </label>
               <label>Mã nhân viên <input name="staffId" value="NV001" required></label>
               <label>Ngày mượn <input name="borrowDate" type="date" required></label>
@@ -530,8 +531,9 @@
                 </select>
               </label>
               <div id="importExistingFields" class="extra-fields">
-                <label>Tài liệu
-                  <select name="documentId" id="importDocumentSelect" required></select>
+                <label>Mã tài liệu
+                  <input name="documentId" id="importDocumentInput" list="importDocumentSelect" placeholder="Nhập mã tài liệu cần nhập thêm" required autocomplete="off">
+                  <datalist id="importDocumentSelect"></datalist>
                 </label>
               </div>
               <div id="importNewFields" class="extra-fields" hidden>
@@ -574,8 +576,9 @@
               <h2>Xuất / thanh lý tài liệu</h2>
             </div>
             <form id="exportForm" class="stacked-form">
-              <label>Tài liệu
-                <select name="documentId" id="exportDocumentSelect" required></select>
+              <label>Mã tài liệu
+                <input name="documentId" id="exportDocumentInput" list="exportDocumentSelect" placeholder="Nhập mã tài liệu cần xuất" required autocomplete="off">
+                <datalist id="exportDocumentSelect"></datalist>
               </label>
               <div class="form-grid">
                 <label>Số lượng xuất <input name="quantity" type="number" min="1" value="1" required></label>
@@ -595,8 +598,9 @@
             <h2>Cập nhật file sách</h2>
           </div>
           <form id="documentFileForm" class="stacked-form">
-            <label>Tài liệu
-              <select name="documentId" id="fileDocumentSelect" required></select>
+            <label>Mã tài liệu
+              <input name="documentId" id="fileDocumentInput" list="fileDocumentSelect" placeholder="Nhập mã tài liệu cần cập nhật file" required autocomplete="off">
+              <datalist id="fileDocumentSelect"></datalist>
             </label>
             <div class="form-grid">
               <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub"></label>

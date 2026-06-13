@@ -363,6 +363,7 @@ function allDocuments() {
 }
 
 function ensureManagedDocument(id) {
+  id = String(id || "").trim().toUpperCase();
   const managed = state.documents.find((documentItem) => documentItem.id === id);
   if (managed) return managed;
 
@@ -577,7 +578,7 @@ function renderLoanSelects() {
 
   const documents = allDocuments().filter((documentItem) => isBorrowable(documentItem));
   byId("borrowDocumentSelect").innerHTML = documents.map((documentItem) => (
-    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.id)} - ${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
+    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
   )).join("");
 
   byId("returnLoanSelect").innerHTML = state.loans.map((loan) => {
@@ -612,7 +613,7 @@ function renderInventory() {
   const documents = allDocuments();
   const visibleRows = documents.slice(0, DOCUMENT_PAGE_SIZE);
   const documentOptions = documents.map((documentItem) => (
-    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.id)} - ${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
+    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
   )).join("");
 
   byId("importDocumentSelect").innerHTML = documentOptions;
@@ -915,6 +916,7 @@ function handleBorrowSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
+  data.documentId = String(data.documentId || "").trim().toUpperCase();
   const reader = findReader(data.readerId);
   const documentItem = ensureManagedDocument(data.documentId);
 
@@ -1036,6 +1038,7 @@ async function handleImportSubmit(event) {
     await attachFiles(documentItem, form);
     state.documents.push(documentItem);
   } else {
+    data.documentId = String(data.documentId || "").trim().toUpperCase();
     documentItem = ensureManagedDocument(data.documentId);
     if (!documentItem) {
       showToast("Không tìm thấy tài liệu cần nhập.");
@@ -1069,7 +1072,7 @@ function toggleImportMode() {
   const newMode = byId("importMode").value === "new";
   byId("importExistingFields").hidden = newMode;
   byId("importNewFields").hidden = !newMode;
-  byId("importDocumentSelect").disabled = newMode;
+  byId("importDocumentInput").disabled = newMode;
   byId("importNewFields").querySelectorAll("input, select").forEach((el) => {
     el.disabled = !newMode;
   });
@@ -1153,6 +1156,7 @@ function handleExportSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
+  data.documentId = String(data.documentId || "").trim().toUpperCase();
   const documentItem = ensureManagedDocument(data.documentId);
   const quantity = Number(data.quantity);
   const unitPrice = Number(data.unitPrice);
