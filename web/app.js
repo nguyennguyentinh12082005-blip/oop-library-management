@@ -47,6 +47,41 @@ const otherBookTypes = [
   "Khác"
 ];
 
+const HCMUTE_SOURCE = [
+  ["HCMUTE001", "Thực nghiệm quá trình tạo ngã rẽ trên thân ống kim loại", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260609/hcmute/ovanke/80x100/4761780968301.jpg", "https://thuvienso.hcmute.edu.vn/doc/thuc-nghiem-qua-trinh-tao-nga-re-tren-than-ong-kim-loai-1051690.html", "Nghiên cứu khoa học"],
+  ["HCMUTE002", "Thiết kế hệ thống điều khiển thiết bị điện trong gia đình qua mạng Ethernet và phần mềm Android", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260608/hcmute/ovanke/80x100/8821780904401.jpg", "https://thuvienso.hcmute.edu.vn/doc/thiet-ke-he-thong-dieu-khien-thiet-bi-dien-trong-gia-dinh-qua-mang-ethernet-va-phan-mem-android-1051689.html", "Điện - điện tử"],
+  ["HCMUTE003", "Xây dựng mô hình nghịch lưu 3 pha 5 bậc diode kẹp điều khiển bằng card DSP F28335", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260602/hcmute/ovanke/80x100/5221780363801.jpg", "https://thuvienso.hcmute.edu.vn/doc/xay-dung-mo-hinh-nghich-luu-3-pha-5-bac-diode-kep-dieu-khien-bang-card-dsp-f28335-1051640.html", "Điện - điện tử"],
+  ["HCMUTE004", "Nghiên cứu ảnh những ảnh hưởng của các Tiktoker đến ý định mua mỹ phẩm của sinh viên tại Thành phố Hồ Chí Minh", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260526/hcmute/ovanke/80x100/8481779785401.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-anh-nhung-anh-huong-cua-cac-tiktoker-den-y-dinh-mua-my-pham-cua-sinh-vien-tai-thanh-pho-h-1049855.html", "Kinh tế - xã hội"],
+  ["HCMUTE005", "Các yếu tố ảnh hưởng đến quyết định thuê chỗ ở của sinh viên đại học ở Thủ Đức cũ", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260525/hcmute/ovanke/80x100/7001779695701.jpg", "https://thuvienso.hcmute.edu.vn/doc/cac-yeu-to-anh-huong-den-quyet-dinh-thue-cho-o-cua-sinh-vien-dai-hoc-o-thu-duc-cu-1049035.html", "Kinh tế - xã hội"],
+  ["HCMUTE006", "Nghiên cứu các nhân tố tác động đến sự chấp nhận chuyển đổi số của các doanh nghiệp vừa và nhỏ - SV2025-139", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/4171779439801.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-cac-nhan-to-tac-dong-den-su-chap-nhan-chuyen-doi-so-cua-cac-doanh-nghiep-vua-va-nho-sv2-1047121.html", "Chuyển đổi số"],
+  ["HCMUTE007", "Thiết kế, chế tạo mô hình đóng mấu chốt cho khung thép chữ nhật - SV2025-298", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/5741779438602.jpg", "https://thuvienso.hcmute.edu.vn/doc/thiet-ke-che-tao-mo-hinh-dong-mau-chot-cho-khung-thep-chu-nhat-sv2025-298-1047118.html", "Cơ khí"],
+  ["HCMUTE008", "Tác động của khuyến mãi chớp nhoáng đến quyết định mua hàng ngẫu hứng trên sàn thương mại điện tử - SV2025-127", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/6921779438301.jpg", "https://thuvienso.hcmute.edu.vn/doc/tac-dong-cua-khuyen-mai-chop-nhoang-den-quyet-dinh-mua-hang-ngau-hung-tren-san-thuong-mai-dien-tu-1047117.html", "Thương mại điện tử"],
+  ["HCMUTE009", "Nghiên cứu ảnh hưởng của tôi lặp đến độ cứng và tổ chức tế vi của thép C45 khi nhiệt luyện - SV2025-289", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/3741779438002.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-anh-huong-cua-toi-lap-den-do-cung-va-to-chuc-te-vi-cua-thep-c45-khi-nhiet-luyen-sv2025-1047116.html", "Vật liệu"],
+  ["HCMUTE010", "Nghiên cứu chế tạo mô hình hàn ống tự động - SV2025-348", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/3911779437701.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-che-tao-mo-hinh-han-ong-tu-dong-sv2025-348-1047115.html", "Cơ khí"],
+  ["HCMUTE011", "Chế tạo mô hình tạo hình mặt cong bằng phương pháp chấn - SV2025-344", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/8101779437402.jpg", "https://thuvienso.hcmute.edu.vn/doc/che-tao-mo-hinh-tao-hinh-mat-cong-bang-phuong-phap-chan-sv2025-344-1047114.html", "Cơ khí"],
+  ["HCMUTE012", "Nghiên cứu, lựa chọn loại nút giao thông phù hợp với giao thông Việt Nam - SV2025-253", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/441779437101.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-lua-chon-loai-nut-giao-thong-phu-hop-voi-giao-thong-viet-nam-sv2025-253-1047113.html", "Giao thông"]
+];
+
+const HCMUTE_DOCUMENTS = HCMUTE_SOURCE.map(([id, title, coverImage, fileUrl, linhVuc]) => ({
+  id,
+  title,
+  kind: KINDS.RESEARCH,
+  year: 2026,
+  quantity: 1,
+  author: "HCMUTE",
+  publisher: "Thư viện số HCMUTE",
+  category: "Tài liệu số",
+  coverImage,
+  fileUrl,
+  fileName: "Mở nguồn",
+  extra: {
+    coQuanChuQuan: "Trường Đại học Sư phạm Kỹ thuật TP.HCM",
+    linhVuc
+  }
+}));
+
+const DOCUMENT_PAGE_SIZE = 120;
+
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
 function clone(value) {
@@ -92,6 +127,109 @@ function escapeHtml(value) {
   }[char]));
 }
 
+function statusBadge(ok, okText, badText, badClass = "bad") {
+  return `<span class="status ${ok ? "ok" : badClass}">${escapeHtml(ok ? okText : badText)}</span>`;
+}
+
+function coverCell(documentItem) {
+  if (documentItem.coverImage) {
+    return `<img class="cover-thumb" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}" loading="lazy">`;
+  }
+  return `<span class="cover-thumb" aria-hidden="true"></span>`;
+}
+
+function documentFileUrl(documentItem) {
+  return documentItem.fileUrl || documentItem.fileData || "";
+}
+
+function fileCell(documentItem) {
+  const url = documentFileUrl(documentItem);
+  if (!url) return `<span class="file-pill">Chưa có file</span>`;
+  const label = escapeHtml(documentItem.fileName || "Mở file");
+  return `<a class="file-pill ready" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}">${label}</a>`;
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Downscale an uploaded image to a small JPEG data URL so localStorage stays light.
+function readImageAsThumb(file, maxSize = 480) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function extraFieldsMarkup(kind) {
+  if (kind === KINDS.TEXTBOOK) {
+    return `
+      <label>Mã môn học <input name="maMonHoc" required></label>
+      <label>Bộ môn <input name="boMon" required></label>
+    `;
+  }
+  if (kind === KINDS.OTHER_BOOK) {
+    return `
+      <label>Loại sách khác
+        <select name="loaiSachKhac" required>
+          ${otherBookTypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}
+        </select>
+      </label>
+    `;
+  }
+  if (kind === KINDS.MAGAZINE) {
+    return `
+      <div class="form-grid">
+        <label>Số phát hành <input name="soPhatHanh" type="number" min="1" value="1" required></label>
+        <label>Tháng phát hành <input name="thangPhatHanh" type="number" min="1" max="12" value="1" required></label>
+      </div>
+    `;
+  }
+  if (kind === KINDS.RESEARCH) {
+    return `
+      <label>Cơ quan chủ quản <input name="coQuanChuQuan" required></label>
+      <label>Lĩnh vực <input name="linhVuc" required></label>
+    `;
+  }
+  return "";
+}
+
+function buildExtra(kind, data) {
+  const extra = {};
+  if (kind === KINDS.TEXTBOOK) {
+    extra.maMonHoc = data.maMonHoc;
+    extra.boMon = data.boMon;
+  } else if (kind === KINDS.OTHER_BOOK) {
+    extra.loaiSachKhac = data.loaiSachKhac;
+  } else if (kind === KINDS.MAGAZINE) {
+    extra.soPhatHanh = Number(data.soPhatHanh);
+    extra.thangPhatHanh = Number(data.thangPhatHanh);
+  } else if (kind === KINDS.RESEARCH) {
+    extra.coQuanChuQuan = data.coQuanChuQuan;
+    extra.linhVuc = data.linhVuc;
+  }
+  return extra;
+}
+
 function sampleState() {
   return {
     counters: {
@@ -113,9 +251,12 @@ function sampleState() {
         permission: "Full"
       }
     ],
-    documents: [],
+    documents: clone(HCMUTE_DOCUMENTS),
     loans: [],
-    transactions: []
+    transactions: [],
+    seededSources: {
+      hcmute202606: true
+    }
   };
 }
 
@@ -130,8 +271,34 @@ function loadState() {
 
 let state = loadState();
 
+function seedHcmuteDocuments() {
+  state.documents = Array.isArray(state.documents) ? state.documents : [];
+  state.seededSources = state.seededSources || {};
+  if (state.seededSources.hcmute202606) return;
+
+  const existingIds = new Set(state.documents.map((documentItem) => documentItem.id));
+  HCMUTE_DOCUMENTS.forEach((documentItem) => {
+    if (!existingIds.has(documentItem.id)) {
+      state.documents.push(clone(documentItem));
+    }
+  });
+
+  state.seededSources.hcmute202606 = true;
+  saveState();
+}
+
+seedHcmuteDocuments();
+
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return true;
+  } catch {
+    if (document.querySelector("#toast")) {
+      showToast("Không lưu được: bộ nhớ trình duyệt đầy. Hãy dùng link file thay vì tải file lên.");
+    }
+    return false;
+  }
 }
 
 function nextId(prefix, key) {
@@ -156,7 +323,42 @@ function findReader(id) {
 }
 
 function findDocument(id) {
-  return state.documents.find((documentItem) => documentItem.id === id);
+  return state.documents.find((documentItem) => documentItem.id === id)
+    || catalogDocuments().find((documentItem) => documentItem.id === id);
+}
+
+function catalogDocuments() {
+  return Array.isArray(window.HCMUTE_CATALOG) && window.HCMUTE_CATALOG.length
+    ? window.HCMUTE_CATALOG
+    : HCMUTE_DOCUMENTS;
+}
+
+function allDocuments() {
+  const rows = [];
+  const seenIds = new Set();
+  const seenUrls = new Set();
+
+  [...state.documents, ...catalogDocuments()].forEach((documentItem) => {
+    const url = documentFileUrl(documentItem);
+    if (seenIds.has(documentItem.id) || (url && seenUrls.has(url))) return;
+    seenIds.add(documentItem.id);
+    if (url) seenUrls.add(url);
+    rows.push(documentItem);
+  });
+
+  return rows;
+}
+
+function ensureManagedDocument(id) {
+  const managed = state.documents.find((documentItem) => documentItem.id === id);
+  if (managed) return managed;
+
+  const catalogItem = catalogDocuments().find((documentItem) => documentItem.id === id);
+  if (!catalogItem) return null;
+
+  const copy = clone(catalogItem);
+  state.documents.push(copy);
+  return copy;
 }
 
 function personIdExists(id) {
@@ -223,10 +425,11 @@ function transactionNote(transaction) {
 }
 
 function renderStats() {
-  const totalCopies = state.documents.reduce((sum, documentItem) => sum + Number(documentItem.quantity), 0);
+  const documents = allDocuments();
+  const totalCopies = documents.reduce((sum, documentItem) => sum + Number(documentItem.quantity), 0);
   const overdue = state.loans.filter((loan) => loan.dueDate < todayISO()).length;
   const stats = [
-    { label: "Đầu tài liệu", value: state.documents.length, tone: "cyan" },
+    { label: "Đầu tài liệu", value: documents.length, tone: "cyan" },
     { label: "Tổng bản sách", value: totalCopies, tone: "green" },
     { label: "Người đọc", value: state.readers.length, tone: "amber" },
     { label: "Quá hạn", value: overdue, tone: "rose" }
@@ -267,23 +470,27 @@ function renderDashboardLists() {
 function renderDocuments() {
   const keyword = plainText(byId("documentSearch").value.trim());
   const type = byId("documentTypeFilter").value;
-  const rows = state.documents.filter((documentItem) => {
+  const rows = allDocuments().filter((documentItem) => {
     const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher}`);
     const matchKeyword = !keyword || haystack.includes(keyword);
     const matchType = type === "all" || documentItem.kind === type;
     return matchKeyword && matchType;
   });
+  const visibleRows = rows.slice(0, DOCUMENT_PAGE_SIZE);
+  const suffix = rows.length > visibleRows.length ? `, hiển thị ${visibleRows.length} mục đầu` : "";
 
-  byId("documentCount").textContent = `${rows.length} mục`;
-  byId("documentsTable").innerHTML = rows.map((documentItem) => `
+  byId("documentCount").textContent = `${rows.length} mục${suffix}`;
+  byId("documentsTable").innerHTML = visibleRows.map((documentItem) => `
     <tr>
+      <td>${coverCell(documentItem)}</td>
       <td><strong>${escapeHtml(documentItem.id)}</strong></td>
       <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
       <td>${escapeHtml(documentItem.kind)}</td>
-      <td><span class="status ${documentItem.quantity > 0 ? "ok" : "warn"}">${escapeHtml(documentItem.quantity)}</span></td>
-      <td>${escapeHtml(documentDetail(documentItem))}</td>
+      <td>${statusBadge(documentItem.quantity > 0, documentItem.quantity, documentItem.quantity, "warn")}</td>
+      <td>${fileCell(documentItem)}</td>
+      <td><button class="text-button" type="button" data-detail="${escapeHtml(documentItem.id)}">Chi tiết</button></td>
     </tr>
-  `).join("") || `<tr><td colspan="5" class="muted">Không có tài liệu phù hợp.</td></tr>`;
+  `).join("") || `<tr><td colspan="7" class="muted">Không có tài liệu phù hợp.</td></tr>`;
 }
 
 function renderReaders() {
@@ -344,7 +551,7 @@ function renderLoanSelects() {
     `<option value="${escapeHtml(reader.id)}">${escapeHtml(reader.id)} - ${escapeHtml(reader.name)} (${escapeHtml(reader.type)})</option>`
   )).join("");
 
-  const documents = state.documents.filter((documentItem) => isBorrowable(documentItem));
+  const documents = allDocuments().filter((documentItem) => isBorrowable(documentItem));
   byId("borrowDocumentSelect").innerHTML = documents.map((documentItem) => (
     `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.id)} - ${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
   )).join("");
@@ -378,22 +585,29 @@ function renderLoans() {
 }
 
 function renderInventory() {
-  const documentOptions = state.documents.map((documentItem) => (
+  const documents = allDocuments();
+  const visibleRows = documents.slice(0, DOCUMENT_PAGE_SIZE);
+  const documentOptions = documents.map((documentItem) => (
     `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.id)} - ${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
   )).join("");
 
   byId("importDocumentSelect").innerHTML = documentOptions;
   byId("exportDocumentSelect").innerHTML = documentOptions;
-  byId("inventoryCount").textContent = `${state.documents.length} mục`;
-  byId("inventoryTable").innerHTML = state.documents.map((documentItem) => `
+  byId("fileDocumentSelect").innerHTML = documentOptions;
+  byId("inventoryCount").textContent = documents.length > visibleRows.length
+    ? `${documents.length} mục, hiển thị ${visibleRows.length} mục đầu`
+    : `${documents.length} mục`;
+  byId("inventoryTable").innerHTML = visibleRows.map((documentItem) => `
     <tr>
+      <td>${coverCell(documentItem)}</td>
       <td><strong>${escapeHtml(documentItem.id)}</strong></td>
       <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
       <td>${escapeHtml(documentItem.kind)}</td>
       <td>${escapeHtml(documentItem.quantity)}</td>
-      <td><span class="status ${documentItem.quantity > 0 ? "ok" : "warn"}">${documentItem.quantity > 0 ? "Còn tài liệu" : "Hết tài liệu"}</span></td>
+      <td>${fileCell(documentItem)}</td>
+      <td>${statusBadge(documentItem.quantity > 0, "Còn tài liệu", "Hết tài liệu", "warn")}</td>
     </tr>
-  `).join("");
+  `).join("") || `<tr><td colspan="7" class="muted">Chưa có tài liệu.</td></tr>`;
 }
 
 function renderTransactions() {
@@ -498,78 +712,25 @@ function setPage(pageName) {
 }
 
 function renderDocumentExtraFields() {
-  const kind = byId("documentKind").value;
-  const extra = byId("documentExtraFields");
-
-  if (kind === KINDS.TEXTBOOK) {
-    extra.innerHTML = `
-      <label>Mã môn học <input name="maMonHoc" required></label>
-      <label>Bộ môn <input name="boMon" required></label>
-    `;
-    return;
-  }
-
-  if (kind === KINDS.OTHER_BOOK) {
-    extra.innerHTML = `
-      <label>Loại sách khác
-        <select name="loaiSachKhac" required>
-          ${otherBookTypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}
-        </select>
-      </label>
-    `;
-    return;
-  }
-
-  if (kind === KINDS.MAGAZINE) {
-    extra.innerHTML = `
-      <div class="form-grid">
-        <label>Số phát hành <input name="soPhatHanh" type="number" min="1" value="1" required></label>
-        <label>Tháng phát hành <input name="thangPhatHanh" type="number" min="1" max="12" value="1" required></label>
-      </div>
-    `;
-    return;
-  }
-
-  if (kind === KINDS.RESEARCH) {
-    extra.innerHTML = `
-      <label>Cơ quan chủ quản <input name="coQuanChuQuan" required></label>
-      <label>Lĩnh vực <input name="linhVuc" required></label>
-    `;
-    return;
-  }
-
-  extra.innerHTML = "";
+  byId("documentExtraFields").innerHTML = extraFieldsMarkup(byId("documentKind").value);
 }
 
-function handleDocumentSubmit(event) {
+function renderImportExtraFields() {
+  byId("importExtraFields").innerHTML = extraFieldsMarkup(byId("importKind").value);
+}
+
+async function handleDocumentSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
 
-  if (state.documents.some((documentItem) => documentItem.id === id)) {
+  if (allDocuments().some((documentItem) => documentItem.id === id)) {
     showToast("Mã tài liệu đã tồn tại.");
     return;
   }
 
-  const extra = {};
-  if (data.kind === KINDS.TEXTBOOK) {
-    extra.maMonHoc = data.maMonHoc;
-    extra.boMon = data.boMon;
-  }
-  if (data.kind === KINDS.OTHER_BOOK) {
-    extra.loaiSachKhac = data.loaiSachKhac;
-  }
-  if (data.kind === KINDS.MAGAZINE) {
-    extra.soPhatHanh = Number(data.soPhatHanh);
-    extra.thangPhatHanh = Number(data.thangPhatHanh);
-  }
-  if (data.kind === KINDS.RESEARCH) {
-    extra.coQuanChuQuan = data.coQuanChuQuan;
-    extra.linhVuc = data.linhVuc;
-  }
-
-  state.documents.push({
+  const documentItem = {
     id,
     title: data.title.trim(),
     kind: data.kind,
@@ -578,14 +739,35 @@ function handleDocumentSubmit(event) {
     author: data.author.trim(),
     publisher: data.publisher.trim(),
     category: data.category.trim(),
-    extra
-  });
+    extra: buildExtra(data.kind, data)
+  };
 
+  await attachFiles(documentItem, form);
+
+  state.documents.push(documentItem);
   saveState();
   form.reset();
   renderDocumentExtraFields();
   renderAll();
   showToast("Đã thêm tài liệu mới.");
+}
+
+// Read cover image (downscaled) and book file from a form into the document object.
+async function attachFiles(documentItem, form) {
+  const coverFile = form.coverImage?.files?.[0];
+  if (coverFile) documentItem.coverImage = await readImageAsThumb(coverFile);
+
+  const bookFile = form.bookFile?.files?.[0];
+  if (bookFile) {
+    documentItem.fileName = bookFile.name;
+    documentItem.fileData = await readFileAsDataURL(bookFile);
+  }
+
+  const url = form.fileUrl?.value?.trim();
+  if (url) {
+    documentItem.fileUrl = url;
+    if (!documentItem.fileName) documentItem.fileName = url.split("/").pop() || "Mở file";
+  }
 }
 
 function handleReaderSubmit(event) {
@@ -710,7 +892,7 @@ function handleBorrowSubmit(event) {
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const reader = findReader(data.readerId);
-  const documentItem = findDocument(data.documentId);
+  const documentItem = ensureManagedDocument(data.documentId);
 
   if (!reader || !documentItem) {
     showToast("Dữ liệu người đọc hoặc tài liệu không hợp lệ.");
@@ -802,17 +984,39 @@ function handleReturnSubmit(event) {
   showToast("Đã xác nhận trả tài liệu.");
 }
 
-function handleImportSubmit(event) {
+async function handleImportSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
-  const documentItem = findDocument(data.documentId);
   const quantity = Number(data.quantity);
   const unitPrice = Number(data.unitPrice);
+  let documentItem;
 
-  if (!documentItem) {
-    showToast("Không tìm thấy tài liệu cần nhập.");
-    return;
+  if (data.importMode === "new") {
+    const id = data.id.trim().toUpperCase();
+    if (allDocuments().some((item) => item.id === id)) {
+      showToast("Mã tài liệu đã tồn tại.");
+      return;
+    }
+    documentItem = {
+      id,
+      title: data.title.trim(),
+      kind: data.kind,
+      year: Number(data.year),
+      quantity: 0,
+      author: data.author.trim(),
+      publisher: data.publisher.trim(),
+      category: data.category.trim(),
+      extra: buildExtra(data.kind, data)
+    };
+    await attachFiles(documentItem, form);
+    state.documents.push(documentItem);
+  } else {
+    documentItem = ensureManagedDocument(data.documentId);
+    if (!documentItem) {
+      showToast("Không tìm thấy tài liệu cần nhập.");
+      return;
+    }
   }
 
   documentItem.quantity += quantity;
@@ -829,16 +1033,103 @@ function handleImportSubmit(event) {
   });
 
   saveState();
+  form.reset();
+  toggleImportMode();
+  setDefaultDates();
   renderAll();
   byId("importHint").textContent = `Số lượng hiện tại: ${documentItem.quantity}.`;
   showToast("Đã ghi nhận nhập tài liệu.");
+}
+
+function toggleImportMode() {
+  const newMode = byId("importMode").value === "new";
+  byId("importExistingFields").hidden = newMode;
+  byId("importNewFields").hidden = !newMode;
+  byId("importDocumentSelect").disabled = newMode;
+  byId("importNewFields").querySelectorAll("input, select").forEach((el) => {
+    el.disabled = !newMode;
+  });
+  if (newMode) renderImportExtraFields();
+}
+
+async function handleDocumentFileSubmit(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const documentItem = ensureManagedDocument(form.documentId.value);
+  if (!documentItem) {
+    showToast("Không tìm thấy tài liệu.");
+    return;
+  }
+
+  const bookFile = form.bookFile.files[0];
+  const url = form.fileUrl.value.trim();
+  if (!bookFile && !url) {
+    showToast("Hãy chọn file hoặc nhập link.");
+    return;
+  }
+
+  if (bookFile) {
+    documentItem.fileName = bookFile.name;
+    documentItem.fileData = await readFileAsDataURL(bookFile);
+    documentItem.fileUrl = "";
+  }
+  if (url) {
+    documentItem.fileUrl = url;
+    if (!bookFile) documentItem.fileName = url.split("/").pop() || "Mở file";
+  }
+
+  saveState();
+  form.reset();
+  renderAll();
+  byId("fileUpdateHint").textContent = `Đã cập nhật file cho ${documentItem.title}.`;
+  showToast("Đã cập nhật file sách.");
+}
+
+function openDocumentModal(id) {
+  const documentItem = findDocument(id);
+  if (!documentItem) return;
+
+  const rows = [
+    ["Mã tài liệu", documentItem.id],
+    ["Loại", documentItem.kind],
+    ["Tác giả", documentItem.author],
+    ["Nhà xuất bản", documentItem.publisher],
+    ["Năm xuất bản", documentItem.year],
+    ["Thể loại", documentItem.category],
+    ["Số lượng", documentItem.quantity],
+    ["Thông tin riêng", documentDetail(documentItem)]
+  ];
+
+  byId("documentModalContent").innerHTML = `
+    <div class="document-detail">
+      <div>
+        ${documentItem.coverImage
+          ? `<img class="cover-large" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}">`
+          : `<div class="cover-large"></div>`}
+      </div>
+      <div>
+        <h2>${escapeHtml(documentItem.title)}</h2>
+        <div class="reader-info">
+          ${rows.map(([key, value]) => `<div class="info-row"><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
+        </div>
+        <p class="form-note">File sách: ${fileCell(documentItem)}</p>
+      </div>
+    </div>
+  `;
+
+  byId("documentModal").hidden = false;
+  byId("closeDocumentModal").focus();
+}
+
+function closeDocumentModal() {
+  byId("documentModal").hidden = true;
 }
 
 function handleExportSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
-  const documentItem = findDocument(data.documentId);
+  const documentItem = ensureManagedDocument(data.documentId);
   const quantity = Number(data.quantity);
   const unitPrice = Number(data.unitPrice);
 
@@ -1036,7 +1327,24 @@ function bindEvents() {
   byId("borrowForm").addEventListener("submit", handleBorrowSubmit);
   byId("returnForm").addEventListener("submit", handleReturnSubmit);
   byId("importForm").addEventListener("submit", handleImportSubmit);
+  byId("importMode").addEventListener("change", toggleImportMode);
+  byId("importKind").addEventListener("change", renderImportExtraFields);
   byId("exportForm").addEventListener("submit", handleExportSubmit);
+  byId("documentFileForm").addEventListener("submit", handleDocumentFileSubmit);
+
+  byId("documentsTable").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-detail]");
+    if (button) openDocumentModal(button.dataset.detail);
+  });
+
+  byId("closeDocumentModal").addEventListener("click", closeDocumentModal);
+  byId("documentModal").addEventListener("click", (event) => {
+    if (event.target === byId("documentModal")) closeDocumentModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !byId("documentModal").hidden) closeDocumentModal();
+  });
+
   byId("resetDataBtn").addEventListener("click", () => {
     state = sampleState();
     saveState();
@@ -1064,5 +1372,6 @@ function bindEvents() {
 }
 
 renderDocumentExtraFields();
+toggleImportMode();
 setDefaultDates();
 bindEvents();

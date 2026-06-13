@@ -10,7 +10,10 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <div class="login-brand">
-        <img src="logo.png" alt="Logo thư viện" class="login-logo">
+        <picture>
+          <source srcset="logo.webp" type="image/webp">
+          <img src="logo.png" alt="Logo thư viện" class="login-logo" width="512" height="280">
+        </picture>
         <h1>Thư viện OOP</h1>
         <p>Hệ thống quản lý thư viện C++</p>
       </div>
@@ -645,6 +648,7 @@
       <div id="documentModalContent"></div>
     </section>
   </div>
+  <script src="hcmute-catalog.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
