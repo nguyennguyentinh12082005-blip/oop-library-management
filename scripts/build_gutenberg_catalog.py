@@ -169,7 +169,7 @@ def parse_book(member_name, member_file):
 
 def convert_book(book, index):
     return {
-        "id": f"GUTENBERG{index:05d}",
+        "id": f"TVS{index:05d}",
         "title": book["title"],
         "kind": "Sách khác",
         "year": 2026,

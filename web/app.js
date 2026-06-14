@@ -93,39 +93,6 @@ function defaultSubtypesForKind(kind) {
   return [];
 }
 
-const HCMUTE_SOURCE = [
-  ["HCMUTE001", "Thực nghiệm quá trình tạo ngã rẽ trên thân ống kim loại", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260609/hcmute/ovanke/80x100/4761780968301.jpg", "https://thuvienso.hcmute.edu.vn/doc/thuc-nghiem-qua-trinh-tao-nga-re-tren-than-ong-kim-loai-1051690.html", "Nghiên cứu khoa học"],
-  ["HCMUTE002", "Thiết kế hệ thống điều khiển thiết bị điện trong gia đình qua mạng Ethernet và phần mềm Android", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260608/hcmute/ovanke/80x100/8821780904401.jpg", "https://thuvienso.hcmute.edu.vn/doc/thiet-ke-he-thong-dieu-khien-thiet-bi-dien-trong-gia-dinh-qua-mang-ethernet-va-phan-mem-android-1051689.html", "Điện - điện tử"],
-  ["HCMUTE003", "Xây dựng mô hình nghịch lưu 3 pha 5 bậc diode kẹp điều khiển bằng card DSP F28335", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260602/hcmute/ovanke/80x100/5221780363801.jpg", "https://thuvienso.hcmute.edu.vn/doc/xay-dung-mo-hinh-nghich-luu-3-pha-5-bac-diode-kep-dieu-khien-bang-card-dsp-f28335-1051640.html", "Điện - điện tử"],
-  ["HCMUTE004", "Nghiên cứu ảnh những ảnh hưởng của các Tiktoker đến ý định mua mỹ phẩm của sinh viên tại Thành phố Hồ Chí Minh", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260526/hcmute/ovanke/80x100/8481779785401.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-anh-nhung-anh-huong-cua-cac-tiktoker-den-y-dinh-mua-my-pham-cua-sinh-vien-tai-thanh-pho-h-1049855.html", "Kinh tế - xã hội"],
-  ["HCMUTE005", "Các yếu tố ảnh hưởng đến quyết định thuê chỗ ở của sinh viên đại học ở Thủ Đức cũ", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260525/hcmute/ovanke/80x100/7001779695701.jpg", "https://thuvienso.hcmute.edu.vn/doc/cac-yeu-to-anh-huong-den-quyet-dinh-thue-cho-o-cua-sinh-vien-dai-hoc-o-thu-duc-cu-1049035.html", "Kinh tế - xã hội"],
-  ["HCMUTE006", "Nghiên cứu các nhân tố tác động đến sự chấp nhận chuyển đổi số của các doanh nghiệp vừa và nhỏ - SV2025-139", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/4171779439801.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-cac-nhan-to-tac-dong-den-su-chap-nhan-chuyen-doi-so-cua-cac-doanh-nghiep-vua-va-nho-sv2-1047121.html", "Chuyển đổi số"],
-  ["HCMUTE007", "Thiết kế, chế tạo mô hình đóng mấu chốt cho khung thép chữ nhật - SV2025-298", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/5741779438602.jpg", "https://thuvienso.hcmute.edu.vn/doc/thiet-ke-che-tao-mo-hinh-dong-mau-chot-cho-khung-thep-chu-nhat-sv2025-298-1047118.html", "Cơ khí"],
-  ["HCMUTE008", "Tác động của khuyến mãi chớp nhoáng đến quyết định mua hàng ngẫu hứng trên sàn thương mại điện tử - SV2025-127", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/6921779438301.jpg", "https://thuvienso.hcmute.edu.vn/doc/tac-dong-cua-khuyen-mai-chop-nhoang-den-quyet-dinh-mua-hang-ngau-hung-tren-san-thuong-mai-dien-tu-1047117.html", "Thương mại điện tử"],
-  ["HCMUTE009", "Nghiên cứu ảnh hưởng của tôi lặp đến độ cứng và tổ chức tế vi của thép C45 khi nhiệt luyện - SV2025-289", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/3741779438002.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-anh-huong-cua-toi-lap-den-do-cung-va-to-chuc-te-vi-cua-thep-c45-khi-nhiet-luyen-sv2025-1047116.html", "Vật liệu"],
-  ["HCMUTE010", "Nghiên cứu chế tạo mô hình hàn ống tự động - SV2025-348", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/3911779437701.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-che-tao-mo-hinh-han-ong-tu-dong-sv2025-348-1047115.html", "Cơ khí"],
-  ["HCMUTE011", "Chế tạo mô hình tạo hình mặt cong bằng phương pháp chấn - SV2025-344", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/8101779437402.jpg", "https://thuvienso.hcmute.edu.vn/doc/che-tao-mo-hinh-tao-hinh-mat-cong-bang-phuong-phap-chan-sv2025-344-1047114.html", "Cơ khí"],
-  ["HCMUTE012", "Nghiên cứu, lựa chọn loại nút giao thông phù hợp với giao thông Việt Nam - SV2025-253", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260522/hcmute/ovanke/80x100/441779437101.jpg", "https://thuvienso.hcmute.edu.vn/doc/nghien-cuu-lua-chon-loai-nut-giao-thong-phu-hop-voi-giao-thong-viet-nam-sv2025-253-1047113.html", "Giao thông"]
-];
-
-const HCMUTE_DOCUMENTS = HCMUTE_SOURCE.map(([id, title, coverImage, fileUrl, linhVuc]) => ({
-  id,
-  title,
-  kind: KINDS.RESEARCH,
-  year: 2026,
-  quantity: 1,
-  author: "HCMUTE",
-  publisher: "Thư viện số HCMUTE",
-  category: "Tài liệu số",
-  coverImage,
-  fileUrl,
-  fileName: "Mở nguồn",
-  extra: {
-    coQuanChuQuan: "Trường Đại học Sư phạm Kỹ thuật TP.HCM",
-    linhVuc
-  }
-}));
-
 const DOCUMENT_PAGE_SIZE = 120;
 const DOCUMENT_OPTION_LIMIT = 250;
 
@@ -306,7 +273,7 @@ function normalizeSourceDocument(documentItem) {
   normalized.kind = sourceKind(documentItem);
 
   if (normalized.kind === KINDS.TEXTBOOK) {
-    normalized.extra.maMonHoc = normalized.extra.maMonHoc || "HCMUTE";
+    normalized.extra.maMonHoc = normalized.extra.maMonHoc || "TVS";
     normalized.extra.boMon = normalized.extra.boMon || normalized.category || "Giáo trình";
   } else if (normalized.kind === KINDS.REFERENCE) {
     normalized.category = normalized.category || "Tài liệu tham khảo";
@@ -471,22 +438,6 @@ const viewState = {
   inventoryPage: 1
 };
 
-function seedHcmuteDocuments() {
-  state.documents = Array.isArray(state.documents) ? state.documents : [];
-  state.seededSources = state.seededSources || {};
-  if (state.seededSources.hcmute202606) return;
-
-  const existingIds = new Set(state.documents.map((documentItem) => documentItem.id));
-  HCMUTE_DOCUMENTS.forEach((documentItem) => {
-    if (!existingIds.has(documentItem.id)) {
-      state.documents.push(clone(documentItem));
-    }
-  });
-
-  state.seededSources.hcmute202606 = true;
-  saveState();
-}
-
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -497,6 +448,46 @@ function saveState() {
     }
     return false;
   }
+}
+
+function migrateStoredCatalogCodes() {
+  let changed = false;
+  const catalogs = catalogDocuments();
+  const bySourceId = new Map(catalogs.map((documentItem) => [String(documentItem.extra?.gutenbergId || ""), documentItem]));
+  const idMap = new Map();
+
+  state.documents = (Array.isArray(state.documents) ? state.documents : []).flatMap((documentItem) => {
+    if (isDigitalLibraryDocument(documentItem) || String(documentItem.id || "").startsWith("HCMUTE")) {
+      changed = true;
+      return [];
+    }
+
+    if (String(documentItem.id || "").startsWith("GUTENBERG") && documentItem.extra?.gutenbergId) {
+      const next = bySourceId.get(String(documentItem.extra.gutenbergId));
+      if (next) {
+        const copy = { ...clone(next), quantity: documentItem.quantity || next.quantity };
+        idMap.set(documentItem.id, copy.id);
+        changed = true;
+        return [copy];
+      }
+    }
+
+    return [documentItem];
+  });
+
+  if (idMap.size) {
+    state.loans = (state.loans || []).map((loan) => (
+      idMap.has(loan.documentId) ? { ...loan, documentId: idMap.get(loan.documentId) } : loan
+    ));
+    state.transactions = (state.transactions || []).map((transaction) => (
+      idMap.has(transaction.documentId) ? { ...transaction, documentId: idMap.get(transaction.documentId) } : transaction
+    ));
+  }
+
+  state.loans = (state.loans || []).filter((loan) => !String(loan.documentId || "").startsWith("HCMUTE"));
+  state.transactions = (state.transactions || []).filter((transaction) => !String(transaction.documentId || "").startsWith("HCMUTE"));
+
+  if (changed) saveState();
 }
 
 function nextId(prefix, key) {
@@ -522,7 +513,7 @@ function findReader(id) {
 
 function findDocument(id) {
   const managed = state.documents.find((documentItem) => documentItem.id === id);
-  if (managed) return normalizeManagedDocument(managed);
+  if (managed && !isDigitalLibraryDocument(managed)) return normalizeManagedDocument(managed);
   return catalogDocuments().find((documentItem) => documentItem.id === id);
 }
 
@@ -556,7 +547,7 @@ function allDocuments() {
 function ensureManagedDocument(id) {
   id = String(id || "").trim().toUpperCase();
   const managed = state.documents.find((documentItem) => documentItem.id === id);
-  if (managed) return normalizeManagedDocument(managed);
+  if (managed && !isDigitalLibraryDocument(managed)) return normalizeManagedDocument(managed);
 
   const catalogItem = catalogDocuments().find((documentItem) => documentItem.id === id);
   if (!catalogItem) return null;
@@ -1730,6 +1721,7 @@ function bindEvents() {
   byId("publicReaderForm").addEventListener("submit", handlePublicReaderSignup);
 }
 
+migrateStoredCatalogCodes();
 renderDocumentExtraFields();
 renderDocumentSubtypeOptions();
 toggleImportMode();
