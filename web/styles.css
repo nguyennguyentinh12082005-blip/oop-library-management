@@ -366,6 +366,10 @@ button {
   margin-bottom: 16px;
 }
 
+.two-column > * {
+  min-width: 0;
+}
+
 .two-column.wide-left {
   grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.55fr);
 }
@@ -514,6 +518,7 @@ select:focus {
 
 table {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
   background: #fff;
 }
@@ -605,8 +610,22 @@ tbody tr:hover {
 .generated-cover strong {
   display: block;
   overflow: hidden;
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.cover-thumb.generated-cover {
+  padding: 5px;
+}
+
+.cover-thumb.generated-cover span {
+  font-size: 0.5rem;
+}
+
+.cover-thumb.generated-cover strong {
+  font-size: 0.67rem;
+  overflow-wrap: normal;
 }
 
 .cover-large.generated-cover {
@@ -620,6 +639,13 @@ tbody tr:hover {
 .cover-large.generated-cover strong {
   font-size: 1.28rem;
   line-height: 1.18;
+}
+
+.cover-large.generated-cover em {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.9rem;
+  font-style: normal;
+  font-weight: 900;
 }
 
 .file-pill {
@@ -1092,7 +1118,8 @@ tbody tr:hover {
   .nav-list,
   .stats-grid,
   .form-grid,
-  .reader-stats {
+  .reader-stats,
+  .two-column.wide-left {
     grid-template-columns: 1fr;
   }
 

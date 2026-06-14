@@ -159,11 +159,13 @@ function coverCell(documentItem) {
 
 function generatedCover(documentItem, className) {
   const title = documentItem.title || "Sách";
-  const label = documentItem.kind === KINDS.OTHER_BOOK ? documentDetail(documentItem) : documentItem.kind;
+  const label = documentSubtypeLabel(documentItem) || documentItem.kind || "Sách";
+  const isLarge = className.includes("cover-large");
   return `
     <div class="${escapeHtml(className)} generated-cover" aria-label="Bìa ${escapeHtml(title)}">
       <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(title)}</strong>
+      <strong>${escapeHtml(isLarge ? cleanBookTitle(title) : documentItem.id)}</strong>
+      ${isLarge ? `<em>${escapeHtml(documentItem.id)}</em>` : ""}
     </div>
   `;
 }
@@ -297,21 +299,6 @@ function normalizeManagedDocument(documentItem) {
   Object.assign(documentItem, normalized);
   documentItem.extra = normalized.extra;
   return documentItem;
-}
-
-function fileCell(documentItem) {
-  if (isSourceOnlyCatalogItem(documentItem)) return `<span class="file-pill" title="Chưa có file nội bộ">Chưa có file nội bộ</span>`;
-  const url = documentFileUrl(documentItem);
-  if (!url) return `<span class="file-pill" title="Chưa có file nội bộ">Chưa có file nội bộ</span>`;
-  const label = escapeHtml(documentItem.fileName || "Mở file");
-  return `<a class="file-pill ready" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}">${label}</a>`;
-}
-
-function fileStatusText(documentItem) {
-  if (isSourceOnlyCatalogItem(documentItem) || !documentFileUrl(documentItem)) {
-    return "Chưa có file nội bộ. Sách vẫn được quản lý như bản in: tra cứu bằng mã, nhập kho, mượn và trả.";
-  }
-  return `File nội bộ: ${documentItem.fileName || "Đã có file"}.`;
 }
 
 function readFileAsDataURL(file) {
@@ -643,15 +630,58 @@ function documentSubtypeLabel(documentItem) {
   return documentItem.category || "Khác";
 }
 
+function cleanBookTitle(title) {
+  return String(title || "Sách")
+    .replace(/\s*:\s*\$b\s*/gi, " - ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function previewTopics(documentItem) {
+  const raw = String(documentItem.extra?.docTruoc || "");
+  const body = raw.includes(":") ? raw.slice(raw.indexOf(":") + 1) : raw;
+  return body
+    .split(";")
+    .map(formatPreviewTopic)
+    .filter((part) => part && !/^[A-Z]{1,3}\d{0,4}$/i.test(part))
+    .slice(0, 5);
+}
+
+function formatPreviewTopic(topic) {
+  return String(topic || "")
+    .replace(/\s*--\s*/g, " - ")
+    .replace(/\bJuvenile fiction\b/gi, "truyện thiếu nhi")
+    .replace(/\bJuvenile literature\b/gi, "sách thiếu nhi")
+    .replace(/\bChildren's literature\b/gi, "văn học thiếu nhi")
+    .replace(/\bChildren's poetry\b/gi, "thơ thiếu nhi")
+    .replace(/\bShort stories\b/gi, "truyện ngắn")
+    .replace(/\bDetective and mystery stories\b/gi, "truyện trinh thám")
+    .replace(/\bFantasy literature\b/gi, "văn học kỳ ảo")
+    .replace(/\bFairy tales\b/gi, "truyện cổ tích")
+    .replace(/\bFiction\b/gi, "truyện hư cấu")
+    .replace(/\bDrama\b/gi, "kịch")
+    .replace(/\bPoetry\b/gi, "thơ")
+    .replace(/\bBiography\b/gi, "tiểu sử")
+    .replace(/\bHistory and criticism\b/gi, "lịch sử và phê bình")
+    .replace(/\bHistory\b/gi, "lịch sử")
+    .replace(/\bLiterature\b/gi, "văn học")
+    .replace(/\bUnited States\b/gi, "Hoa Kỳ")
+    .replace(/\bGreat Britain\b/gi, "Vương quốc Anh")
+    .replace(/\bEngland\b/gi, "Anh")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function documentPreview(documentItem) {
-  if (documentItem.extra?.docTruoc) return documentItem.extra.docTruoc;
-  if (documentItem.extra?.linhVuc) {
-    return `Mô tả/chủ đề: tài liệu thuộc lĩnh vực ${documentItem.extra.linhVuc}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
-  }
-  if (isSourceOnlyCatalogItem(documentItem)) {
-    return `Mô tả/chủ đề: ${documentItem.kind} thuộc thể loại ${documentItem.category || documentDetail(documentItem)}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
-  }
-  return "";
+  const title = cleanBookTitle(documentItem.title);
+  const author = documentItem.author && documentItem.author !== "Unknown" ? documentItem.author : "tác giả chưa rõ";
+  const subtype = documentSubtypeLabel(documentItem);
+  const topics = previewTopics(documentItem);
+  const topicText = topics.length
+    ? topics.join("; ")
+    : (documentItem.extra?.linhVuc || documentItem.category || documentDetail(documentItem) || "nội dung tổng quát");
+
+  return `“${title}” là ${String(documentItem.kind || "tài liệu").toLowerCase()} thuộc nhóm ${subtype}. Tài liệu do ${author} biên soạn hoặc được ghi nhận là tác giả, nội dung xoay quanh ${topicText}. Phần này giúp đọc trước chủ đề chính để chọn sách, nhập kho, mượn và trả đúng nhu cầu.`;
 }
 
 function documentKindLabel(documentItem) {
@@ -775,10 +805,9 @@ function renderDocuments() {
       <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
       <td>${escapeHtml(documentKindLabel(documentItem))}</td>
       <td>${statusBadge(documentItem.quantity > 0, documentItem.quantity, documentItem.quantity, "warn")}</td>
-      <td>${fileCell(documentItem)}</td>
       <td><button class="text-button" type="button" data-detail="${escapeHtml(documentItem.id)}">Chi tiết</button></td>
     </tr>
-  `).join("") || `<tr><td colspan="7" class="muted">Không có tài liệu phù hợp.</td></tr>`;
+  `).join("") || `<tr><td colspan="6" class="muted">Không có tài liệu phù hợp.</td></tr>`;
 }
 
 function renderReaders() {
@@ -889,10 +918,9 @@ function renderInventory() {
       <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
       <td>${escapeHtml(documentKindLabel(documentItem))}</td>
       <td>${escapeHtml(documentItem.quantity)}</td>
-      <td>${fileCell(documentItem)}</td>
       <td>${statusBadge(documentItem.quantity > 0, "Còn tài liệu", "Hết tài liệu", "warn")}</td>
     </tr>
-  `).join("") || `<tr><td colspan="7" class="muted">Chưa có tài liệu.</td></tr>`;
+  `).join("") || `<tr><td colspan="6" class="muted">Chưa có tài liệu.</td></tr>`;
 }
 
 function renderTransactions() {
@@ -1378,14 +1406,14 @@ function openDocumentModal(id) {
   const preview = documentPreview(documentItem);
 
   const rows = [
-    ["Mã tài liệu", documentItem.id],
-    ["Loại", documentItem.kind],
+    ["Mã sách", documentItem.id],
+    ["Loại tài liệu", documentItem.kind],
+    ["Phân loại chi tiết", documentSubtypeLabel(documentItem)],
     ["Tác giả", documentItem.author],
-    ["Nhà xuất bản", documentItem.publisher],
+    ["Nguồn / Nhà xuất bản", documentItem.publisher],
     ["Năm xuất bản", documentItem.year],
-    ["Thể loại", documentItem.category],
-    ["Số lượng", documentItem.quantity],
-    ["Thông tin riêng", documentDetail(documentItem)]
+    ["Số lượng trong kho", `${documentItem.quantity} bản`],
+    ["Trạng thái quản lý", documentItem.quantity > 0 ? "Có thể mượn/trả trong hệ thống" : "Hết sách trong kho"]
   ];
 
   byId("documentModalContent").innerHTML = `
@@ -1402,8 +1430,7 @@ function openDocumentModal(id) {
         <div class="reader-info">
           ${rows.map(([key, value]) => `<div class="info-row"><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
         </div>
-        ${preview ? `<div class="document-preview"><strong>Thông tin xem trước</strong><p>${escapeHtml(preview)}</p></div>` : ""}
-        <p class="form-note">${escapeHtml(fileStatusText(documentItem))}</p>
+        ${preview ? `<div class="document-preview"><strong>Tóm tắt nội dung</strong><p>${escapeHtml(preview)}</p></div>` : ""}
       </div>
     </div>
   `;
