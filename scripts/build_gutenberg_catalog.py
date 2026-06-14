@@ -132,6 +132,20 @@ def score_book(subjects, title):
     return score
 
 
+def catalog_quantity(book, index):
+    text = plain_text(f"{book['title']} {' '.join(book['subjects'])}")
+    quantity = 4 + (index % 7)
+    if book["score"] >= 100:
+        quantity += 8
+    elif book["score"] >= 40:
+        quantity += 4
+    if any(word in text for word in ["dictionary", "grammar", "science", "history", "mathematics", "law"]):
+        quantity += 3
+    if any(word in text for word in ["sherlock", "austen", "dickens", "shakespeare", "peter pan"]):
+        quantity += 5
+    return min(quantity, 30)
+
+
 def parse_book(member_name, member_file):
     try:
         root = ET.parse(member_file).getroot()
@@ -173,7 +187,7 @@ def convert_book(book, index):
         "title": book["title"],
         "kind": "Sách khác",
         "year": 2026,
-        "quantity": 1,
+        "quantity": catalog_quantity(book, index),
         "author": book["author"],
         "publisher": "Project Gutenberg",
         "category": "English public domain",

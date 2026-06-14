@@ -234,6 +234,12 @@ function sourceKind(documentItem) {
     return KINDS.RESEARCH;
   }
   if (hasAny(text, ["tap chi", "journal", "magazine", "ky yeu hoi thao"])) return KINDS.MAGAZINE;
+  if (hasAny(text, ["handbook", "primer", "manual", "guide", "grammar", "dictionary", "mathematics", "science", "engineering", "technology", "printing", "communication", "media", "library", "catalog", "bibliography", "education"])) {
+    return KINDS.TEXTBOOK;
+  }
+  if (hasAny(text, ["history", "biography", "criticism", "travel", "law", "legal", "constitution", "memoir", "essays"])) {
+    return KINDS.REFERENCE;
+  }
   return KINDS.OTHER_BOOK;
 }
 
@@ -273,14 +279,19 @@ function normalizeSourceDocument(documentItem) {
     extra: { ...(documentItem.extra || {}) }
   };
   normalized.kind = sourceKind(documentItem);
+  const sourceSubtype = sourceOtherBookType(normalized);
 
   if (normalized.kind === KINDS.TEXTBOOK) {
     normalized.extra.maMonHoc = normalized.extra.maMonHoc || "TVS";
-    normalized.extra.boMon = normalized.extra.boMon || normalized.category || "Giáo trình";
+    normalized.extra.boMon = normalized.extra.boMon
+      || (normalized.category && normalized.category !== "English public domain" ? normalized.category : sourceSubtype)
+      || "Giáo trình";
   } else if (normalized.kind === KINDS.REFERENCE) {
-    normalized.category = normalized.category || "Tài liệu tham khảo";
+    normalized.category = normalized.category && normalized.category !== "English public domain"
+      ? normalized.category
+      : sourceSubtype || "Tài liệu tham khảo";
   } else if (normalized.kind === KINDS.OTHER_BOOK) {
-    normalized.extra.loaiSachKhac = sourceOtherBookType(normalized);
+    normalized.extra.loaiSachKhac = sourceSubtype;
   } else if (normalized.kind === KINDS.MAGAZINE) {
     normalized.extra.soPhatHanh = normalized.extra.soPhatHanh || 1;
     normalized.extra.thangPhatHanh = normalized.extra.thangPhatHanh || 1;
@@ -1633,8 +1644,11 @@ function renderDocumentSubtypeOptions() {
   const selected = select.value || "all";
   const type = byId("documentTypeFilter")?.value || "all";
   const documents = allDocuments().filter((documentItem) => type === "all" || documentItem.kind === type);
-  const defaults = type === "all" ? [] : defaultSubtypesForKind(type);
-  const subtypes = [...new Set([...defaults, ...documents.map(documentSubtypeLabel).filter(Boolean)])]
+  const availableSubtypes = [...new Set(documents.map(documentSubtypeLabel).filter(Boolean))];
+  const defaults = type === "all"
+    ? []
+    : defaultSubtypesForKind(type).filter((subtype) => availableSubtypes.includes(subtype));
+  const subtypes = [...new Set([...defaults, ...availableSubtypes])]
     .sort((a, b) => a.localeCompare(b, "vi"));
   select.innerHTML = [
     `<option value="all">Tất cả phân loại</option>`,
