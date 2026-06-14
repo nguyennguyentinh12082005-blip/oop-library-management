@@ -97,6 +97,7 @@ const HCMUTE_DOCUMENTS = HCMUTE_SOURCE.map(([id, title, coverImage, fileUrl, lin
 }));
 
 const DOCUMENT_PAGE_SIZE = 120;
+const DOCUMENT_OPTION_LIMIT = 250;
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
@@ -153,7 +154,21 @@ function coverCell(documentItem) {
   if (documentItem.coverImage) {
     return `<img class="cover-thumb" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}" loading="lazy" onerror="handleCoverError(this)">`;
   }
+  if (isSourceOnlyCatalogItem(documentItem)) {
+    return generatedCover(documentItem, "cover-thumb");
+  }
   return `<span class="cover-thumb" aria-hidden="true"></span>`;
+}
+
+function generatedCover(documentItem, className) {
+  const title = documentItem.title || "Sách";
+  const label = documentItem.kind === KINDS.OTHER_BOOK ? documentDetail(documentItem) : documentItem.kind;
+  return `
+    <div class="${escapeHtml(className)} generated-cover" aria-label="Bìa ${escapeHtml(title)}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(title)}</strong>
+    </div>
+  `;
 }
 
 function handleCoverError(img) {
@@ -179,6 +194,13 @@ function isSourceOnlyCatalogItem(documentItem) {
   return Boolean(documentItem.extra?.nguon)
     || /^https?:\/\/thuvienso\.hcmute\.edu\.vn\//i.test(url)
     || (fileName === "Mở nguồn" && /^https?:\/\//i.test(url));
+}
+
+function isDigitalLibraryDocument(documentItem) {
+  const url = documentFileUrl(documentItem);
+  const publisher = plainText(documentItem.publisher || "");
+  return /^https?:\/\/thuvienso\.hcmute\.edu\.vn\//i.test(url)
+    || publisher.includes("thu vien so hcmute");
 }
 
 function sourceText(documentItem) {
@@ -281,11 +303,18 @@ function normalizeManagedDocument(documentItem) {
 }
 
 function fileCell(documentItem) {
-  if (isSourceOnlyCatalogItem(documentItem)) return `<span class="file-pill">Chưa có file</span>`;
+  if (isSourceOnlyCatalogItem(documentItem)) return `<span class="file-pill" title="Chưa có file nội bộ">Chưa có file nội bộ</span>`;
   const url = documentFileUrl(documentItem);
-  if (!url) return `<span class="file-pill">Chưa có file</span>`;
+  if (!url) return `<span class="file-pill" title="Chưa có file nội bộ">Chưa có file nội bộ</span>`;
   const label = escapeHtml(documentItem.fileName || "Mở file");
   return `<a class="file-pill ready" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}">${label}</a>`;
+}
+
+function fileStatusText(documentItem) {
+  if (isSourceOnlyCatalogItem(documentItem) || !documentFileUrl(documentItem)) {
+    return "Chưa có file nội bộ. Sách vẫn được quản lý như bản in: tra cứu bằng mã, nhập kho, mượn và trả.";
+  }
+  return `File nội bộ: ${documentItem.fileName || "Đã có file"}.`;
 }
 
 function readFileAsDataURL(file) {
@@ -390,12 +419,10 @@ function sampleState() {
         permission: "Full"
       }
     ],
-    documents: clone(HCMUTE_DOCUMENTS),
+    documents: [],
     loans: [],
     transactions: [],
-    seededSources: {
-      hcmute202606: true
-    }
+    seededSources: {}
   };
 }
 
@@ -409,6 +436,10 @@ function loadState() {
 }
 
 let state = loadState();
+const viewState = {
+  documentPage: 1,
+  inventoryPage: 1
+};
 
 function seedHcmuteDocuments() {
   state.documents = Array.isArray(state.documents) ? state.documents : [];
@@ -425,8 +456,6 @@ function seedHcmuteDocuments() {
   state.seededSources.hcmute202606 = true;
   saveState();
 }
-
-seedHcmuteDocuments();
 
 function saveState() {
   try {
@@ -469,11 +498,6 @@ function findDocument(id) {
 
 function catalogDocuments() {
   const catalogs = [];
-  if (Array.isArray(window.HCMUTE_CATALOG) && window.HCMUTE_CATALOG.length) {
-    catalogs.push(...window.HCMUTE_CATALOG);
-  } else {
-    catalogs.push(...HCMUTE_DOCUMENTS);
-  }
   if (Array.isArray(window.GUTENBERG_CATALOG) && window.GUTENBERG_CATALOG.length) {
     catalogs.push(...window.GUTENBERG_CATALOG);
   }
@@ -485,7 +509,10 @@ function allDocuments() {
   const seenIds = new Set();
   const seenUrls = new Set();
 
-  [...state.documents.map(normalizeManagedDocument), ...catalogDocuments()].forEach((documentItem) => {
+  [
+    ...state.documents.map(normalizeManagedDocument).filter((documentItem) => !isDigitalLibraryDocument(documentItem)),
+    ...catalogDocuments()
+  ].forEach((documentItem) => {
     const url = documentFileUrl(documentItem);
     if (seenIds.has(documentItem.id) || (url && seenUrls.has(url))) return;
     seenIds.add(documentItem.id);
@@ -507,6 +534,26 @@ function ensureManagedDocument(id) {
   const copy = clone(catalogItem);
   state.documents.push(copy);
   return normalizeManagedDocument(copy);
+}
+
+function documentOptionsMarkup(documents, query = "") {
+  const needle = plainText(query);
+  const source = needle
+    ? documents.filter((documentItem) => {
+      const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author}`);
+      return haystack.includes(needle);
+    })
+    : documents;
+  return source.slice(0, DOCUMENT_OPTION_LIMIT).map((documentItem) => (
+    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
+  )).join("");
+}
+
+function refreshDocumentDatalist(inputId, datalistId, documents = allDocuments()) {
+  const input = byId(inputId);
+  const datalist = byId(datalistId);
+  if (!input || !datalist) return;
+  datalist.innerHTML = documentOptionsMarkup(documents, input.value);
 }
 
 function personIdExists(id) {
@@ -559,10 +606,10 @@ function documentDetail(documentItem) {
 function documentPreview(documentItem) {
   if (documentItem.extra?.docTruoc) return documentItem.extra.docTruoc;
   if (documentItem.extra?.linhVuc) {
-    return `Đọc trước: tài liệu thuộc lĩnh vực ${documentItem.extra.linhVuc}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
+    return `Mô tả/chủ đề: tài liệu thuộc lĩnh vực ${documentItem.extra.linhVuc}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
   }
   if (isSourceOnlyCatalogItem(documentItem)) {
-    return `Đọc trước: ${documentItem.kind} thuộc thể loại ${documentItem.category || documentDetail(documentItem)}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
+    return `Mô tả/chủ đề: ${documentItem.kind} thuộc thể loại ${documentItem.category || documentDetail(documentItem)}. Dùng thông tin này để tra cứu, nhập kho và quản lý mượn/trả.`;
   }
   return "";
 }
@@ -634,6 +681,32 @@ function renderDashboardLists() {
   `).join("") : `<p class="muted">Chưa có giao dịch.</p>`;
 }
 
+function pageCount(total) {
+  return Math.max(1, Math.ceil(total / DOCUMENT_PAGE_SIZE));
+}
+
+function clampPage(page, total) {
+  return Math.min(Math.max(1, page), pageCount(total));
+}
+
+function pageRows(rows, page) {
+  const start = (page - 1) * DOCUMENT_PAGE_SIZE;
+  return rows.slice(start, start + DOCUMENT_PAGE_SIZE);
+}
+
+function renderPager(id, page, total, target) {
+  const pager = byId(id);
+  if (!pager) return;
+  const totalPages = pageCount(total);
+  pager.innerHTML = `
+    <button type="button" class="pager-button" data-page-target="${target}" data-page-action="first" ${page <= 1 ? "disabled" : ""}>Đầu</button>
+    <button type="button" class="pager-button" data-page-target="${target}" data-page-action="prev" ${page <= 1 ? "disabled" : ""}>Trước</button>
+    <span class="pager-info">Trang ${escapeHtml(page)} / ${escapeHtml(totalPages)}</span>
+    <button type="button" class="pager-button" data-page-target="${target}" data-page-action="next" ${page >= totalPages ? "disabled" : ""}>Sau</button>
+    <button type="button" class="pager-button" data-page-target="${target}" data-page-action="last" ${page >= totalPages ? "disabled" : ""}>Cuối</button>
+  `;
+}
+
 function renderDocuments() {
   const keyword = plainText(byId("documentSearch").value.trim());
   const type = byId("documentTypeFilter").value;
@@ -646,10 +719,13 @@ function renderDocuments() {
       || (documentItem.kind === KINDS.OTHER_BOOK && documentDetail(documentItem) === otherType);
     return matchKeyword && matchType && matchOtherType;
   });
-  const visibleRows = rows.slice(0, DOCUMENT_PAGE_SIZE);
-  const suffix = rows.length > visibleRows.length ? `, hiển thị ${visibleRows.length} mục đầu` : "";
+  viewState.documentPage = clampPage(viewState.documentPage, rows.length);
+  const visibleRows = pageRows(rows, viewState.documentPage);
+  const start = rows.length ? (viewState.documentPage - 1) * DOCUMENT_PAGE_SIZE + 1 : 0;
+  const end = rows.length ? start + visibleRows.length - 1 : 0;
 
-  byId("documentCount").textContent = `${rows.length} mục${suffix}`;
+  byId("documentCount").textContent = `${rows.length} mục, đang xem ${start}-${end}`;
+  renderPager("documentPager", viewState.documentPage, rows.length, "documents");
   byId("documentsTable").innerHTML = visibleRows.map((documentItem) => `
     <tr>
       <td>${coverCell(documentItem)}</td>
@@ -722,9 +798,7 @@ function renderLoanSelects() {
   )).join("");
 
   const documents = allDocuments().filter((documentItem) => isBorrowable(documentItem));
-  byId("borrowDocumentSelect").innerHTML = documents.map((documentItem) => (
-    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
-  )).join("");
+  refreshDocumentDatalist("borrowDocumentInput", "borrowDocumentSelect", documents);
 
   byId("returnLoanSelect").innerHTML = state.loans.map((loan) => {
     const reader = findReader(loan.readerId);
@@ -756,17 +830,16 @@ function renderLoans() {
 
 function renderInventory() {
   const documents = allDocuments();
-  const visibleRows = documents.slice(0, DOCUMENT_PAGE_SIZE);
-  const documentOptions = documents.map((documentItem) => (
-    `<option value="${escapeHtml(documentItem.id)}">${escapeHtml(documentItem.title)} (${escapeHtml(documentItem.quantity)})</option>`
-  )).join("");
+  viewState.inventoryPage = clampPage(viewState.inventoryPage, documents.length);
+  const visibleRows = pageRows(documents, viewState.inventoryPage);
 
-  byId("importDocumentSelect").innerHTML = documentOptions;
-  byId("exportDocumentSelect").innerHTML = documentOptions;
-  byId("fileDocumentSelect").innerHTML = documentOptions;
-  byId("inventoryCount").textContent = documents.length > visibleRows.length
-    ? `${documents.length} mục, hiển thị ${visibleRows.length} mục đầu`
-    : `${documents.length} mục`;
+  refreshDocumentDatalist("importDocumentInput", "importDocumentSelect", documents);
+  refreshDocumentDatalist("exportDocumentInput", "exportDocumentSelect", documents);
+  refreshDocumentDatalist("fileDocumentInput", "fileDocumentSelect", documents);
+  const start = documents.length ? (viewState.inventoryPage - 1) * DOCUMENT_PAGE_SIZE + 1 : 0;
+  const end = documents.length ? start + visibleRows.length - 1 : 0;
+  byId("inventoryCount").textContent = `${documents.length} mục, đang xem ${start}-${end}`;
+  renderPager("inventoryPager", viewState.inventoryPage, documents.length, "inventory");
   byId("inventoryTable").innerHTML = visibleRows.map((documentItem) => `
     <tr>
       <td>${coverCell(documentItem)}</td>
@@ -1278,15 +1351,17 @@ function openDocumentModal(id) {
       <div>
         ${documentItem.coverImage
           ? `<img class="cover-large" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}">`
-          : `<div class="cover-large"></div>`}
+          : isSourceOnlyCatalogItem(documentItem)
+            ? generatedCover(documentItem, "cover-large")
+            : `<div class="cover-large"></div>`}
       </div>
       <div>
         <h2>${escapeHtml(documentItem.title)}</h2>
         <div class="reader-info">
           ${rows.map(([key, value]) => `<div class="info-row"><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
         </div>
-        ${preview ? `<div class="document-preview"><strong>Đọc trước</strong><p>${escapeHtml(preview)}</p></div>` : ""}
-        <p class="form-note">File sách: ${fileCell(documentItem)}</p>
+        ${preview ? `<div class="document-preview"><strong>Thông tin xem trước</strong><p>${escapeHtml(preview)}</p></div>` : ""}
+        <p class="form-note">${escapeHtml(fileStatusText(documentItem))}</p>
       </div>
     </div>
   `;
@@ -1492,6 +1567,38 @@ function renderOtherBookTypeOptions() {
   ].join("");
 }
 
+function handlePagerClick(event) {
+  const button = event.target.closest("[data-page-target]");
+  if (!button || button.disabled) return;
+
+  const target = button.dataset.pageTarget;
+  const action = button.dataset.pageAction;
+  const rows = target === "documents"
+    ? allDocuments().filter((documentItem) => {
+      const keyword = plainText(byId("documentSearch").value.trim());
+      const type = byId("documentTypeFilter").value;
+      const otherType = byId("otherBookTypeFilter").value;
+      const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)}`);
+      const matchKeyword = !keyword || haystack.includes(keyword);
+      const matchType = type === "all" || documentItem.kind === type;
+      const matchOtherType = otherType === "all"
+        || (documentItem.kind === KINDS.OTHER_BOOK && documentDetail(documentItem) === otherType);
+      return matchKeyword && matchType && matchOtherType;
+    })
+    : allDocuments();
+  const key = target === "documents" ? "documentPage" : "inventoryPage";
+  const totalPages = pageCount(rows.length);
+
+  if (action === "first") viewState[key] = 1;
+  if (action === "prev") viewState[key] -= 1;
+  if (action === "next") viewState[key] += 1;
+  if (action === "last") viewState[key] = totalPages;
+  viewState[key] = clampPage(viewState[key], rows.length);
+
+  if (target === "documents") renderDocuments();
+  if (target === "inventory") renderInventory();
+}
+
 function bindEvents() {
   document.querySelectorAll(".nav-item").forEach((button) => {
     button.addEventListener("click", () => setPage(button.dataset.page));
@@ -1501,31 +1608,44 @@ function bindEvents() {
     button.addEventListener("click", () => setPage(button.dataset.jump));
   });
 
-  byId("documentSearch").addEventListener("input", renderDocuments);
+  byId("documentSearch").addEventListener("input", () => {
+    viewState.documentPage = 1;
+    renderDocuments();
+  });
   byId("documentTypeFilter").addEventListener("change", () => {
+    viewState.documentPage = 1;
     if (byId("documentTypeFilter").value !== KINDS.OTHER_BOOK) {
       byId("otherBookTypeFilter").value = "all";
     }
     renderDocuments();
   });
   byId("otherBookTypeFilter").addEventListener("change", () => {
+    viewState.documentPage = 1;
     if (byId("otherBookTypeFilter").value !== "all") {
       byId("documentTypeFilter").value = KINDS.OTHER_BOOK;
     }
     renderDocuments();
   });
+  byId("documentPager").addEventListener("click", handlePagerClick);
+  byId("inventoryPager").addEventListener("click", handlePagerClick);
   byId("documentKind").addEventListener("change", renderDocumentExtraFields);
   byId("documentForm").addEventListener("submit", handleDocumentSubmit);
   byId("readerForm").addEventListener("submit", handleReaderSubmit);
   byId("staffForm").addEventListener("submit", handleStaffSubmit);
   byId("adminForm").addEventListener("submit", handleAdminSubmit);
   byId("borrowForm").addEventListener("submit", handleBorrowSubmit);
+  byId("borrowDocumentInput").addEventListener("input", () => {
+    refreshDocumentDatalist("borrowDocumentInput", "borrowDocumentSelect", allDocuments().filter((documentItem) => isBorrowable(documentItem)));
+  });
   byId("returnForm").addEventListener("submit", handleReturnSubmit);
   byId("importForm").addEventListener("submit", handleImportSubmit);
   byId("importMode").addEventListener("change", toggleImportMode);
   byId("importKind").addEventListener("change", renderImportExtraFields);
+  byId("importDocumentInput").addEventListener("input", () => refreshDocumentDatalist("importDocumentInput", "importDocumentSelect"));
   byId("exportForm").addEventListener("submit", handleExportSubmit);
+  byId("exportDocumentInput").addEventListener("input", () => refreshDocumentDatalist("exportDocumentInput", "exportDocumentSelect"));
   byId("documentFileForm").addEventListener("submit", handleDocumentFileSubmit);
+  byId("fileDocumentInput").addEventListener("input", () => refreshDocumentDatalist("fileDocumentInput", "fileDocumentSelect"));
 
   byId("documentsTable").addEventListener("click", (event) => {
     const button = event.target.closest("[data-detail]");
