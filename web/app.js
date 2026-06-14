@@ -63,6 +63,36 @@ const otherBookTypes = [
   "Khác"
 ];
 
+function defaultSubtypesForKind(kind) {
+  const majorTypes = [
+    "Công nghệ thông tin",
+    "Cơ khí chế tạo máy",
+    "Cơ khí động lực",
+    "Điện - Điện tử",
+    "Xây dựng - Kiến trúc",
+    "Kinh tế - Quản lý",
+    "Y học - Sức khỏe",
+    "Nông - Lâm - Ngư nghiệp",
+    "Thực phẩm, Môi trường",
+    "Khoa học xã hội",
+    "Khoa học ứng dụng",
+    "CN May - thời trang",
+    "Nghệ thuật - Ẩm thực",
+    "In - Truyền thông",
+    "Ngoại ngữ",
+    "Luật",
+    "Khác"
+  ];
+
+  if (kind === KINDS.TEXTBOOK || kind === KINDS.REFERENCE) return majorTypes;
+  if (kind === KINDS.OTHER_BOOK) return otherBookTypes;
+  if (kind === KINDS.MAGAZINE) return ["Báo", "Tạp chí", "Kỷ yếu hội thảo", "Khác"];
+  if (kind === KINDS.RESEARCH) {
+    return ["Luận văn, luận án", "Đồ án, khóa luận tốt nghiệp", "BC nghiên cứu khoa học", ...majorTypes];
+  }
+  return [];
+}
+
 const HCMUTE_SOURCE = [
   ["HCMUTE001", "Thực nghiệm quá trình tạo ngã rẽ trên thân ống kim loại", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260609/hcmute/ovanke/80x100/4761780968301.jpg", "https://thuvienso.hcmute.edu.vn/doc/thuc-nghiem-qua-trinh-tao-nga-re-tren-than-ong-kim-loai-1051690.html", "Nghiên cứu khoa học"],
   ["HCMUTE002", "Thiết kế hệ thống điều khiển thiết bị điện trong gia đình qua mạng Ethernet và phần mềm Android", "https://thuvienso.hcmute.edu.vn/images/libedu/document/thumbnail/2026/20260608/hcmute/ovanke/80x100/8821780904401.jpg", "https://thuvienso.hcmute.edu.vn/doc/thiet-ke-he-thong-dieu-khien-thiet-bi-dien-trong-gia-dinh-qua-mang-ethernet-va-phan-mem-android-1051689.html", "Điện - điện tử"],
@@ -603,6 +633,25 @@ function documentDetail(documentItem) {
   return documentItem.category;
 }
 
+function documentSubtypeLabel(documentItem) {
+  if (documentItem.kind === KINDS.TEXTBOOK) {
+    return documentItem.extra.boMon || documentItem.category || "Khác";
+  }
+  if (documentItem.kind === KINDS.REFERENCE) {
+    return documentItem.category || "Khác";
+  }
+  if (documentItem.kind === KINDS.OTHER_BOOK) {
+    return documentItem.extra.loaiSachKhac || documentItem.category || "Khác";
+  }
+  if (documentItem.kind === KINDS.MAGAZINE) {
+    return documentItem.category || "Báo/tạp chí";
+  }
+  if (documentItem.kind === KINDS.RESEARCH) {
+    return documentItem.extra.linhVuc || documentItem.category || "Nghiên cứu";
+  }
+  return documentItem.category || "Khác";
+}
+
 function documentPreview(documentItem) {
   if (documentItem.extra?.docTruoc) return documentItem.extra.docTruoc;
   if (documentItem.extra?.linhVuc) {
@@ -615,9 +664,9 @@ function documentPreview(documentItem) {
 }
 
 function documentKindLabel(documentItem) {
-  const detail = documentDetail(documentItem);
-  if (documentItem.kind === KINDS.OTHER_BOOK && detail) {
-    return `${documentItem.kind} / ${detail}`;
+  const subtype = documentSubtypeLabel(documentItem);
+  if (subtype) {
+    return `${documentItem.kind} / ${subtype}`;
   }
   return documentItem.kind;
 }
@@ -707,18 +756,20 @@ function renderPager(id, page, total, target) {
   `;
 }
 
-function renderDocuments() {
+function documentMatchesFilters(documentItem) {
   const keyword = plainText(byId("documentSearch").value.trim());
   const type = byId("documentTypeFilter").value;
-  const otherType = byId("otherBookTypeFilter").value;
-  const rows = allDocuments().filter((documentItem) => {
-    const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)}`);
-    const matchKeyword = !keyword || haystack.includes(keyword);
-    const matchType = type === "all" || documentItem.kind === type;
-    const matchOtherType = otherType === "all"
-      || (documentItem.kind === KINDS.OTHER_BOOK && documentDetail(documentItem) === otherType);
-    return matchKeyword && matchType && matchOtherType;
-  });
+  const subtype = byId("otherBookTypeFilter").value;
+  const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)} ${documentSubtypeLabel(documentItem)}`);
+  const matchKeyword = !keyword || haystack.includes(keyword);
+  const matchType = type === "all" || documentItem.kind === type;
+  const matchSubtype = subtype === "all" || documentSubtypeLabel(documentItem) === subtype;
+  return matchKeyword && matchType && matchSubtype;
+}
+
+function renderDocuments() {
+  renderDocumentSubtypeOptions();
+  const rows = allDocuments().filter(documentMatchesFilters);
   viewState.documentPage = clampPage(viewState.documentPage, rows.length);
   const visibleRows = pageRows(rows, viewState.documentPage);
   const start = rows.length ? (viewState.documentPage - 1) * DOCUMENT_PAGE_SIZE + 1 : 0;
@@ -1558,13 +1609,20 @@ function handleLogout() {
   setPage("dashboard");
 }
 
-function renderOtherBookTypeOptions() {
+function renderDocumentSubtypeOptions() {
   const select = byId("otherBookTypeFilter");
   if (!select) return;
+  const selected = select.value || "all";
+  const type = byId("documentTypeFilter")?.value || "all";
+  const documents = allDocuments().filter((documentItem) => type === "all" || documentItem.kind === type);
+  const defaults = type === "all" ? [] : defaultSubtypesForKind(type);
+  const subtypes = [...new Set([...defaults, ...documents.map(documentSubtypeLabel).filter(Boolean)])]
+    .sort((a, b) => a.localeCompare(b, "vi"));
   select.innerHTML = [
-    `<option value="all">Tất cả</option>`,
-    ...otherBookTypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`)
+    `<option value="all">Tất cả phân loại</option>`,
+    ...subtypes.map((subtype) => `<option value="${escapeHtml(subtype)}">${escapeHtml(subtype)}</option>`)
   ].join("");
+  select.value = subtypes.includes(selected) ? selected : "all";
 }
 
 function handlePagerClick(event) {
@@ -1574,17 +1632,7 @@ function handlePagerClick(event) {
   const target = button.dataset.pageTarget;
   const action = button.dataset.pageAction;
   const rows = target === "documents"
-    ? allDocuments().filter((documentItem) => {
-      const keyword = plainText(byId("documentSearch").value.trim());
-      const type = byId("documentTypeFilter").value;
-      const otherType = byId("otherBookTypeFilter").value;
-      const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)}`);
-      const matchKeyword = !keyword || haystack.includes(keyword);
-      const matchType = type === "all" || documentItem.kind === type;
-      const matchOtherType = otherType === "all"
-        || (documentItem.kind === KINDS.OTHER_BOOK && documentDetail(documentItem) === otherType);
-      return matchKeyword && matchType && matchOtherType;
-    })
+    ? allDocuments().filter(documentMatchesFilters)
     : allDocuments();
   const key = target === "documents" ? "documentPage" : "inventoryPage";
   const totalPages = pageCount(rows.length);
@@ -1614,16 +1662,12 @@ function bindEvents() {
   });
   byId("documentTypeFilter").addEventListener("change", () => {
     viewState.documentPage = 1;
-    if (byId("documentTypeFilter").value !== KINDS.OTHER_BOOK) {
-      byId("otherBookTypeFilter").value = "all";
-    }
+    byId("otherBookTypeFilter").value = "all";
+    renderDocumentSubtypeOptions();
     renderDocuments();
   });
   byId("otherBookTypeFilter").addEventListener("change", () => {
     viewState.documentPage = 1;
-    if (byId("otherBookTypeFilter").value !== "all") {
-      byId("documentTypeFilter").value = KINDS.OTHER_BOOK;
-    }
     renderDocuments();
   });
   byId("documentPager").addEventListener("click", handlePagerClick);
@@ -1687,7 +1731,7 @@ function bindEvents() {
 }
 
 renderDocumentExtraFields();
-renderOtherBookTypeOptions();
+renderDocumentSubtypeOptions();
 toggleImportMode();
 setDefaultDates();
 bindEvents();
