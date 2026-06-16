@@ -161,11 +161,12 @@ function generatedCover(documentItem, className) {
   const title = documentItem.title || "Sách";
   const label = documentSubtypeLabel(documentItem) || documentItem.kind || "Sách";
   const isLarge = className.includes("cover-large");
+  const coverTitle = isLarge ? cleanBookTitle(title) : coverTitleSnippet(title);
   return `
     <div class="${escapeHtml(className)} generated-cover" aria-label="Bìa ${escapeHtml(title)}">
       <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(isLarge ? cleanBookTitle(title) : documentItem.id)}</strong>
-      ${isLarge ? `<em>${escapeHtml(documentItem.id)}</em>` : ""}
+      <strong>${escapeHtml(coverTitle)}</strong>
+      <em>${escapeHtml(documentItem.id)}</em>
     </div>
   `;
 }
@@ -586,6 +587,12 @@ function currentReaderProfile() {
   return findReader(currentUser.readerId);
 }
 
+function readerHasAccount(readerId) {
+  return Object.values(state.accounts || {}).some((account) => (
+    account.role === "reader" && account.readerId === readerId
+  ));
+}
+
 function canAccessPage(pageName) {
   if (!currentUser) return pageName === "dashboard";
   return ROLE_PAGES[currentUser.role]?.has(pageName) || false;
@@ -593,6 +600,16 @@ function canAccessPage(pageName) {
 
 function homePage() {
   return ROLE_HOME[currentUser?.role] || "dashboard";
+}
+
+function canManageLibraryActions() {
+  return currentUser?.role === "admin" || currentUser?.role === "staff";
+}
+
+function guardLibraryAction() {
+  if (canManageLibraryActions()) return true;
+  showToast("Độc giả chỉ được xem sách đã mượn và sách trong thư viện.");
+  return false;
 }
 
 function isBorrowable(documentItem) {
@@ -646,6 +663,11 @@ function cleanBookTitle(title) {
     .replace(/\s*:\s*\$b\s*/gi, " - ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function coverTitleSnippet(title, maxLength = 34) {
+  const clean = cleanBookTitle(title);
+  return clean.length > maxLength ? `${clean.slice(0, maxLength - 1).trim()}…` : clean;
 }
 
 function previewTopics(documentItem) {
@@ -953,18 +975,22 @@ function renderReaderPortal() {
   const info = byId("readerPortalInfo");
   const stats = byId("readerPortalStats");
   const loansTable = byId("readerLoansTable");
+  const libraryTable = byId("readerLibraryTable");
   const transactionsTable = byId("readerTransactionsTable");
 
   if (!reader) {
     info.innerHTML = `<p class="muted">Không có hồ sơ độc giả.</p>`;
     stats.innerHTML = "";
     loansTable.innerHTML = `<tr><td colspan="5" class="muted">Không có dữ liệu.</td></tr>`;
+    byId("readerLibraryCount").textContent = "0 mục";
+    libraryTable.innerHTML = `<tr><td colspan="5" class="muted">Không có dữ liệu.</td></tr>`;
     transactionsTable.innerHTML = `<tr><td colspan="5" class="muted">Không có dữ liệu.</td></tr>`;
     return;
   }
 
   const readerLoans = state.loans.filter((loan) => loan.readerId === reader.id);
   const readerTransactions = state.transactions.filter((transaction) => transaction.readerId === reader.id);
+  const libraryRows = allDocuments().filter((documentItem) => Number(documentItem.quantity) > 0);
   const overdue = readerLoans.filter((loan) => loan.dueDate < todayISO()).length;
 
   info.innerHTML = `
@@ -994,6 +1020,17 @@ function renderReaderPortal() {
       </tr>
     `;
   }).join("") || `<tr><td colspan="5" class="muted">Không có tài liệu đang mượn.</td></tr>`;
+
+  byId("readerLibraryCount").textContent = `${libraryRows.length} mục`;
+  libraryTable.innerHTML = libraryRows.slice(0, DOCUMENT_PAGE_SIZE).map((documentItem) => `
+    <tr>
+      <td><strong>${escapeHtml(documentItem.id)}</strong></td>
+      <td>${escapeHtml(documentItem.title)}<br><span class="muted">${escapeHtml(documentItem.author)} - ${escapeHtml(documentItem.publisher)}</span></td>
+      <td>${escapeHtml(documentKindLabel(documentItem))}</td>
+      <td>${escapeHtml(documentItem.quantity)}</td>
+      <td>${statusBadge(isBorrowable(documentItem), "Mượn qua thủ thư", "Đọc tại chỗ", "warn")}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="5" class="muted">Không có sách trong thư viện.</td></tr>`;
 
   byId("readerTransactionCount").textContent = `${readerTransactions.length} giao dịch`;
   transactionsTable.innerHTML = readerTransactions.slice().reverse().map((transaction) => {
@@ -1045,6 +1082,7 @@ function renderImportExtraFields() {
 
 async function handleDocumentSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1096,12 +1134,22 @@ async function attachFiles(documentItem, form) {
 
 function handleReaderSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
+  const username = data.username.trim().toLowerCase();
 
   if (personIdExists(id)) {
     showToast("Mã người đã tồn tại.");
+    return;
+  }
+  if (state.accounts[username]) {
+    showToast("Tài khoản đã tồn tại.");
+    return;
+  }
+  if (!data.password || data.password.length < 3) {
+    showToast("Mật khẩu phải có ít nhất 3 ký tự.");
     return;
   }
 
@@ -1120,6 +1168,14 @@ function handleReaderSubmit(event) {
     limit: data.type === READER_TYPES.STUDENT ? 5 : 10
   });
 
+  state.accounts[username] = {
+    password: data.password,
+    role: "reader",
+    name: data.name.trim(),
+    title: "Độc giả",
+    personId: id,
+    readerId: id
+  };
 
   saveState();
   form.reset();
@@ -1130,6 +1186,7 @@ function handleReaderSubmit(event) {
 
 function handleStaffSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1172,6 +1229,7 @@ function handleStaffSubmit(event) {
 
 function handleAdminSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1213,6 +1271,7 @@ function handleAdminSubmit(event) {
 
 function handleBorrowSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   data.documentId = String(data.documentId || "").trim().toUpperCase();
@@ -1274,6 +1333,7 @@ function handleBorrowSubmit(event) {
 
 function handleReturnSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const loanIndex = state.loans.findIndex((loan) => loan.id === data.loanId);
@@ -1311,6 +1371,7 @@ function handleReturnSubmit(event) {
 
 async function handleImportSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const quantity = Number(data.quantity);
@@ -1380,6 +1441,7 @@ function toggleImportMode() {
 
 async function handleDocumentFileSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const documentItem = ensureManagedDocument(form.documentId.value);
   if (!documentItem) {
@@ -1456,6 +1518,7 @@ function closeDocumentModal() {
 
 function handleExportSubmit(event) {
   event.preventDefault();
+  if (!guardLibraryAction()) return;
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   data.documentId = String(data.documentId || "").trim().toUpperCase();
@@ -1539,6 +1602,19 @@ function applyRoleRestrictions() {
   });
 }
 
+function enterApp(user, username) {
+  currentUser = { ...user, username };
+  byId("loginOverlay").classList.add("hidden");
+  byId("appShell").style.display = "";
+  byId("userName").textContent = currentUser.name;
+  byId("userRole").textContent = currentUser.title;
+
+  applyRoleRestrictions();
+  setPage(homePage());
+  renderAll();
+  showToast("Xin chào, " + currentUser.name + "!");
+}
+
 function handleLogin(event) {
   event.preventDefault();
   const username = byId("loginUsername").value.trim().toLowerCase();
@@ -1552,17 +1628,8 @@ function handleLogin(event) {
     return;
   }
 
-  currentUser = { ...user, username };
   error.textContent = "";
-  byId("loginOverlay").classList.add("hidden");
-  byId("appShell").style.display = "";
-  byId("userName").textContent = currentUser.name;
-  byId("userRole").textContent = currentUser.title;
-
-  applyRoleRestrictions();
-  setPage(homePage());
-  renderAll();
-  showToast("Xin chào, " + currentUser.name + "!");
+  enterApp(user, username);
 }
 
 function handlePublicReaderSignup(event) {
@@ -1573,16 +1640,35 @@ function handlePublicReaderSignup(event) {
   const username = data.username.trim().toLowerCase();
   const error = byId("signupError");
 
-  if (personIdExists(id)) {
-    error.textContent = "Mã độc giả đã tồn tại.";
-    return;
-  }
   if (state.accounts[username]) {
     error.textContent = "Tài khoản đã tồn tại.";
     return;
   }
   if (!data.password || data.password.length < 3) {
     error.textContent = "Mật khẩu phải có ít nhất 3 ký tự.";
+    return;
+  }
+
+  const existingReader = findReader(id);
+  if (personIdExists(id)) {
+    if (!existingReader || readerHasAccount(id)) {
+      error.textContent = "Mã độc giả đã tồn tại.";
+      return;
+    }
+
+    state.accounts[username] = {
+      password: data.password,
+      role: "reader",
+      name: existingReader.name,
+      title: "Độc giả",
+      personId: id,
+      readerId: id
+    };
+
+    saveState();
+    error.textContent = "";
+    form.reset();
+    enterApp(state.accounts[username], username);
     return;
   }
 
@@ -1618,13 +1704,7 @@ function handlePublicReaderSignup(event) {
   saveState();
   error.textContent = "";
   form.reset();
-  showToast("Đăng ký thành công! Hãy đăng nhập với tài khoản vừa tạo.");
-
-  // Switch back to login tab
-  document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
-  document.querySelector('[data-auth-tab="login"]').classList.add("active");
-  byId("loginPanel").classList.add("active");
-  byId("signupPanel").classList.remove("active");
+  enterApp(state.accounts[username], username);
 }
 
 function handleLogout() {

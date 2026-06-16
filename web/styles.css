@@ -615,6 +615,18 @@ tbody tr:hover {
   overflow-wrap: anywhere;
 }
 
+.generated-cover em {
+  display: block;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .cover-thumb.generated-cover {
   padding: 5px;
 }
@@ -624,8 +636,16 @@ tbody tr:hover {
 }
 
 .cover-thumb.generated-cover strong {
-  font-size: 0.67rem;
-  overflow-wrap: normal;
+  display: -webkit-box;
+  font-size: 0.6rem;
+  line-height: 1.08;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.cover-thumb.generated-cover em {
+  font-size: 0.48rem;
 }
 
 .cover-large.generated-cover {
@@ -824,7 +844,8 @@ tbody tr:hover {
   z-index: 1000;
   display: grid;
   place-items: center;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 16px;
   background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172333 100%);
   animation: loginBgShift 8s ease infinite alternate;
@@ -840,12 +861,14 @@ tbody tr:hover {
 }
 
 .login-card {
+  box-sizing: border-box;
   width: min(520px, calc(100vw - 32px));
   max-height: calc(100vh - 32px);
+  overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid rgba(255,255,255,0.14);
   border-radius: 16px;
-  padding: 36px 32px;
+  padding: 28px 32px;
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(18px);
   box-shadow: 0 24px 64px rgba(0,0,0,0.35);
@@ -859,14 +882,14 @@ tbody tr:hover {
 
 .login-brand {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .login-logo {
   display: block;
-  width: min(190px, 72%);
+  width: min(160px, 62%);
   aspect-ratio: 1024 / 559;
-  margin: 0 auto 16px;
+  margin: 0 auto 12px;
   border-radius: 10px;
   object-fit: cover;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
@@ -928,7 +951,7 @@ tbody tr:hover {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius);
   padding: 4px;
@@ -981,8 +1004,8 @@ tbody tr:hover {
 }
 
 .login-hint {
-  margin-top: 22px;
-  padding-top: 18px;
+  margin-top: 16px;
+  padding-top: 14px;
   border-top: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -1099,6 +1122,20 @@ tbody tr:hover {
 }
 
 @media (max-width: 720px) {
+  .login-overlay {
+    padding: 10px;
+  }
+
+  .login-card {
+    width: min(100%, calc(100vw - 20px));
+    max-height: calc(100vh - 20px);
+    padding: 20px 18px;
+  }
+
+  .login-logo {
+    width: min(138px, 58%);
+  }
+
   .content {
     padding: 16px;
   }
@@ -1141,5 +1178,38 @@ tbody tr:hover {
 
   .logout-btn {
     width: 100%;
+  }
+}
+
+@media (max-height: 760px) {
+  .login-overlay {
+    align-items: start;
+  }
+
+  .login-card {
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .login-logo {
+    width: min(128px, 56%);
+    margin-bottom: 8px;
+  }
+
+  .login-brand {
+    margin-bottom: 12px;
+  }
+
+  .login-brand h1 {
+    font-size: 1.45rem;
+  }
+
+  .login-brand p,
+  .login-hint {
+    display: none;
+  }
+
+  .auth-tabs {
+    margin-bottom: 12px;
   }
 }
