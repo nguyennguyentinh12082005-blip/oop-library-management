@@ -54,8 +54,9 @@ Doc gia co the tu dang ky tai man hinh **Dang ky doc gia**. Admin co the tao ho 
 ### Anh bia sach
 
 - Du lieu Project Gutenberg trong `web/gutenberg-catalog.js` khong co anh bia that (`coverImage` rong).
-- App dung bia gia cho cac sach nay.
-- Da doi bia gia de hien thi ten sach rut gon thay vi chi hien ma `TVS...`.
+- App tu lay anh bia that tu Project Gutenberg bang `gutenbergId` theo mau URL `https://www.gutenberg.org/cache/epub/{id}/pg{id}.cover.medium.jpg`.
+- Neu Project Gutenberg khong co anh bia hoac anh bi loi, app fallback ve bia gia.
+- Bia gia hien thi ten sach rut gon thay vi chi hien ma `TVS...`.
 - Ma `TVS...` van duoc hien nho o dong phu de nguoi dung biet ma tai lieu.
 
 ### Man hinh dang nhap

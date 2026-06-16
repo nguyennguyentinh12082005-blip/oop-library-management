@@ -149,12 +149,40 @@ function statusBadge(ok, okText, badText, badClass = "bad") {
 
 function coverCell(documentItem) {
   if (documentItem.coverImage) {
-    return `<img class="cover-thumb" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}" loading="lazy" onerror="handleCoverError(this)">`;
+    return coverImageMarkup(documentItem, "cover-thumb", documentItem.coverImage);
+  }
+  const gutenbergUrl = gutenbergCoverUrl(documentItem);
+  if (gutenbergUrl) {
+    return coverImageMarkup(documentItem, "cover-thumb", gutenbergUrl);
   }
   if (isSourceOnlyCatalogItem(documentItem)) {
     return generatedCover(documentItem, "cover-thumb");
   }
   return `<span class="cover-thumb" aria-hidden="true"></span>`;
+}
+
+function coverImageMarkup(documentItem, className, imageUrl) {
+  const label = documentSubtypeLabel(documentItem) || documentItem.kind || "Sách";
+  const title = className.includes("cover-large")
+    ? cleanBookTitle(documentItem.title)
+    : coverTitleSnippet(documentItem.title);
+  return `
+    <img class="${escapeHtml(className)}"
+      src="${escapeHtml(imageUrl)}"
+      alt="Bìa ${escapeHtml(documentItem.title)}"
+      loading="lazy"
+      data-cover-label="${escapeHtml(label)}"
+      data-cover-title="${escapeHtml(title)}"
+      data-cover-code="${escapeHtml(documentItem.id)}"
+      onerror="handleCoverError(this)">
+  `;
+}
+
+function gutenbergCoverUrl(documentItem) {
+  const gutenbergId = documentItem.extra?.gutenbergId;
+  if (!gutenbergId) return "";
+  const encodedId = encodeURIComponent(gutenbergId);
+  return `https://www.gutenberg.org/cache/epub/${encodedId}/pg${encodedId}.cover.medium.jpg`;
 }
 
 function generatedCover(documentItem, className) {
@@ -172,15 +200,24 @@ function generatedCover(documentItem, className) {
 }
 
 function handleCoverError(img) {
-  const row = img.closest("tr");
-  if (row) {
-    row.remove();
-    return;
+  const placeholder = document.createElement("div");
+  placeholder.className = `${img.className || "cover-thumb"} generated-cover`;
+  placeholder.setAttribute("aria-label", img.alt || "Bìa sách");
+
+  const label = document.createElement("span");
+  label.textContent = img.dataset.coverLabel || "Sách";
+  placeholder.appendChild(label);
+
+  const title = document.createElement("strong");
+  title.textContent = img.dataset.coverTitle || img.dataset.coverCode || "Sách";
+  placeholder.appendChild(title);
+
+  if (img.dataset.coverCode) {
+    const code = document.createElement("em");
+    code.textContent = img.dataset.coverCode;
+    placeholder.appendChild(code);
   }
 
-  const placeholder = document.createElement("div");
-  placeholder.className = img.className || "cover-thumb";
-  placeholder.setAttribute("aria-hidden", "true");
   img.replaceWith(placeholder);
 }
 
@@ -1488,15 +1525,17 @@ function openDocumentModal(id) {
     ["Số lượng trong kho", `${documentItem.quantity} bản`],
     ["Trạng thái quản lý", documentItem.quantity > 0 ? "Có thể mượn/trả trong hệ thống" : "Hết sách trong kho"]
   ];
+  const coverLargeUrl = documentItem.coverImage || gutenbergCoverUrl(documentItem);
+  const coverLargeMarkup = coverLargeUrl
+    ? coverImageMarkup(documentItem, "cover-large", coverLargeUrl)
+    : isSourceOnlyCatalogItem(documentItem)
+      ? generatedCover(documentItem, "cover-large")
+      : `<div class="cover-large"></div>`;
 
   byId("documentModalContent").innerHTML = `
     <div class="document-detail">
       <div>
-        ${documentItem.coverImage
-          ? `<img class="cover-large" src="${escapeHtml(documentItem.coverImage)}" alt="Bìa ${escapeHtml(documentItem.title)}">`
-          : isSourceOnlyCatalogItem(documentItem)
-            ? generatedCover(documentItem, "cover-large")
-            : `<div class="cover-large"></div>`}
+        ${coverLargeMarkup}
       </div>
       <div>
         <h2>${escapeHtml(documentItem.title)}</h2>
