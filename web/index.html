@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Quản lý Thư viện OOP C++</title>
-  <link rel="stylesheet" href="styles.css?v=20260616-cover">
+  <link rel="stylesheet" href="styles.css?v=20260616-topic">
 </head>
 <body>
   <div class="login-overlay" id="loginOverlay">
@@ -253,9 +253,9 @@
             </select>
           </label>
           <label class="select-field">
-            <span>Phân loại chi tiết</span>
+            <span id="documentTopicFilterLabel">Chủ đề theo loại</span>
             <select id="otherBookTypeFilter">
-              <option value="all">Tất cả</option>
+              <option value="all">Tất cả chủ đề</option>
               <option value="Truyện">Truyện</option>
               <option value="Văn học">Văn học</option>
               <option value="Kỹ năng sống">Kỹ năng sống</option>
@@ -268,6 +268,10 @@
               <option value="Luật">Luật</option>
               <option value="Khác">Khác</option>
             </select>
+          </label>
+          <label class="search-field">
+            <span id="documentTopicSearchLabel">Tìm trong chủ đề</span>
+            <input id="documentTopicSearch" type="search" placeholder="Nhập bộ môn, môn học, lĩnh vực">
           </label>
         </div>
 
@@ -690,7 +694,7 @@
       <div id="documentModalContent"></div>
     </section>
   </div>
-  <script src="gutenberg-catalog.js?v=20260616-cover"></script>
-  <script src="app.js?v=20260616-cover"></script>
+  <script src="gutenberg-catalog.js?v=20260616-topic"></script>
+  <script src="app.js?v=20260616-topic"></script>
 </body>
 </html>

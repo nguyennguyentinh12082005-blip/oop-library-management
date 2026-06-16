@@ -695,6 +695,53 @@ function documentSubtypeLabel(documentItem) {
   return documentItem.category || "Khác";
 }
 
+function topicFilterLabel(kind) {
+  if (kind === KINDS.TEXTBOOK) return "Bộ môn / môn học";
+  if (kind === KINDS.REFERENCE) return "Chủ đề tham khảo";
+  if (kind === KINDS.OTHER_BOOK) return "Thể loại sách";
+  if (kind === KINDS.MAGAZINE) return "Nhóm báo/tạp chí";
+  if (kind === KINDS.RESEARCH) return "Lĩnh vực nghiên cứu";
+  return "Chủ đề theo loại";
+}
+
+function topicSearchPlaceholder(kind) {
+  if (kind === KINDS.TEXTBOOK) return "Nhập bộ môn, mã môn học, tên môn";
+  if (kind === KINDS.REFERENCE) return "Nhập chủ đề, ngành, lĩnh vực";
+  if (kind === KINDS.OTHER_BOOK) return "Nhập truyện, văn học, kỹ năng, ngoại ngữ...";
+  if (kind === KINDS.MAGAZINE) return "Nhập báo, tạp chí, số phát hành, tháng";
+  if (kind === KINDS.RESEARCH) return "Nhập lĩnh vực, cơ quan chủ quản, loại nghiên cứu";
+  return "Nhập bộ môn, môn học, lĩnh vực";
+}
+
+function documentTopicValues(documentItem, includePreview = false) {
+  const extra = documentItem.extra || {};
+  const preview = includePreview ? previewTopics(documentItem) : [];
+  if (documentItem.kind === KINDS.TEXTBOOK) {
+    return [extra.boMon, extra.maMonHoc, documentItem.category, ...preview].filter(Boolean);
+  }
+  if (documentItem.kind === KINDS.REFERENCE) {
+    return [documentItem.category, extra.boMon, extra.linhVuc, extra.loaiSachKhac, ...preview].filter(Boolean);
+  }
+  if (documentItem.kind === KINDS.OTHER_BOOK) {
+    return [extra.loaiSachKhac, documentItem.category, ...preview].filter(Boolean);
+  }
+  if (documentItem.kind === KINDS.MAGAZINE) {
+    return [documentItem.category, extra.soPhatHanh && `Số ${extra.soPhatHanh}`, extra.thangPhatHanh && `Tháng ${extra.thangPhatHanh}`, ...preview].filter(Boolean);
+  }
+  if (documentItem.kind === KINDS.RESEARCH) {
+    return [extra.linhVuc, extra.coQuanChuQuan, documentItem.category, ...preview].filter(Boolean);
+  }
+  return [documentSubtypeLabel(documentItem), documentDetail(documentItem), documentItem.category, ...preview].filter(Boolean);
+}
+
+function documentTopicLabel(documentItem) {
+  return documentTopicValues(documentItem)[0] || documentSubtypeLabel(documentItem) || "Khác";
+}
+
+function documentTopicHaystack(documentItem) {
+  return plainText(documentTopicValues(documentItem, true).join(" "));
+}
+
 function cleanBookTitle(title) {
   return String(title || "Sách")
     .replace(/\s*:\s*\$b\s*/gi, " - ")
@@ -850,12 +897,14 @@ function renderPager(id, page, total, target) {
 function documentMatchesFilters(documentItem) {
   const keyword = plainText(byId("documentSearch").value.trim());
   const type = byId("documentTypeFilter").value;
-  const subtype = byId("otherBookTypeFilter").value;
-  const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)} ${documentSubtypeLabel(documentItem)}`);
+  const topic = byId("otherBookTypeFilter").value;
+  const topicKeyword = plainText(byId("documentTopicSearch")?.value.trim() || "");
+  const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)} ${documentSubtypeLabel(documentItem)} ${documentTopicValues(documentItem).join(" ")}`);
   const matchKeyword = !keyword || haystack.includes(keyword);
   const matchType = type === "all" || documentItem.kind === type;
-  const matchSubtype = subtype === "all" || documentSubtypeLabel(documentItem) === subtype;
-  return matchKeyword && matchType && matchSubtype;
+  const matchTopic = topic === "all" || documentTopicValues(documentItem).includes(topic);
+  const matchTopicKeyword = !topicKeyword || documentTopicHaystack(documentItem).includes(topicKeyword);
+  return matchKeyword && matchType && matchTopic && matchTopicKeyword;
 }
 
 function renderDocuments() {
@@ -1763,14 +1812,21 @@ function renderDocumentSubtypeOptions() {
   const selected = select.value || "all";
   const type = byId("documentTypeFilter")?.value || "all";
   const documents = allDocuments().filter((documentItem) => type === "all" || documentItem.kind === type);
-  const availableSubtypes = [...new Set(documents.map(documentSubtypeLabel).filter(Boolean))];
+  const availableSubtypes = [...new Set(documents.map(documentTopicLabel).filter(Boolean))];
   const defaults = type === "all"
     ? []
     : defaultSubtypesForKind(type).filter((subtype) => availableSubtypes.includes(subtype));
   const subtypes = [...new Set([...defaults, ...availableSubtypes])]
     .sort((a, b) => a.localeCompare(b, "vi"));
+  const label = topicFilterLabel(type);
+  const labelElement = byId("documentTopicFilterLabel");
+  const searchLabel = byId("documentTopicSearchLabel");
+  const searchInput = byId("documentTopicSearch");
+  if (labelElement) labelElement.textContent = label;
+  if (searchLabel) searchLabel.textContent = `Tìm ${label.toLowerCase()}`;
+  if (searchInput) searchInput.placeholder = topicSearchPlaceholder(type);
   select.innerHTML = [
-    `<option value="all">Tất cả phân loại</option>`,
+    `<option value="all">Tất cả ${escapeHtml(label.toLowerCase())}</option>`,
     ...subtypes.map((subtype) => `<option value="${escapeHtml(subtype)}">${escapeHtml(subtype)}</option>`)
   ].join("");
   select.value = subtypes.includes(selected) ? selected : "all";
@@ -1811,9 +1867,14 @@ function bindEvents() {
     viewState.documentPage = 1;
     renderDocuments();
   });
+  byId("documentTopicSearch").addEventListener("input", () => {
+    viewState.documentPage = 1;
+    renderDocuments();
+  });
   byId("documentTypeFilter").addEventListener("change", () => {
     viewState.documentPage = 1;
     byId("otherBookTypeFilter").value = "all";
+    byId("documentTopicSearch").value = "";
     renderDocumentSubtypeOptions();
     renderDocuments();
   });

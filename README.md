@@ -42,6 +42,17 @@ Doc gia co the tu dang ky tai man hinh **Dang ky doc gia**. Admin co the tao ho 
   - `Doc tai cho` voi bao/tap chi hoac bai nghien cuu.
 - Doc gia van xem duoc danh sach tai lieu dang muon va lich su giao dich cua minh.
 
+### Tim kiem va loc sach theo chu de
+
+- Cai tien man hinh **Tai lieu** de tim kiem dung hon theo tung loai sach.
+- Bo loc **Chu de theo loai** tu doi noi dung theo loai tai lieu dang chon:
+  - **Giao trinh**: loc theo bo mon, ma mon hoc, ten mon.
+  - **Sach tham khao**: loc theo chu de/nganh/lĩnh vực tham khao.
+  - **Sach khac**: loc theo the loai nhu truyen, van hoc, ky nang, ngoai ngu.
+  - **Bao/tap chi**: loc theo bao, tap chi, so phat hanh, thang.
+  - **Bai nghien cuu**: loc theo linh vuc nghien cuu, co quan chu quan.
+- Them o **Tim trong chu de** de tim sau trong chu de/mo ta cua tai lieu, rieng voi o tim chung theo ma, ten, tac gia.
+
 ### Tao tai khoan doc gia
 
 - Sua loi admin/nhan vien tao nguoi doc nhung khong tao duoc tai khoan dang nhap.
