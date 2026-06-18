@@ -38,57 +38,116 @@ const READER_TYPES = {
 };
 
 const otherBookTypes = [
-  "Truyện",
-  "Văn học",
-  "Ngoại ngữ",
-  "Khoa học phổ thông",
-  "Lịch sử - địa lý",
-  "Kỹ năng sống",
-  "Luật",
-  "Công nghệ thông tin",
-  "Cơ khí chế tạo máy",
-  "Cơ khí động lực",
-  "Điện - Điện tử",
-  "Xây dựng - Kiến trúc",
-  "Kinh tế - Quản lý",
-  "Y học - Sức khỏe",
-  "Nông - Lâm - Ngư nghiệp",
-  "Thực phẩm, Môi trường",
-  "Khoa học xã hội",
-  "Khoa học ứng dụng",
-  "CN May - thời trang",
-  "Nghệ thuật - Ẩm thực",
-  "In - Truyền thông",
-  "Thông tin Thư viện",
+  "Văn học / Tiểu thuyết",
+  "Phát triển bản thân / Kỹ năng sống",
+  "Hồi ký / Tiểu sử",
+  "Nghệ thuật / Đời sống",
   "Khác"
 ];
 
-function defaultSubtypesForKind(kind) {
-  const majorTypes = [
-    "Công nghệ thông tin",
-    "Cơ khí chế tạo máy",
-    "Cơ khí động lực",
-    "Điện - Điện tử",
-    "Xây dựng - Kiến trúc",
-    "Kinh tế - Quản lý",
-    "Y học - Sức khỏe",
-    "Nông - Lâm - Ngư nghiệp",
-    "Thực phẩm, Môi trường",
-    "Khoa học xã hội",
-    "Khoa học ứng dụng",
-    "CN May - thời trang",
-    "Nghệ thuật - Ẩm thực",
-    "In - Truyền thông",
-    "Ngoại ngữ",
-    "Luật",
-    "Khác"
-  ];
+const TEXTBOOK_FACULTIES = [
+  {
+    name: "Giáo trình Đại cương",
+    subjects: [
+      "Toán cao cấp", "Triết học Mác - Lênin", "Vật lý đại cương", "Đại số tuyến tính", "Giải tích",
+      "Xác suất thống kê", "Toán rời rạc", "Hóa học đại cương", "Sinh học đại cương", "Pháp luật đại cương",
+      "Triết học Mác-Lênin", "Kinh tế chính trị", "Chủ nghĩa xã hội KH", "Tư tưởng Hồ Chí Minh", "Lịch sử Đảng",
+      "Giáo dục thể chất", "Thể dục", "Thể thao", "Võ thuật", "Giáo dục quốc phòng", "An ninh quốc gia"
+    ]
+  },
+  {
+    name: "Giáo trình Chuyên ngành",
+    subjects: [
+      "Kế toán doanh nghiệp", "Lập trình Hướng đối tượng (C++)", "Giải phẫu học",
+      "Lập trình", "Cơ sở dữ liệu", "Mạng máy tính", "Cấu trúc dữ liệu", "Hệ điều hành",
+      "Trí tuệ nhân tạo", "Công nghệ phần mềm", "An toàn thông tin", "Thuật toán",
+      "Cơ học kỹ thuật", "Sức bền vật liệu", "Nguyên lý máy", "Chi tiết máy", "Vẽ kỹ thuật", "Công nghệ chế tạo máy",
+      "Mạch điện", "Điện tử số", "Vi xử lý", "Kỹ thuật điện", "Tự động hóa", "Điện tử công suất",
+      "Kết cấu", "Vật liệu xây dựng", "Nền móng", "Kiến trúc", "Địa kỹ thuật",
+      "Kinh tế vi mô", "Kinh tế vĩ mô", "Quản trị kinh doanh", "Kế toán", "Tài chính", "Marketing", "Ngân hàng",
+      "Luật dân sự", "Luật hình sự", "Luật thương mại", "Luật lao động",
+      "Giải phẫu", "Sinh lý", "Dược lý", "Y học cộng đồng", "Điều dưỡng",
+      "Trồng trọt", "Chăn nuôi", "Thủy sản", "Lâm nghiệp"
+    ]
+  },
+  {
+    name: "Giáo trình Khoa học ứng dụng",
+    subjects: [
+      "Ứng dụng AI trong y tế", "Kỹ thuật điện tử ứng dụng", "Ứng dụng AI", "Điện tử ứng dụng", "Khoa học ứng dụng"
+    ]
+  },
+  {
+    name: "Giáo trình Ngoại ngữ",
+    subjects: [
+      "Hán ngữ", "Tiếng Anh giao tiếp", "New English File", "Tiếng Anh", "Tiếng Pháp", "Tiếng Nhật", "Tiếng Trung", "Tiếng Hàn"
+    ]
+  },
+  {
+    name: "Khác",
+    subjects: []
+  }
+];
 
-  if (kind === KINDS.TEXTBOOK || kind === KINDS.REFERENCE) return majorTypes;
-  if (kind === KINDS.OTHER_BOOK) return otherBookTypes;
-  if (kind === KINDS.MAGAZINE) return ["Báo", "Tạp chí", "Kỷ yếu hội thảo", "Khác"];
+function getDocumentFaculty(documentItem) {
+  if (documentItem.kind !== KINDS.TEXTBOOK) return null;
+  const haystack = plainText(
+    [documentItem.extra?.boMon, documentItem.extra?.maMonHoc, documentItem.category]
+      .filter(Boolean).join(" ")
+  );
+  for (const fac of TEXTBOOK_FACULTIES) {
+    if (fac.name === "Khác") continue;
+    const facNameNorm = plainText(fac.name);
+    if (haystack.includes(facNameNorm)) return fac.name;
+    for (const subj of fac.subjects) {
+      if (haystack.includes(plainText(subj))) return fac.name;
+    }
+  }
+  return "Khác";
+}
+
+function textbookSubjectsForFaculty(facultyName) {
+  const fac = TEXTBOOK_FACULTIES.find((f) => f.name === facultyName);
+  return fac ? fac.subjects : [];
+}
+
+function defaultSubtypesForKind(kind) {
+  if (kind === KINDS.TEXTBOOK) {
+    return [
+      "Giáo trình Đại cương",
+      "Giáo trình Chuyên ngành",
+      "Giáo trình Khoa học ứng dụng",
+      "Giáo trình Ngoại ngữ",
+      "Khác"
+    ];
+  }
+  if (kind === KINDS.REFERENCE) {
+    return [
+      "Từ điển / Bách khoa toàn thư",
+      "Sách chuyên khảo",
+      "Sách hướng dẫn / Thực hành",
+      "Sách giải bài tập",
+      "Khác"
+    ];
+  }
+  if (kind === KINDS.OTHER_BOOK) {
+    return otherBookTypes;
+  }
+  if (kind === KINDS.MAGAZINE) {
+    return [
+      "Tạp chí Khoa học & Chuyên ngành",
+      "Tạp chí Kinh tế / Xã hội",
+      "Báo giấy thường nhật / Báo tuần",
+      "Khác"
+    ];
+  }
   if (kind === KINDS.RESEARCH) {
-    return ["Luận văn, luận án", "Đồ án, khóa luận tốt nghiệp", "BC nghiên cứu khoa học", ...majorTypes];
+    return [
+      "Luận văn / Luận án",
+      "Báo cáo khoa học / Đề tài NCKH",
+      "Kỷ yếu hội thảo (Conference Proceedings)",
+      "Bài báo khoa học quốc tế",
+      "Khác"
+    ];
   }
   return [];
 }
@@ -264,48 +323,94 @@ function sourceKind(documentItem) {
   const title = plainText(documentItem.title || "");
   const category = plainText(`${documentItem.kind || ""} ${documentItem.category || ""} ${documentItem.extra?.linhVuc || ""} ${documentItem.extra?.boMon || ""}`);
 
-  if (hasAny(category, ["tap chi", "bao/tap chi", "ky yeu", "hoi thao"])) return KINDS.MAGAZINE;
-  if (hasAny(category, ["giao trinh"]) || title.startsWith("giao trinh ")) return KINDS.TEXTBOOK;
-  if (hasAny(category, ["tham khao", "reference"])) return KINDS.REFERENCE;
-  if (hasAny(category, ["nghien cuu", "luan van", "luan an", "do an", "khoa luan", "bc nghien cuu"])
-    || hasAny(title, ["nghien cuu ", "bao cao ", "luan van ", "luan an ", "do an ", "khoa luan "])) {
-    return KINDS.RESEARCH;
+  if (hasAny(category, ["tap chi", "bao/tap chi", "ky yeu", "hoi thao", "magazine", "newspaper", "journal"])) return KINDS.MAGAZINE;
+  if (hasAny(category, ["giao trinh", "textbook"]) || title.startsWith("giao trinh ")) return KINDS.TEXTBOOK;
+  if (hasAny(category, ["tham khao", "reference", "tra cuu"])) return KINDS.REFERENCE;
+  if (hasAny(category, ["nghien cuu", "luan van", "luan an", "do an", "khoa luan", "bc nghien cuu", "thesis", "dissertation", "paper", "proceeding"])) return KINDS.RESEARCH;
+
+  if (hasAny(text, ["truyen", "fiction", "novel", "stories", "story", "fairy", "adventure", "children", "poetry", "poems", "drama", "plays", "literature", "van hoc", "essays", "classic"])) {
+    return KINDS.OTHER_BOOK;
   }
-  if (hasAny(text, ["tap chi", "journal", "magazine", "ky yeu hoi thao"])) return KINDS.MAGAZINE;
-  if (hasAny(text, ["handbook", "primer", "manual", "guide", "grammar", "dictionary", "mathematics", "science", "engineering", "technology", "printing", "communication", "media", "library", "catalog", "bibliography", "education"])) {
+
+  if (hasAny(text, ["journal", "magazine", "periodical", "newspaper"])) return KINDS.MAGAZINE;
+  if (hasAny(text, ["thesis", "dissertation", "research paper", "proceedings"])) return KINDS.RESEARCH;
+
+  if (hasAny(text, ["textbook", "course", "lecture", "exposition of", "introduction to", "principles of", "elements of", "handbook of", "mathematics", "calculus", "algebra", "physics", "chemistry", "biology", "astronomy", "anatomy", "physiology", "mechanics", "engineering", "programming"])) {
     return KINDS.TEXTBOOK;
   }
-  if (hasAny(text, ["history", "biography", "criticism", "travel", "law", "legal", "constitution", "memoir", "essays"])) {
+
+  if (hasAny(text, ["dictionary", "encyclopedia", "manual", "guide", "handbook", "primer", "grammar", "law", "legal", "constitution", "history", "biography", "memoir", "directory"])) {
     return KINDS.REFERENCE;
   }
+
   return KINDS.OTHER_BOOK;
 }
 
-function sourceOtherBookType(documentItem) {
+function classifySubtype(kind, documentItem) {
   const text = sourceText(documentItem);
 
-  if (hasAny(text, ["truyen", "fiction", "novel", "stories", "story", "fairy", "adventure", "children"])) return "Truyện";
-  if (hasAny(text, ["van hoc", "literature", "poetry", "poems", "drama", "plays", "essays"])) return "Văn học";
-  if (hasAny(text, ["ngoai ngu", "ngon ngu", "language", "grammar", "dictionary", "english", "french", "german", "spanish"])) return "Ngoại ngữ";
-  if (hasAny(text, ["lich su", "dia ly", "du lich", "history", "geography", "travel", "biography", "memoir"])) return "Lịch sử - địa lý";
-  if (hasAny(text, ["ky nang", "self-help", "conduct of life", "psychology", "ethics", "leadership"])) return "Kỹ năng sống";
-  if (hasAny(text, ["luat", "law", "legal", "constitution"])) return "Luật";
-  if (hasAny(text, ["cong nghe thong tin", "tin hoc", "computer", "software", "programming", "lap trinh", "java", "python", "ai ", "artificial intelligence", "information retrieval"])) return "Công nghệ thông tin";
-  if (hasAny(text, ["co khi che tao may", "manufacturing", "machine design", "cnc", "han ", "welding"])) return "Cơ khí chế tạo máy";
-  if (hasAny(text, ["co khi dong luc", "o to", "automotive", "engine", "vehicle"])) return "Cơ khí động lực";
-  if (hasAny(text, ["dien - dien tu", "dien tu", "electrical", "electronics", "vhdl", "plc", "mach so", "vi mach"])) return "Điện - Điện tử";
-  if (hasAny(text, ["xay dung", "kien truc", "construction", "architecture"])) return "Xây dựng - Kiến trúc";
-  if (hasAny(text, ["kinh te", "quan ly", "business", "management", "marketing", "commerce", "finance"])) return "Kinh tế - Quản lý";
-  if (hasAny(text, ["y hoc", "suc khoe", "medical", "health", "medicine", "breastfeeding"])) return "Y học - Sức khỏe";
-  if (hasAny(text, ["nong - lam - ngu", "nong nghiep", "lam nghiep", "ngu nghiep", "agriculture", "forestry", "fishery"])) return "Nông - Lâm - Ngư nghiệp";
-  if (hasAny(text, ["thuc pham", "moi truong", "food", "environment"])) return "Thực phẩm, Môi trường";
-  if (hasAny(text, ["khoa hoc xa hoi", "social science", "sociology", "education"])) return "Khoa học xã hội";
-  if (hasAny(text, ["khoa hoc ung dung", "applied science", "engineering", "technology"])) return "Khoa học ứng dụng";
-  if (hasAny(text, ["may - thoi trang", "thoi trang", "garment", "fashion", "textile"])) return "CN May - thời trang";
-  if (hasAny(text, ["nghe thuat", "am thuc", "art", "cookery", "cooking", "music"])) return "Nghệ thuật - Ẩm thực";
-  if (hasAny(text, ["in - truyen thong", "truyen thong", "printing", "communication", "media"])) return "In - Truyền thông";
-  if (hasAny(text, ["thong tin thu vien", "library", "catalog", "bibliography"])) return "Thông tin Thư viện";
-  if (hasAny(text, ["khoa hoc tu nhien", "science", "mathematics", "physics", "chemistry", "biology", "nature", "astronomy"])) return "Khoa học phổ thông";
+  if (kind === KINDS.TEXTBOOK) {
+    if (hasAny(text, ["ngoai ngu", "ngon ngu", "language", "grammar", "english", "french", "german", "spanish", "chinese", "japanese", "vietnamese", "han ngu"])) {
+      return "Giáo trình Ngoại ngữ";
+    }
+    if (hasAny(text, ["ai ", "artificial intelligence", "applied", "ung dung", "technology", "electronics", "robotic", "automation", "software engineering", "cong nghe phan mem", "thiet ke may"])) {
+      return "Giáo trình Khoa học ứng dụng";
+    }
+    if (hasAny(text, ["toan", "dai so", "giai tich", "xac suat", "triet", "mac", "lenin", "vat ly dai cuong", "hoa hoc dai cuong", "sinh hoc dai cuong", "mathematics", "calculus", "algebra", "physics", "chemistry", "philosophy", "basic", "general", "introduction"])) {
+      return "Giáo trình Đại cương";
+    }
+    return "Giáo trình Chuyên ngành";
+  }
+
+  if (kind === KINDS.REFERENCE) {
+    if (hasAny(text, ["dictionary", "encyclopedia", "tu dien", "bach khoa", "glossary", "lexicon"])) {
+      return "Từ điển / Bách khoa toàn thư";
+    }
+    if (hasAny(text, ["giai bai tap", "solutions", "key to", "exercises solved", "test prep", "ielts", "toeic", "de thi"])) {
+      return "Sách giải bài tập";
+    }
+    if (hasAny(text, ["manual", "guide", "handbook", "primer", "huong dan", "thuc hanh", "so tay", "cam nang", "how to"])) {
+      return "Sách hướng dẫn / Thực hành";
+    }
+    return "Sách chuyên khảo";
+  }
+
+  if (kind === KINDS.OTHER_BOOK) {
+    if (hasAny(text, ["biography", "memoir", "autobiography", "tieu su", "hoi ky", "life of"])) {
+      return "Hồi ký / Tiểu sử";
+    }
+    if (hasAny(text, ["art ", "music", "cooking", "cookery", "recipe", "photography", "architecture", "nghe thuat", "am thuc", "nau an", "nhiep anh", "khoe dep", "lifestyle", "gardening"])) {
+      return "Nghệ thuật / Đời sống";
+    }
+    if (hasAny(text, ["self-help", "ky nang", "giao tiep", "quan ly thoi gian", "tam ly hoc hanh vi", "psychology", "leadership", "success", "motivate"])) {
+      return "Phát triển bản thân / Kỹ năng sống";
+    }
+    return "Văn học / Tiểu thuyết";
+  }
+
+  if (kind === KINDS.MAGAZINE) {
+    if (hasAny(text, ["khoa hoc", "chuyen nganh", "science", "technology", "journal", "academic", "research"])) {
+      return "Tạp chí Khoa học & Chuyên ngành";
+    }
+    if (hasAny(text, ["kinh te", "xa hoi", "forbes", "business", "economy", "nhip cau", "kien truc", "society"])) {
+      return "Tạp chí Kinh tế / Xã hội";
+    }
+    return "Báo giấy thường nhật / Báo tuần";
+  }
+
+  if (kind === KINDS.RESEARCH) {
+    if (hasAny(text, ["proceedings", "conference", "ky yeu", "hoi thao", "workshop"])) {
+      return "Kỷ yếu hội thảo (Conference Proceedings)";
+    }
+    if (hasAny(text, ["quoc te", "international", "isi", "scopus", "ieee", "springer"])) {
+      return "Bài báo khoa học quốc tế";
+    }
+    if (hasAny(text, ["thesis", "dissertation", "luan van", "luan an", "khoa luan", "do an"])) {
+      return "Luận văn / Luận án";
+    }
+    return "Báo cáo khoa học / Đề tài NCKH";
+  }
+
   return "Khác";
 }
 
@@ -317,25 +422,29 @@ function normalizeSourceDocument(documentItem) {
     extra: { ...(documentItem.extra || {}) }
   };
   normalized.kind = sourceKind(documentItem);
-  const sourceSubtype = sourceOtherBookType(normalized);
+  const sourceSubtype = classifySubtype(normalized.kind, normalized);
 
   if (normalized.kind === KINDS.TEXTBOOK) {
     normalized.extra.maMonHoc = normalized.extra.maMonHoc || "TVS";
-    normalized.extra.boMon = normalized.extra.boMon
-      || (normalized.category && normalized.category !== "English public domain" ? normalized.category : sourceSubtype)
-      || "Giáo trình";
+    normalized.extra.boMon = normalized.extra.boMon || sourceSubtype || "Giáo trình Chuyên ngành";
   } else if (normalized.kind === KINDS.REFERENCE) {
+    normalized.extra.referenceSubtype = sourceSubtype || "Sách chuyên khảo";
     normalized.category = normalized.category && normalized.category !== "English public domain"
       ? normalized.category
-      : sourceSubtype || "Tài liệu tham khảo";
+      : normalized.extra.referenceSubtype;
   } else if (normalized.kind === KINDS.OTHER_BOOK) {
-    normalized.extra.loaiSachKhac = sourceSubtype;
+    normalized.extra.loaiSachKhac = sourceSubtype || "Văn học / Tiểu thuyết";
   } else if (normalized.kind === KINDS.MAGAZINE) {
+    normalized.extra.magazineSubtype = sourceSubtype || "Báo giấy thường nhật / Báo tuần";
+    normalized.category = normalized.category && normalized.category !== "English public domain"
+      ? normalized.category
+      : normalized.extra.magazineSubtype;
     normalized.extra.soPhatHanh = normalized.extra.soPhatHanh || 1;
     normalized.extra.thangPhatHanh = normalized.extra.thangPhatHanh || 1;
   } else if (normalized.kind === KINDS.RESEARCH) {
     normalized.extra.coQuanChuQuan = normalized.extra.coQuanChuQuan || normalized.publisher || "Nguồn catalog";
-    normalized.extra.linhVuc = normalized.extra.linhVuc || normalized.category || "Nghiên cứu";
+    normalized.extra.researchSubtype = sourceSubtype || "Báo cáo khoa học / Đề tài NCKH";
+    normalized.extra.linhVuc = normalized.extra.researchSubtype;
   }
 
   normalized.fileName = "";
@@ -381,16 +490,38 @@ function readImageAsThumb(file, maxSize = 480) {
   });
 }
 
-function extraFieldsMarkup(kind) {
+function extraFieldsMarkup(kind, prefix = "") {
   if (kind === KINDS.TEXTBOOK) {
     return `
-      <label>Mã môn học <input name="maMonHoc" required></label>
-      <label>Bộ môn <input name="boMon" required></label>
+      <label>Phân loại Giáo trình (Khoa)
+        <select name="boMon" id="${prefix}FacultySelect" required>
+          <option value="Giáo trình Đại cương">Giáo trình Đại cương</option>
+          <option value="Giáo trình Chuyên ngành">Giáo trình Chuyên ngành</option>
+          <option value="Giáo trình Khoa học ứng dụng">Giáo trình Khoa học ứng dụng</option>
+          <option value="Giáo trình Ngoại ngữ">Giáo trình Ngoại ngữ</option>
+          <option value="Khác">Khác</option>
+        </select>
+      </label>
+      <label>Môn học (Bộ môn)
+        <input name="maMonHoc" id="${prefix}SubjectInput" list="${prefix}SubjectDatalist" placeholder="Chọn hoặc nhập môn học (VD: Toán cao cấp)" required autocomplete="off">
+        <datalist id="${prefix}SubjectDatalist"></datalist>
+      </label>
+    `;
+  }
+  if (kind === KINDS.REFERENCE) {
+    const subtypes = defaultSubtypesForKind(kind).filter((t) => t !== "Khác");
+    return `
+      <label>Phân loại Sách tham khảo
+        <select name="referenceSubtype" required>
+          ${subtypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}
+          <option value="Khác">Khác</option>
+        </select>
+      </label>
     `;
   }
   if (kind === KINDS.OTHER_BOOK) {
     return `
-      <label>Loại sách khác
+      <label>Phân loại Sách khác
         <select name="loaiSachKhac" required>
           ${otherBookTypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}
         </select>
@@ -398,7 +529,14 @@ function extraFieldsMarkup(kind) {
     `;
   }
   if (kind === KINDS.MAGAZINE) {
+    const subtypes = defaultSubtypesForKind(kind).filter((t) => t !== "Khác");
     return `
+      <label>Phân loại Báo/Tạp chí
+        <select name="magazineSubtype" required>
+          ${subtypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}
+          <option value="Khác">Khác</option>
+        </select>
+      </label>
       <div class="form-grid">
         <label>Số phát hành <input name="soPhatHanh" type="number" min="1" value="1" required></label>
         <label>Tháng phát hành <input name="thangPhatHanh" type="number" min="1" max="12" value="1" required></label>
@@ -406,9 +544,15 @@ function extraFieldsMarkup(kind) {
     `;
   }
   if (kind === KINDS.RESEARCH) {
+    const subtypes = defaultSubtypesForKind(kind).filter((t) => t !== "Khác");
     return `
+      <label>Phân loại Nghiên cứu
+        <select name="researchSubtype" required>
+          ${subtypes.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("")}
+          <option value="Khác">Khác</option>
+        </select>
+      </label>
       <label>Cơ quan chủ quản <input name="coQuanChuQuan" required></label>
-      <label>Lĩnh vực <input name="linhVuc" required></label>
     `;
   }
   return "";
@@ -419,14 +563,18 @@ function buildExtra(kind, data) {
   if (kind === KINDS.TEXTBOOK) {
     extra.maMonHoc = data.maMonHoc;
     extra.boMon = data.boMon;
+  } else if (kind === KINDS.REFERENCE) {
+    extra.referenceSubtype = data.referenceSubtype;
   } else if (kind === KINDS.OTHER_BOOK) {
     extra.loaiSachKhac = data.loaiSachKhac;
   } else if (kind === KINDS.MAGAZINE) {
     extra.soPhatHanh = Number(data.soPhatHanh);
     extra.thangPhatHanh = Number(data.thangPhatHanh);
+    extra.magazineSubtype = data.magazineSubtype;
   } else if (kind === KINDS.RESEARCH) {
     extra.coQuanChuQuan = data.coQuanChuQuan;
-    extra.linhVuc = data.linhVuc;
+    extra.researchSubtype = data.researchSubtype;
+    extra.linhVuc = data.researchSubtype;
   }
   return extra;
 }
@@ -678,19 +826,19 @@ function documentDetail(documentItem) {
 
 function documentSubtypeLabel(documentItem) {
   if (documentItem.kind === KINDS.TEXTBOOK) {
-    return documentItem.extra.boMon || documentItem.category || "Khác";
+    return documentItem.extra?.boMon || documentItem.category || "Khác";
   }
   if (documentItem.kind === KINDS.REFERENCE) {
-    return documentItem.category || "Khác";
+    return documentItem.extra?.referenceSubtype || documentItem.category || "Khác";
   }
   if (documentItem.kind === KINDS.OTHER_BOOK) {
-    return documentItem.extra.loaiSachKhac || documentItem.category || "Khác";
+    return documentItem.extra?.loaiSachKhac || documentItem.category || "Khác";
   }
   if (documentItem.kind === KINDS.MAGAZINE) {
-    return documentItem.category || "Báo/tạp chí";
+    return documentItem.extra?.magazineSubtype || documentItem.category || "Báo/tạp chí";
   }
   if (documentItem.kind === KINDS.RESEARCH) {
-    return documentItem.extra.linhVuc || documentItem.category || "Nghiên cứu";
+    return documentItem.extra?.researchSubtype || documentItem.extra?.linhVuc || documentItem.category || "Nghiên cứu";
   }
   return documentItem.category || "Khác";
 }
@@ -720,16 +868,16 @@ function documentTopicValues(documentItem, includePreview = false) {
     return [extra.boMon, extra.maMonHoc, documentItem.category, ...preview].filter(Boolean);
   }
   if (documentItem.kind === KINDS.REFERENCE) {
-    return [documentItem.category, extra.boMon, extra.linhVuc, extra.loaiSachKhac, ...preview].filter(Boolean);
+    return [extra.referenceSubtype, documentItem.category, extra.boMon, extra.linhVuc, extra.loaiSachKhac, ...preview].filter(Boolean);
   }
   if (documentItem.kind === KINDS.OTHER_BOOK) {
     return [extra.loaiSachKhac, documentItem.category, ...preview].filter(Boolean);
   }
   if (documentItem.kind === KINDS.MAGAZINE) {
-    return [documentItem.category, extra.soPhatHanh && `Số ${extra.soPhatHanh}`, extra.thangPhatHanh && `Tháng ${extra.thangPhatHanh}`, ...preview].filter(Boolean);
+    return [extra.magazineSubtype, documentItem.category, extra.soPhatHanh && `Số ${extra.soPhatHanh}`, extra.thangPhatHanh && `Tháng ${extra.thangPhatHanh}`, ...preview].filter(Boolean);
   }
   if (documentItem.kind === KINDS.RESEARCH) {
-    return [extra.linhVuc, extra.coQuanChuQuan, documentItem.category, ...preview].filter(Boolean);
+    return [extra.researchSubtype || extra.linhVuc, extra.coQuanChuQuan, documentItem.category, ...preview].filter(Boolean);
   }
   return [documentSubtypeLabel(documentItem), documentDetail(documentItem), documentItem.category, ...preview].filter(Boolean);
 }
@@ -1158,12 +1306,36 @@ function setPage(pageName) {
   document.querySelector(`[data-page="${nextPage}"]`)?.classList.add("active");
 }
 
+function setupTextbookExtraFieldsEvents(prefix) {
+  const facultySelect = byId(`${prefix}FacultySelect`);
+  const subjectDatalist = byId(`${prefix}SubjectDatalist`);
+  if (!facultySelect || !subjectDatalist) return;
+
+  function updateSubjects() {
+    const faculty = facultySelect.value;
+    const fac = TEXTBOOK_FACULTIES.find((f) => f.name === faculty);
+    const subjects = fac ? fac.subjects : [];
+    subjectDatalist.innerHTML = subjects.map((subj) => `<option value="${escapeHtml(subj)}">`).join("");
+  }
+
+  facultySelect.addEventListener("change", updateSubjects);
+  updateSubjects();
+}
+
 function renderDocumentExtraFields() {
-  byId("documentExtraFields").innerHTML = extraFieldsMarkup(byId("documentKind").value);
+  const kind = byId("documentKind").value;
+  byId("documentExtraFields").innerHTML = extraFieldsMarkup(kind, "document");
+  if (kind === KINDS.TEXTBOOK) {
+    setupTextbookExtraFieldsEvents("document");
+  }
 }
 
 function renderImportExtraFields() {
-  byId("importExtraFields").innerHTML = extraFieldsMarkup(byId("importKind").value);
+  const kind = byId("importKind").value;
+  byId("importExtraFields").innerHTML = extraFieldsMarkup(kind, "import");
+  if (kind === KINDS.TEXTBOOK) {
+    setupTextbookExtraFieldsEvents("import");
+  }
 }
 
 async function handleDocumentSubmit(event) {
@@ -1813,11 +1985,22 @@ function renderDocumentSubtypeOptions() {
   const type = byId("documentTypeFilter")?.value || "all";
   const documents = allDocuments().filter((documentItem) => type === "all" || documentItem.kind === type);
   const availableSubtypes = [...new Set(documents.map(documentTopicLabel).filter(Boolean))];
-  const defaults = type === "all"
-    ? []
-    : defaultSubtypesForKind(type).filter((subtype) => availableSubtypes.includes(subtype));
-  const subtypes = [...new Set([...defaults, ...availableSubtypes])]
-    .sort((a, b) => a.localeCompare(b, "vi"));
+  let subtypes;
+  if (type === "all") {
+    subtypes = [...new Set(availableSubtypes)];
+  } else {
+    const allowedDefaults = defaultSubtypesForKind(type);
+    const otherKindDefaults = new Set(
+      Object.values(KINDS)
+        .filter((k) => k !== type)
+        .flatMap((k) => defaultSubtypesForKind(k))
+    );
+    subtypes = [...new Set([
+      ...allowedDefaults.filter((subtype) => availableSubtypes.includes(subtype)),
+      ...availableSubtypes.filter((subtype) => allowedDefaults.includes(subtype) || !otherKindDefaults.has(subtype))
+    ])];
+  }
+  subtypes.sort((a, b) => a.localeCompare(b, "vi"));
   const label = topicFilterLabel(type);
   const labelElement = byId("documentTopicFilterLabel");
   const searchLabel = byId("documentTopicSearchLabel");

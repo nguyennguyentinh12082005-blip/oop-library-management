@@ -288,7 +288,7 @@ public:
         return nguoiDoc.laSinhVien() ? 15 : 90;
     }
 
-    string chiTiet() const override { return "Sách tra cứu, tham khảo chuyên ngành"; }
+    string chiTiet() const override { return theLoai.empty() ? "Sách tra cứu, tham khảo chuyên ngành" : theLoai; }
 };
 
 class SachKhac : public TaiLieu {
@@ -446,15 +446,15 @@ public:
 
         taiLieus.them(make_shared<GiaoTrinh>("GT001", "Lập trình hướng đối tượng C++", "Trần Văn Tuấn",
                                              "NXB Giáo Dục", "Công nghệ thông tin", 2024, 8,
-                                             "OOP101", "Khoa học máy tính"));
+                                             "Lập trình Hướng đối tượng (C++)", "Giáo trình Chuyên ngành"));
         taiLieus.them(make_shared<SachThamKhao>("TK001", "Cấu trúc dữ liệu và giải thuật", "Nguyễn Đức Nghĩa",
-                                                "NXB Đại học Quốc gia", "Công nghệ thông tin", 2023, 5));
+                                                "NXB Đại học Quốc gia", "Sách chuyên khảo", 2023, 5));
         taiLieus.them(make_shared<SachKhac>("SK001", "Kỹ năng học tập đại học", "Nhiều tác giả",
-                                            "NXB Trẻ", "Kỹ năng", 2022, 4, "Kỹ năng sống"));
+                                            "NXB Trẻ", "Kỹ năng", 2022, 4, "Phát triển bản thân / Kỹ năng sống"));
         taiLieus.them(make_shared<BaoTapChi>("BC001", "Tạp chí Khoa học Trẻ", "Tòa soạn",
-                                             "NXB Trẻ", "Tạp chí", 2026, 12, 6, 6));
+                                             "NXB Trẻ", "Tạp chí Khoa học & Chuyên ngành", 2026, 12, 6, 6));
         taiLieus.them(make_shared<BaiNghienCuu>("NC001", "Ứng dụng AI trong thư viện", "Nhóm nghiên cứu A",
-                                                "HUTECH", "Trí tuệ nhân tạo", 2025, 2, "HUTECH", "AI"));
+                                                "HUTECH", "Báo cáo khoa học / Đề tài NCKH", 2025, 2, "HUTECH", "Báo cáo khoa học / Đề tài NCKH"));
 
         thongBao = "Đã nạp lại dữ liệu mẫu.";
     }
@@ -692,18 +692,30 @@ string renderPage(const LibrarySystem &system) {
          << "<label>Tác giả<input name='tacGia' required></label>"
          << "<label>Nhà xuất bản<input name='nhaXuatBan' required></label>"
          << "<label>Thể loại<input name='theLoai' required></label>"
-         << "<div class='form-grid'><label>Mã môn học<input name='maMonHoc' placeholder='Dùng cho giáo trình'></label>"
-         << "<label>Bộ môn<input name='boMon' placeholder='Dùng cho giáo trình'></label></div>"
-         << "<label>Loại sách khác<select name='loaiSachKhac'>"
-         << option("Văn học", "Văn học") << option("Kỹ năng sống", "Kỹ năng sống")
-         << option("Ngoại ngữ", "Ngoại ngữ") << option("Truyện", "Truyện")
-         << option("Khoa học phổ thông", "Khoa học phổ thông") << option("Lịch sử - địa lý", "Lịch sử - địa lý")
+         << "<div class='form-grid'><label>Môn học (Bộ môn)<input name='maMonHoc' placeholder='VD: Lập trình Hướng đối tượng (C++)'></label>"
+         << "<label>Phân loại / Khoa<input name='boMon' placeholder='VD: Giáo trình Chuyên ngành'></label></div>"
+         << "<label>Thể loại phụ (Dành cho Sách khác / Sách tham khảo / Báo / Nghiên cứu)<select name='loaiSachKhac'>"
+         << option("Văn học / Tiểu thuyết", "Văn học / Tiểu thuyết")
+         << option("Phát triển bản thân / Kỹ năng sống", "Phát triển bản thân / Kỹ năng sống")
+         << option("Hồi ký / Tiểu sử", "Hồi ký / Tiểu sử")
+         << option("Nghệ thuật / Đời sống", "Nghệ thuật / Đời sống")
+         << option("Từ điển / Bách khoa toàn thư", "Từ điển / Bách khoa toàn thư")
+         << option("Sách chuyên khảo", "Sách chuyên khảo")
+         << option("Sách hướng dẫn / Thực hành", "Sách hướng dẫn / Thực hành")
+         << option("Sách giải bài tập", "Sách giải bài tập")
+         << option("Tạp chí Khoa học & Chuyên ngành", "Tạp chí Khoa học & Chuyên ngành")
+         << option("Tạp chí Kinh tế / Xã hội", "Tạp chí Kinh tế / Xã hội")
+         << option("Báo giấy thường nhật / Báo tuần", "Báo giấy thường nhật / Báo tuần")
+         << option("Luận văn / Luận án", "Luận văn / Luận án")
+         << option("Báo cáo khoa học / Đề tài NCKH", "Báo cáo khoa học / Đề tài NCKH")
+         << option("Kỷ yếu hội thảo (Conference Proceedings)", "Kỷ yếu hội thảo (Conference Proceedings)")
+         << option("Bài báo khoa học quốc tế", "Bài báo khoa học quốc tế")
          << option("Khác", "Khác") << "</select></label>"
-         << "<div class='form-grid'><label>Số phát hành<input name='soPhatHanh' type='number' value='1'></label>"
-         << "<label>Tháng phát hành<input name='thangPhatHanh' type='number' value='1'></label></div>"
-         << "<div class='form-grid'><label>Cơ quan chủ quản<input name='coQuanChuQuan' placeholder='Dùng cho bài nghiên cứu'></label>"
-         << "<label>Lĩnh vực<input name='linhVuc' placeholder='Dùng cho bài nghiên cứu'></label></div>"
-         << "<button class='submit' type='submit'>Thêm tài liệu</button></form></div></section>";
+          << "<div class='form-grid'><label>Số phát hành<input name='soPhatHanh' type='number' value='1'></label>"
+          << "<label>Tháng phát hành<input name='thangPhatHanh' type='number' value='1'></label></div>"
+          << "<div class='form-grid'><label>Cơ quan chủ quản<input name='coQuanChuQuan' placeholder='VD: HUTECH'></label>"
+          << "<label>Lĩnh vực nghiên cứu<input name='linhVuc' placeholder='VD: Báo cáo khoa học / Đề tài NCKH'></label></div>"
+          << "<button class='submit' type='submit'>Thêm tài liệu</button></form></div></section>";
 
     html << "<section class='grid' id='nguoidoc'><div class='panel'><div class='head'><h2>Danh sách người đọc</h2>"
          << "<span class='count'>" << nguoiDocs.size() << " người</span></div><div class='table-wrap'><table><thead><tr>"

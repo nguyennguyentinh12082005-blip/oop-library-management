@@ -1,4 +1,4 @@
-﻿#include <algorithm>
+#include <algorithm>
 #include <ctime>
 #include <functional>
 #include <iomanip>
@@ -1268,16 +1268,16 @@ void napDuLieuMau(DanhSach<Nguoi> &dsNguoi, DanhSach<NguoiDoc> &dsNguoiDoc, Danh
 
     dsTaiLieu.them(make_shared<GiaoTrinh>("GT001", "Lap trinh huong doi tuong C++", 2024, 8,
                                           "Tran Van Tuan", "NXB Giao Duc", "Cong nghe thong tin",
-                                          "OOP101", "Khoa hoc may tinh"));
+                                          "Lập trình Hướng đối tượng (C++)", "Giáo trình Chuyên ngành"));
     dsTaiLieu.them(make_shared<SachThamKhao>("TK001", "Cau truc du lieu va giai thuat", 2023, 5,
-                                             "Nguyen Duc Nghia", "NXB DHQG", "Cong nghe thong tin"));
+                                             "Nguyen Duc Nghia", "NXB DHQG", "Sách chuyên khảo"));
     dsTaiLieu.them(make_shared<SachKhac>("SK001", "Ky nang hoc tap dai hoc", 2022, 4,
-                                         "Nhieu tac gia", "NXB Tre", "Ky nang", "Ky nang song"));
+                                         "Nhieu tac gia", "NXB Tre", "Ky nang", "Phát triển bản thân / Kỹ năng sống"));
     dsTaiLieu.them(make_shared<BaoTapChi>("BC001", "Tap chi Khoa hoc Tre", 2026, 12,
-                                          "Toa soan", "NXB Tre", "Tap chi", 6, 6));
+                                          "Toa soan", "NXB Tre", "Tạp chí Khoa học & Chuyên ngành", 6, 6));
     dsTaiLieu.them(make_shared<BaiNghienCuu>("NC001", "Ung dung AI trong thu vien", 2025, 2,
-                                             "Nhom nghien cuu A", "HUTECH", "Tri tue nhan tao",
-                                             "HUTECH", "AI"));
+                                             "Nhom nghien cuu A", "HUTECH", "Báo cáo khoa học / Đề tài NCKH",
+                                             "HUTECH", "Báo cáo khoa học / Đề tài NCKH"));
 }
 
 void hienThiMenu() {
