@@ -585,14 +585,78 @@ function buildExtra(kind, data) {
 }
 
 function sampleState() {
+  const accounts = clone(DEFAULT_ACCOUNTS);
+  accounts["staff"] = {
+    password: "staff",
+    role: "staff",
+    name: "Lê Minh Châu",
+    title: "Nhân viên",
+    personId: "NV001"
+  };
+  accounts["sv001"] = {
+    password: "123",
+    role: "reader",
+    name: "Nguyễn Văn An",
+    title: "Sinh viên",
+    readerId: "SV001"
+  };
+  accounts["vc001"] = {
+    password: "123",
+    role: "reader",
+    name: "Trần Thị Bình",
+    title: "Viên chức",
+    readerId: "VC001"
+  };
+
   return {
     counters: {
       loan: 1,
       transaction: 1
     },
-    accounts: clone(DEFAULT_ACCOUNTS),
-    readers: [],
-    staffs: [],
+    accounts,
+    readers: [
+      {
+        id: "SV001",
+        name: "Nguyễn Văn An",
+        type: "Sinh viên",
+        birth: "2004-03-12",
+        gender: "Nam",
+        registered: "2026-01-01",
+        expires: "2026-12-31",
+        phone: "0901000001",
+        address: "TP. Hồ Chí Minh",
+        code: "22110001",
+        borrowed: 0,
+        limit: 5
+      },
+      {
+        id: "VC001",
+        name: "Trần Thị Bình",
+        type: "Viên chức",
+        birth: "1988-08-20",
+        gender: "Nữ",
+        registered: "2026-01-01",
+        expires: "2026-12-31",
+        phone: "0901000002",
+        address: "TP. Hồ Chí Minh",
+        code: "CB2026",
+        borrowed: 0,
+        limit: 10
+      }
+    ],
+    staffs: [
+      {
+        id: "NV001",
+        name: "Lê Minh Châu",
+        birth: "1995-06-05",
+        gender: "Nữ",
+        phone: "0901000003",
+        address: "TP. Hồ Chí Minh",
+        position: "Thủ thư",
+        salary: 9000000,
+        shift: "Sáng"
+      }
+    ],
     admins: [
       {
         id: "AD001",
@@ -605,7 +669,78 @@ function sampleState() {
         permission: "Full"
       }
     ],
-    documents: [],
+    documents: [
+      {
+        id: "GT001",
+        title: "Lập trình hướng đối tượng C++",
+        kind: "Giáo trình",
+        year: 2024,
+        quantity: 8,
+        author: "Trần Văn Tuấn",
+        publisher: "NXB Giáo Dục",
+        category: "Công nghệ thông tin",
+        extra: {
+          maMonHoc: "Lập trình Hướng đối tượng (C++)",
+          boMon: "Giáo trình Chuyên ngành"
+        }
+      },
+      {
+        id: "TK001",
+        title: "Cấu trúc dữ liệu và giải thuật",
+        kind: "Sách tham khảo",
+        year: 2023,
+        quantity: 5,
+        author: "Nguyễn Đức Nghĩa",
+        publisher: "NXB Đại học Quốc gia",
+        category: "Sách chuyên khảo",
+        extra: {
+          referenceSubtype: "Sách chuyên khảo"
+        }
+      },
+      {
+        id: "SK001",
+        title: "Kỹ năng học tập đại học",
+        kind: "Sách khác",
+        year: 2022,
+        quantity: 4,
+        author: "Nhiều tác giả",
+        publisher: "NXB Trẻ",
+        category: "Kỹ năng",
+        extra: {
+          loaiSachKhac: "Phát triển bản thân / Kỹ năng sống"
+        }
+      },
+      {
+        id: "BC001",
+        title: "Tạp chí Khoa học Trẻ",
+        kind: "Báo/tạp chí",
+        year: 2026,
+        quantity: 12,
+        author: "Tòa soạn",
+        publisher: "NXB Trẻ",
+        category: "Tạp chí Khoa học & Chuyên ngành",
+        extra: {
+          soPhatHanh: 6,
+          thangPhatHanh: 6,
+          magazineSubtype: "Tạp chí Khoa học & Chuyên ngành"
+        }
+      },
+      {
+        id: "NC001",
+        title: "Ứng dụng AI trong thư viện",
+        kind: "Bài nghiên cứu",
+        year: 2025,
+        quantity: 2,
+        author: "Nhóm nghiên cứu A",
+        publisher: "HUTECH",
+        category: "Báo cáo khoa học / Đề tài NCKH",
+        extra: {
+          coQuanChuQuan: "HUTECH",
+          researchSubtype: "Báo cáo khoa học / Đề tài NCKH",
+          linhVuc: "Báo cáo khoa học / Đề tài NCKH"
+        }
+      }
+    ],
     loans: [],
     transactions: [],
     seededSources: {}
@@ -615,7 +750,15 @@ function sampleState() {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : sampleState();
+    const loaded = raw ? JSON.parse(raw) : sampleState();
+    if (loaded && Array.isArray(loaded.documents) && loaded.documents.length === 0) {
+      const sample = sampleState();
+      loaded.documents = sample.documents;
+      loaded.readers = sample.readers;
+      loaded.staffs = sample.staffs;
+      loaded.accounts = { ...loaded.accounts, ...sample.accounts };
+    }
+    return loaded;
   } catch {
     return sampleState();
   }
