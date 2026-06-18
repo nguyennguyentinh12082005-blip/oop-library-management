@@ -2,6 +2,12 @@
 
 Dự án quản lý thư viện cho bài cuối kỳ Lập trình hướng đối tượng. Repo gồm ba phần: ứng dụng console C++ (`main.cpp`), web server C++ trên Winsock (`web_server.cpp`), và bản web tĩnh trong thư mục `web/` chạy trên trình duyệt bằng `localStorage` với workflow deploy tự động lên GitHub Pages.
 
+## 🔗 Xem web trực tiếp
+
+**👉 https://nguyennguyentinh12082005-blip.github.io/oop-library-management/**
+
+Mở link trên trình duyệt để dùng app ngay mà không cần cài đặt gì. Đăng nhập bằng tài khoản admin mặc định (`admin` / `admin`) hoặc bấm **Đăng ký độc giả** để tạo tài khoản mới.
+
 ## Cấu trúc dự án
 
 ```text
