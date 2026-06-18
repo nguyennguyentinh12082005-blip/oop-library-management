@@ -1,28 +1,28 @@
 # OOP Library Management
 
-Du an quan ly thu vien cho bai cuoi ky Lap trinh huong doi tuong. Repo gom ba phan: ung dung console C++ (`main.cpp`), web server C++ tren Winsock (`web_server.cpp`), va ban web tinh trong thu muc `web/` chay tren trinh duyet bang `localStorage` voi workflow deploy tu dong len GitHub Pages.
+Dự án quản lý thư viện cho bài cuối kỳ Lập trình hướng đối tượng. Repo gồm ba phần: ứng dụng console C++ (`main.cpp`), web server C++ trên Winsock (`web_server.cpp`), và bản web tĩnh trong thư mục `web/` chạy trên trình duyệt bằng `localStorage` với workflow deploy tự động lên GitHub Pages.
 
-## Cau truc du an
+## Cấu trúc dự án
 
 ```text
 TL CK/
-├── main.cpp                 # Ung dung console C++ (cac lop OOP: Date, Document, Reader, ...)
-├── web_server.cpp           # Web server C++ dung Winsock (chi chay tren Windows)
-├── web/                     # Ban web tinh (HTML/CSS/JS) chay bang localStorage
+├── main.cpp                 # Ứng dụng console C++ (các lớp OOP: Date, Document, Reader, ...)
+├── web_server.cpp           # Web server C++ dùng Winsock (chỉ chạy trên Windows)
+├── web/                     # Bản web tĩnh (HTML/CSS/JS) chạy bằng localStorage
 │   ├── index.html
 │   ├── app.js
 │   ├── styles.css
-│   └── gutenberg-catalog.js # Du lieu sach mau tu Project Gutenberg
-├── scripts/                 # Script Python/Node ho tro (build catalog, bao cao, so do)
-├── .github/workflows/       # GitHub Actions deploy len GitHub Pages
+│   └── gutenberg-catalog.js # Dữ liệu sách mẫu từ Project Gutenberg
+├── scripts/                 # Script Python/Node hỗ trợ (build catalog, báo cáo, sơ đồ)
+├── .github/workflows/       # GitHub Actions deploy lên GitHub Pages
 └── README.md
 ```
 
-## Build va chay phan C++
+## Build và chạy phần C++
 
-Yeu cau co trinh bien dich C++ (g++/MinGW hoac MSVC) ho tro C++17.
+Yêu cầu có trình biên dịch C++ (g++/MinGW hoặc MSVC) hỗ trợ C++17.
 
-### Ung dung console
+### Ứng dụng console
 
 ```powershell
 g++ -std=c++17 -O2 main.cpp -o library.exe
@@ -31,97 +31,127 @@ g++ -std=c++17 -O2 main.cpp -o library.exe
 
 ### Web server C++ (Windows)
 
-`web_server.cpp` dung Winsock nen can link them `ws2_32`:
+`web_server.cpp` dùng Winsock nên cần link thêm `ws2_32`:
 
 ```powershell
 g++ -std=c++17 -O2 web_server.cpp -o library_web.exe -lws2_32
 .\library_web.exe
 ```
 
-## Cach chay web local
+## Cách chạy web local
 
-Chay static server trong thu muc `web`:
+Chạy static server trong thư mục `web`:
 
 ```powershell
 cd "E:\LTHDT_OOP\TL CK\web"
 python -m http.server 4173
 ```
 
-Mo trinh duyet tai:
+Mở trình duyệt tại:
 
 ```text
 http://127.0.0.1:4173/index.html
 ```
 
-## Tai khoan mac dinh
+## Tài khoản mặc định
 
-- Quan tri vien: `admin`
-- Mat khau: `admin`
+- Quản trị viên: `admin`
+- Mật khẩu: `admin`
 
-Doc gia co the tu dang ky tai man hinh **Dang ky doc gia**. Admin co the tao ho so doc gia, nhan vien, va quan tri vien trong muc **Con nguoi**.
+Độc giả có thể tự đăng ký tại màn hình **Đăng ký độc giả**. Admin có thể tạo hồ sơ độc giả, nhân viên, và quản trị viên trong mục **Con người**.
 
-## Cac thay doi da lam
+## Hướng dẫn sử dụng
 
-### Phan quyen doc gia
+### Đăng nhập
 
-- Doc gia chi thay duoc hai trang: **Trang doc gia** va **Tai lieu**.
-- An trang/nut **Muon / Tra** voi tai khoan doc gia.
-- Chan cung cac form quan ly neu doc gia co gang submit bang devtools.
-- Cac hanh dong bi chan gom: them tai lieu, them doc gia/nhan vien/admin, muon, tra, nhap, xuat, cap nhat file sach.
+1. Mở app tại `http://127.0.0.1:4173/index.html`.
+2. Đăng nhập bằng tài khoản admin mặc định (`admin` / `admin`), hoặc bấm **Đăng ký độc giả** để tạo tài khoản độc giả mới.
+3. Sau khi đăng nhập, menu bên trái sẽ hiển thị các trang tương ứng với quyền của tài khoản.
 
-### Trang doc gia
+### Dành cho quản trị viên / nhân viên
 
-- Them bang **Sach trong thu vien** vao trang doc gia.
-- Doc gia xem duoc sach/tai lieu con so luong trong kho.
-- Bang hien thi ma sach, ten sach, loai, so luong, va trang thai:
-  - `Muon qua thu thu` voi sach co the muon.
-  - `Doc tai cho` voi bao/tap chi hoac bai nghien cuu.
-- Doc gia van xem duoc danh sach tai lieu dang muon va lich su giao dich cua minh.
+- **Tài liệu**: thêm, sửa, xóa sách; tìm kiếm và lọc theo loại (giáo trình, sách tham khảo, sách khác, báo/tạp chí, bài nghiên cứu) và theo chủ đề.
+- **Con người**: tạo hồ sơ độc giả, nhân viên, quản trị viên; tạo tài khoản đăng nhập kèm username/password.
+- **Mượn / Trả**: ghi nhận mượn sách, trả sách; hệ thống tự cập nhật số lượng còn trong kho.
+- **Nhập / Xuất**: nhập thêm số lượng tài liệu vào kho hoặc xuất tài liệu khỏi kho.
+- Có thể xem lịch sử giao dịch để theo dõi hoạt động mượn/trả.
 
-### Tim kiem va loc sach theo chu de
+### Dành cho độc giả
 
-- Cai tien man hinh **Tai lieu** de tim kiem dung hon theo tung loai sach.
-- Bo loc **Chu de theo loai** tu doi noi dung theo loai tai lieu dang chon:
-  - **Giao trinh**: loc theo bo mon, ma mon hoc, ten mon.
-  - **Sach tham khao**: loc theo chu de/nganh/lĩnh vực tham khao.
-  - **Sach khac**: loc theo the loai nhu truyen, van hoc, ky nang, ngoai ngu.
-  - **Bao/tap chi**: loc theo bao, tap chi, so phat hanh, thang.
-  - **Bai nghien cuu**: loc theo linh vuc nghien cuu, co quan chu quan.
-- Them o **Tim trong chu de** de tim sau trong chu de/mo ta cua tai lieu, rieng voi o tim chung theo ma, ten, tac gia.
+- **Trang độc giả**: xem bảng **Sách trong thư viện** (các tài liệu còn số lượng), danh sách tài liệu đang mượn, và lịch sử giao dịch của mình.
+- **Tài liệu**: tra cứu, tìm kiếm và lọc tài liệu theo loại/chủ đề.
+- Trạng thái mỗi tài liệu:
+  - `Mượn qua thủ thư` — sách có thể mượn, liên hệ thủ thư để mượn.
+  - `Đọc tại chỗ` — báo/tạp chí hoặc bài nghiên cứu, chỉ đọc tại thư viện.
+- Độc giả không thể tự thêm/sửa tài liệu hay tự mượn/trả; các thao tác này do nhân viên/admin thực hiện.
 
-### Tao tai khoan doc gia
+### Mẹo
 
-- Sua loi admin/nhan vien tao nguoi doc nhung khong tao duoc tai khoan dang nhap.
-- Form **Dang ky nguoi doc** trong trang quan ly nay da tao luon account role `reader` tu username/password.
-- Sua luong dang ky cong khai:
-  - Dang ky doc gia xong tu dong dang nhap vao app.
-  - Neu ho so doc gia da ton tai nhung chua co account, he thong tao account cho ho so do.
-  - Neu ma doc gia da co account, he thong bao ma doc gia da ton tai.
+- Dùng ô **Tìm trong chủ đề** để tìm sâu theo chủ đề/mô tả, khác với ô tìm chung theo mã, tên, tác giả.
+- Dữ liệu lưu trong `localStorage` của trình duyệt; xóa dữ liệu trình duyệt sẽ đưa app về trạng thái mẫu ban đầu.
 
-### Anh bia sach
+## Các thay đổi đã làm
 
-- Du lieu Project Gutenberg trong `web/gutenberg-catalog.js` khong co anh bia that (`coverImage` rong).
-- App tu lay anh bia that tu Project Gutenberg bang `gutenbergId` theo mau URL `https://www.gutenberg.org/cache/epub/{id}/pg{id}.cover.medium.jpg`.
-- Neu Project Gutenberg khong co anh bia hoac anh bi loi, app fallback ve bia gia.
-- Bia gia hien thi ten sach rut gon thay vi chi hien ma `TVS...`.
-- Ma `TVS...` van duoc hien nho o dong phu de nguoi dung biet ma tai lieu.
+### Phân quyền độc giả
 
-### Man hinh dang nhap
+- Độc giả chỉ thấy được hai trang: **Trang độc giả** và **Tài liệu**.
+- Ẩn trang/nút **Mượn / Trả** với tài khoản độc giả.
+- Chặn cứng các form quản lý nếu độc giả cố gắng submit bằng devtools.
+- Các hành động bị chặn gồm: thêm tài liệu, thêm độc giả/nhân viên/admin, mượn, trả, nhập, xuất, cập nhật file sách.
 
-- Sua loi khung dang nhap bi tran va hien thanh cuon ngang/doc.
-- Giam kich thuoc logo va padding cua card dang nhap.
-- Them responsive cho man hinh nho/thap.
-- An phan goi y tai khoan khi man hinh thap de form dang nhap gon hon.
+### Trang độc giả
 
-### Kiem tra da thuc hien
+- Thêm bảng **Sách trong thư viện** vào trang độc giả.
+- Độc giả xem được sách/tài liệu còn số lượng trong kho.
+- Bảng hiển thị mã sách, tên sách, loại, số lượng, và trạng thái:
+  - `Mượn qua thủ thư` với sách có thể mượn.
+  - `Đọc tại chỗ` với báo/tạp chí hoặc bài nghiên cứu.
+- Độc giả vẫn xem được danh sách tài liệu đang mượn và lịch sử giao dịch của mình.
 
-- Chay `node --check web\app.js` de kiem tra cu phap JavaScript.
-- Test luong admin tao doc gia co username/password, dang xuat, dang nhap bang tai khoan doc gia.
-- Test doc gia chi thay **Trang doc gia** va **Tai lieu**.
-- Test bang **Sach trong thu vien** render danh sach tai lieu con trong kho.
+### Tìm kiếm và lọc sách theo chủ đề
+
+- Cải tiến màn hình **Tài liệu** để tìm kiếm đúng hơn theo từng loại sách.
+- Bộ lọc **Chủ đề theo loại** tự đổi nội dung theo loại tài liệu đang chọn:
+  - **Giáo trình**: lọc theo bộ môn, mã môn học, tên môn.
+  - **Sách tham khảo**: lọc theo chủ đề/ngành/lĩnh vực tham khảo.
+  - **Sách khác**: lọc theo thể loại như truyện, văn học, kỹ năng, ngoại ngữ.
+  - **Báo/tạp chí**: lọc theo báo, tạp chí, số phát hành, tháng.
+  - **Bài nghiên cứu**: lọc theo lĩnh vực nghiên cứu, cơ quan chủ quản.
+- Thêm ô **Tìm trong chủ đề** để tìm sâu trong chủ đề/mô tả của tài liệu, riêng với ô tìm chung theo mã, tên, tác giả.
+
+### Tạo tài khoản độc giả
+
+- Sửa lỗi admin/nhân viên tạo người đọc nhưng không tạo được tài khoản đăng nhập.
+- Form **Đăng ký người đọc** trong trang quản lý này đã tạo luôn account role `reader` từ username/password.
+- Sửa luồng đăng ký công khai:
+  - Đăng ký độc giả xong tự động đăng nhập vào app.
+  - Nếu hồ sơ độc giả đã tồn tại nhưng chưa có account, hệ thống tạo account cho hồ sơ đó.
+  - Nếu mã độc giả đã có account, hệ thống báo mã độc giả đã tồn tại.
+
+### Ảnh bìa sách
+
+- Dữ liệu Project Gutenberg trong `web/gutenberg-catalog.js` không có ảnh bìa thật (`coverImage` rỗng).
+- App tự lấy ảnh bìa thật từ Project Gutenberg bằng `gutenbergId` theo mẫu URL `https://www.gutenberg.org/cache/epub/{id}/pg{id}.cover.medium.jpg`.
+- Nếu Project Gutenberg không có ảnh bìa hoặc ảnh bị lỗi, app fallback về bìa giả.
+- Bìa giả hiển thị tên sách rút gọn thay vì chỉ hiển mã `TVS...`.
+- Mã `TVS...` vẫn được hiển nhỏ ở dòng phụ để người dùng biết mã tài liệu.
+
+### Màn hình đăng nhập
+
+- Sửa lỗi khung đăng nhập bị tràn và hiện thanh cuộn ngang/dọc.
+- Giảm kích thước logo và padding của card đăng nhập.
+- Thêm responsive cho màn hình nhỏ/thấp.
+- Ẩn phần gợi ý tài khoản khi màn hình thấp để form đăng nhập gọn hơn.
+
+### Kiểm tra đã thực hiện
+
+- Chạy `node --check web\app.js` để kiểm tra cú pháp JavaScript.
+- Test luồng admin tạo độc giả có username/password, đăng xuất, đăng nhập bằng tài khoản độc giả.
+- Test độc giả chỉ thấy **Trang độc giả** và **Tài liệu**.
+- Test bảng **Sách trong thư viện** render danh sách tài liệu còn trong kho.
 
 ## Deploy
 
-Repo co workflow `.github/workflows/deploy.yml`. Khi push len nhanh `main`, GitHub Actions se deploy thu muc `web/` len GitHub Pages.
+Repo có workflow `.github/workflows/deploy.yml`. Khi push lên nhánh `main`, GitHub Actions sẽ deploy thư mục `web/` lên GitHub Pages.
 
-Neu can deploy lai thu cong, vao tab **Actions** tren GitHub, chon **Deploy to GitHub Pages**, roi bam **Run workflow**.
+Nếu cần deploy lại thủ công, vào tab **Actions** trên GitHub, chọn **Deploy to GitHub Pages**, rồi bấm **Run workflow**.
