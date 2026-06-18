@@ -1,6 +1,42 @@
 # OOP Library Management
 
-Du an quan ly thu vien cho bai cuoi ky Lap trinh huong doi tuong. Repo co ban web tinh trong thu muc `web/`, du lieu mau chay tren trinh duyet bang `localStorage`, va workflow deploy tu dong len GitHub Pages.
+Du an quan ly thu vien cho bai cuoi ky Lap trinh huong doi tuong. Repo gom ba phan: ung dung console C++ (`main.cpp`), web server C++ tren Winsock (`web_server.cpp`), va ban web tinh trong thu muc `web/` chay tren trinh duyet bang `localStorage` voi workflow deploy tu dong len GitHub Pages.
+
+## Cau truc du an
+
+```text
+TL CK/
+├── main.cpp                 # Ung dung console C++ (cac lop OOP: Date, Document, Reader, ...)
+├── web_server.cpp           # Web server C++ dung Winsock (chi chay tren Windows)
+├── web/                     # Ban web tinh (HTML/CSS/JS) chay bang localStorage
+│   ├── index.html
+│   ├── app.js
+│   ├── styles.css
+│   └── gutenberg-catalog.js # Du lieu sach mau tu Project Gutenberg
+├── scripts/                 # Script Python/Node ho tro (build catalog, bao cao, so do)
+├── .github/workflows/       # GitHub Actions deploy len GitHub Pages
+└── README.md
+```
+
+## Build va chay phan C++
+
+Yeu cau co trinh bien dich C++ (g++/MinGW hoac MSVC) ho tro C++17.
+
+### Ung dung console
+
+```powershell
+g++ -std=c++17 -O2 main.cpp -o library.exe
+.\library.exe
+```
+
+### Web server C++ (Windows)
+
+`web_server.cpp` dung Winsock nen can link them `ws2_32`:
+
+```powershell
+g++ -std=c++17 -O2 web_server.cpp -o library_web.exe -lws2_32
+.\library_web.exe
+```
 
 ## Cach chay web local
 
