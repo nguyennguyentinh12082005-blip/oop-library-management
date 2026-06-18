@@ -323,26 +323,25 @@ function sourceKind(documentItem) {
   const title = plainText(documentItem.title || "");
   const category = plainText(`${documentItem.kind || ""} ${documentItem.category || ""} ${documentItem.extra?.linhVuc || ""} ${documentItem.extra?.boMon || ""}`);
 
+  // 1. Explicit checks (highest priority)
   if (hasAny(category, ["tap chi", "bao/tap chi", "ky yeu", "hoi thao", "magazine", "newspaper", "journal"])) return KINDS.MAGAZINE;
   if (hasAny(category, ["giao trinh", "textbook"]) || title.startsWith("giao trinh ")) return KINDS.TEXTBOOK;
   if (hasAny(category, ["tham khao", "reference", "tra cuu"])) return KINDS.REFERENCE;
   if (hasAny(category, ["nghien cuu", "luan van", "luan an", "do an", "khoa luan", "bc nghien cuu", "thesis", "dissertation", "paper", "proceeding"])) return KINDS.RESEARCH;
 
-  if (hasAny(text, ["truyen", "fiction", "novel", "stories", "story", "fairy", "adventure", "children", "poetry", "poems", "drama", "plays", "literature", "van hoc", "essays", "classic"])) {
-    return KINDS.OTHER_BOOK;
-  }
-
-  if (hasAny(text, ["journal", "magazine", "periodical", "newspaper"])) return KINDS.MAGAZINE;
-  if (hasAny(text, ["thesis", "dissertation", "research paper", "proceedings"])) return KINDS.RESEARCH;
-
-  if (hasAny(text, ["textbook", "course", "lecture", "exposition of", "introduction to", "principles of", "elements of", "handbook of", "mathematics", "calculus", "algebra", "physics", "chemistry", "biology", "astronomy", "anatomy", "physiology", "mechanics", "engineering", "programming"])) {
+  // 2. High priority keyword checks for academic/scholarly categories
+  if (hasAny(text, ["journal", "magazine", "periodical", "newspaper", "bulletin", "weekly", "monthly"])) return KINDS.MAGAZINE;
+  if (hasAny(text, ["thesis", "dissertation", "research paper", "proceedings", "transactions of", "scientific report"])) return KINDS.RESEARCH;
+  
+  if (hasAny(text, ["textbook", "course", "lecture", "exposition of", "principles of", "elements of", "mathematics", "calculus", "algebra", "physics", "chemistry", "biology", "astronomy", "anatomy", "physiology", "mechanics", "engineering", "programming"])) {
     return KINDS.TEXTBOOK;
   }
 
-  if (hasAny(text, ["dictionary", "encyclopedia", "manual", "guide", "handbook", "primer", "grammar", "law", "legal", "constitution", "history", "biography", "memoir", "directory"])) {
+  if (hasAny(text, ["dictionary", "encyclopedia", "manual", "guide", "handbook", "primer", "grammar", "law", "legal", "constitution", "directory"])) {
     return KINDS.REFERENCE;
   }
 
+  // 3. Fallback to OTHER_BOOK
   return KINDS.OTHER_BOOK;
 }
 
@@ -350,55 +349,61 @@ function classifySubtype(kind, documentItem) {
   const text = sourceText(documentItem);
 
   if (kind === KINDS.TEXTBOOK) {
-    if (hasAny(text, ["ngoai ngu", "ngon ngu", "language", "grammar", "english", "french", "german", "spanish", "chinese", "japanese", "vietnamese", "han ngu"])) {
-      return "Giáo trình Ngoại ngữ";
+    if (hasAny(text, ["anatomy", "physiology", "mechanics", "engineering", "programming", "accounting", "economics", "medical", "nursing", "pathology", "disease", "clinical", "machinery", "geology", "agriculture", "law", "legal", "constitution"])) {
+      return "Giáo trình Chuyên ngành";
     }
-    if (hasAny(text, ["ai ", "artificial intelligence", "applied", "ung dung", "technology", "electronics", "robotic", "automation", "software engineering", "cong nghe phan mem", "thiet ke may"])) {
+    if (hasAny(text, ["toan", "dai so", "giai tich", "xac suat", "triet", "mac", "lenin", "vat ly dai cuong", "hoa hoc dai cuong", "sinh hoc dai cuong", "mathematics", "calculus", "algebra", "physics", "chemistry", "philosophy", "basic", "general", "introduction", "geometry", "arithmetic"])) {
+      return "Giáo trình Đại cương";
+    }
+    if (hasAny(text, ["ai ", "artificial intelligence", "applied", "ung dung", "technology", "electronics", "robotic", "automation", "software engineering", "cong nghe phan mem", "thiet ke may", "applied science"])) {
       return "Giáo trình Khoa học ứng dụng";
     }
-    if (hasAny(text, ["toan", "dai so", "giai tich", "xac suat", "triet", "mac", "lenin", "vat ly dai cuong", "hoa hoc dai cuong", "sinh hoc dai cuong", "mathematics", "calculus", "algebra", "physics", "chemistry", "philosophy", "basic", "general", "introduction"])) {
-      return "Giáo trình Đại cương";
+    if (hasAny(text, ["ngoai ngu", "ngon ngu", "language", "grammar", "english", "french", "german", "spanish", "chinese", "japanese", "vietnamese", "han ngu"])) {
+      return "Giáo trình Ngoại ngữ";
     }
     return "Giáo trình Chuyên ngành";
   }
 
   if (kind === KINDS.REFERENCE) {
-    if (hasAny(text, ["dictionary", "encyclopedia", "tu dien", "bach khoa", "glossary", "lexicon"])) {
-      return "Từ điển / Bách khoa toàn thư";
-    }
-    if (hasAny(text, ["giai bai tap", "solutions", "key to", "exercises solved", "test prep", "ielts", "toeic", "de thi"])) {
+    if (hasAny(text, ["giai bai tap", "solutions", "solution", "exercises solved", "solved", "key to", "answers", "test prep", "ielts", "toeic", "toefl", "gmat", "gre", "sat "])) {
       return "Sách giải bài tập";
     }
-    if (hasAny(text, ["manual", "guide", "handbook", "primer", "huong dan", "thuc hanh", "so tay", "cam nang", "how to"])) {
+    if (hasAny(text, ["dictionary", "encyclopedia", "tu dien", "bach khoa", "glossary", "lexicon", "thesaurus"])) {
+      return "Từ điển / Bách khoa toàn thư";
+    }
+    if (hasAny(text, ["manual", "guide", "handbook", "primer", "huong dan", "thuc hanh", "so tay", "cam nang", "how to", "instructions", "recipe"])) {
       return "Sách hướng dẫn / Thực hành";
     }
     return "Sách chuyên khảo";
   }
 
   if (kind === KINDS.OTHER_BOOK) {
-    if (hasAny(text, ["biography", "memoir", "autobiography", "tieu su", "hoi ky", "life of"])) {
+    if (hasAny(text, ["biography", "memoir", "autobiography", "tieu su", "hoi ky", "life of", "lives of", "autobiographical"])) {
       return "Hồi ký / Tiểu sử";
     }
-    if (hasAny(text, ["art ", "music", "cooking", "cookery", "recipe", "photography", "architecture", "nghe thuat", "am thuc", "nau an", "nhiep anh", "khoe dep", "lifestyle", "gardening"])) {
+    if (hasAny(text, ["art ", "music", "cooking", "cookery", "recipe", "photography", "architecture", "nghe thuat", "am thuc", "nau an", "nhiep anh", "khoe dep", "lifestyle", "gardening", "drawing", "painting", "sculpture", "drama", "plays", "play", "theater", "theatre"])) {
       return "Nghệ thuật / Đời sống";
     }
-    if (hasAny(text, ["self-help", "ky nang", "giao tiep", "quan ly thoi gian", "tam ly hoc hanh vi", "psychology", "leadership", "success", "motivate"])) {
+    if (hasAny(text, ["self-help", "ky nang", "giao tiep", "quan ly thoi gian", "tam ly hoc hanh vi", "psychology", "leadership", "success", "motivate", "motivation", "habit", "conduct of life", "ethics", "think", "mind", "mindset", "improvement", "improve", "willpower", "character", "friendship", "influence", "happy", "happiness", "optimism", "courage", "friend", "self-culture"])) {
       return "Phát triển bản thân / Kỹ năng sống";
     }
     return "Văn học / Tiểu thuyết";
   }
 
   if (kind === KINDS.MAGAZINE) {
-    if (hasAny(text, ["khoa hoc", "chuyen nganh", "science", "technology", "journal", "academic", "research"])) {
-      return "Tạp chí Khoa học & Chuyên ngành";
-    }
-    if (hasAny(text, ["kinh te", "xa hoi", "forbes", "business", "economy", "nhip cau", "kien truc", "society"])) {
+    if (hasAny(text, ["kinh te", "xa hoi", "forbes", "business", "economy", "nhip cau", "kien truc", "society", "social", "sociology", "political", "politics", "financial", "finance", "commerce", "trade", "industry"])) {
       return "Tạp chí Kinh tế / Xã hội";
+    }
+    if (hasAny(text, ["khoa hoc", "chuyen nganh", "science", "technology", "journal", "academic", "research", "medical", "engineering", "nature"])) {
+      return "Tạp chí Khoa học & Chuyên ngành";
     }
     return "Báo giấy thường nhật / Báo tuần";
   }
 
   if (kind === KINDS.RESEARCH) {
+    if (hasAny(text, ["report", "bulletin", "survey", "studies", "bao cao", "de tai"])) {
+      return "Báo cáo khoa học / Đề tài NCKH";
+    }
     if (hasAny(text, ["proceedings", "conference", "ky yeu", "hoi thao", "workshop"])) {
       return "Kỷ yếu hội thảo (Conference Proceedings)";
     }
