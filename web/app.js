@@ -206,9 +206,39 @@ function statusBadge(ok, okText, badText, badClass = "bad") {
   return `<span class="status ${ok ? "ok" : badClass}">${escapeHtml(ok ? okText : badText)}</span>`;
 }
 
+function openLibraryCoverUrl(documentItem) {
+  const isbn = documentItem.isbn || documentItem.extra?.isbn;
+  if (isbn) {
+    return `https://covers.openlibrary.org/b/isbn/${encodeURIComponent(String(isbn).trim())}-M.jpg?default=false`;
+  }
+  return "";
+}
+
+function getSearchHaystack(documentItem) {
+  if (!documentItem._searchHaystack) {
+    documentItem._searchHaystack = plainText([
+      documentItem.id,
+      documentItem.title,
+      documentItem.author,
+      documentItem.publisher,
+      documentItem.kind,
+      documentItem.category,
+      documentItem.year,
+      documentDetail(documentItem),
+      documentSubtypeLabel(documentItem),
+      ...documentTopicValues(documentItem)
+    ].filter(Boolean).join(" "));
+  }
+  return documentItem._searchHaystack;
+}
+
 function coverCell(documentItem) {
   if (documentItem.coverImage) {
     return coverImageMarkup(documentItem, "cover-thumb", documentItem.coverImage);
+  }
+  const olUrl = openLibraryCoverUrl(documentItem);
+  if (olUrl) {
+    return coverImageMarkup(documentItem, "cover-thumb", olUrl);
   }
   const gutenbergUrl = gutenbergCoverUrl(documentItem);
   if (gutenbergUrl) {
@@ -861,11 +891,13 @@ function allDocuments() {
   const rows = [];
   const seenIds = new Set();
   const seenUrls = new Set();
+  const deletedIds = new Set(state.deletedCatalogIds || []);
 
   [
     ...state.documents.map(normalizeManagedDocument).filter((documentItem) => !isDigitalLibraryDocument(documentItem)),
     ...catalogDocuments()
   ].forEach((documentItem) => {
+    if (deletedIds.has(documentItem.id)) return;
     const url = documentFileUrl(documentItem);
     if (seenIds.has(documentItem.id) || (url && seenUrls.has(url))) return;
     seenIds.add(documentItem.id);
@@ -894,18 +926,7 @@ function documentOptionsMarkup(documents, query = "") {
   const needleKeywords = needle.split(/\s+/).filter(Boolean);
   const source = needleKeywords.length
     ? documents.filter((documentItem) => {
-      const haystack = plainText([
-        documentItem.id,
-        documentItem.title,
-        documentItem.author,
-        documentItem.publisher,
-        documentItem.kind,
-        documentItem.category,
-        documentItem.year,
-        documentDetail(documentItem),
-        documentSubtypeLabel(documentItem),
-        ...documentTopicValues(documentItem)
-      ].filter(Boolean).join(" "));
+      const haystack = getSearchHaystack(documentItem);
       return needleKeywords.every((kw) => haystack.includes(kw));
     })
     : documents;
@@ -1047,7 +1068,10 @@ function documentTopicLabel(documentItem) {
 }
 
 function documentTopicHaystack(documentItem) {
-  return plainText(documentTopicValues(documentItem, true).join(" "));
+  if (!documentItem._topicHaystack) {
+    documentItem._topicHaystack = plainText(documentTopicValues(documentItem, true).join(" "));
+  }
+  return documentItem._topicHaystack;
 }
 
 function cleanBookTitle(title) {
@@ -1207,18 +1231,7 @@ function documentMatchesFilters(documentItem) {
   const type = byId("documentTypeFilter").value;
   const topic = byId("otherBookTypeFilter").value;
   const topicKeyword = plainText(byId("documentTopicSearch")?.value.trim() || "");
-  const haystack = plainText([
-    documentItem.id,
-    documentItem.title,
-    documentItem.author,
-    documentItem.publisher,
-    documentItem.kind,
-    documentItem.category,
-    documentItem.year,
-    documentDetail(documentItem),
-    documentSubtypeLabel(documentItem),
-    ...documentTopicValues(documentItem)
-  ].filter(Boolean).join(" "));
+  const haystack = getSearchHaystack(documentItem);
   const keywords = keyword.split(/\s+/).filter(Boolean);
   const matchKeyword = !keywords.length || keywords.every((kw) => haystack.includes(kw));
   const matchType = type === "all" || documentItem.kind === type;
@@ -1235,18 +1248,7 @@ function renderDocuments() {
   const topicKeyword = plainText(byId("documentTopicSearch")?.value.trim() || "");
   
   const queryMatchedDocs = allDocuments().filter((doc) => {
-    const haystack = plainText([
-      doc.id,
-      doc.title,
-      doc.author,
-      doc.publisher,
-      doc.kind,
-      doc.category,
-      doc.year,
-      documentDetail(doc),
-      documentSubtypeLabel(doc),
-      ...documentTopicValues(doc)
-    ].filter(Boolean).join(" "));
+    const haystack = getSearchHaystack(doc);
     const keywords = keyword.split(/\s+/).filter(Boolean);
     const matchKeyword = !keywords.length || keywords.every((kw) => haystack.includes(kw));
 
@@ -2000,17 +2002,23 @@ function openDocumentModal(id) {
     ["Số lượng trong kho", `${documentItem.quantity} bản`],
     ["Trạng thái quản lý", documentItem.quantity > 0 ? "Có thể mượn/trả trong hệ thống" : "Hết sách trong kho"]
   ];
-  const coverLargeUrl = documentItem.coverImage || gutenbergCoverUrl(documentItem);
+  const coverLargeUrl = documentItem.coverImage || openLibraryCoverUrl(documentItem) || gutenbergCoverUrl(documentItem);
   const coverLargeMarkup = coverLargeUrl
     ? coverImageMarkup(documentItem, "cover-large", coverLargeUrl)
     : isSourceOnlyCatalogItem(documentItem)
       ? generatedCover(documentItem, "cover-large")
       : `<div class="cover-large"></div>`;
 
+  const canDelete = currentUser && currentUser.role !== "reader";
+  const deleteMarkup = canDelete
+    ? `<button class="secondary-button" style="margin-top: 15px; border-color: var(--rose); color: var(--rose); width: 100%;" onclick="deleteDocument('${escapeHtml(id)}')">Xóa tài liệu</button>`
+    : "";
+
   byId("documentModalContent").innerHTML = `
     <div class="document-detail">
       <div>
         ${coverLargeMarkup}
+        ${deleteMarkup}
       </div>
       <div>
         <h2>${escapeHtml(documentItem.title)}</h2>
@@ -2028,6 +2036,34 @@ function openDocumentModal(id) {
 
 function closeDocumentModal() {
   byId("documentModal").hidden = true;
+}
+
+function deleteDocument(id) {
+  if (!guardLibraryAction()) return;
+  
+  const documentItem = findDocument(id);
+  if (!documentItem) {
+    showToast("Không tìm thấy tài liệu cần xóa.");
+    return;
+  }
+  
+  if (!confirm(`Bạn có chắc chắn muốn xóa tài liệu "${documentItem.title}" không?`)) {
+    return;
+  }
+  
+  // 1. Remove from state.documents if it exists there
+  state.documents = state.documents.filter(doc => doc.id !== id);
+  
+  // 2. Add to deletedCatalogIds to hide from catalog listing
+  state.deletedCatalogIds = state.deletedCatalogIds || [];
+  if (!state.deletedCatalogIds.includes(id)) {
+    state.deletedCatalogIds.push(id);
+  }
+  
+  saveState();
+  closeDocumentModal();
+  renderAll();
+  showToast("Đã xóa tài liệu.");
 }
 
 function handleExportSubmit(event) {
