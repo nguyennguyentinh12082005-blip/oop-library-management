@@ -18,7 +18,7 @@ const ROLE_HOME = {
 
 const ROLE_PAGES = {
   admin: new Set(["dashboard", "documents", "readers", "loans", "inventory", "transactions"]),
-  staff: new Set(["dashboard", "documents", "readers", "loans", "inventory", "transactions"]),
+  staff: new Set(["dashboard", "documents", "loans", "transactions"]),
   reader: new Set(["readerPortal", "documents"])
 };
 
@@ -1596,7 +1596,10 @@ function renderImportExtraFields() {
 
 async function handleDocumentSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép thêm tài liệu.");
+    return;
+  }
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1648,7 +1651,10 @@ async function attachFiles(documentItem, form) {
 
 function handleReaderSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép đăng ký người đọc.");
+    return;
+  }
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1700,7 +1706,10 @@ function handleReaderSubmit(event) {
 
 function handleStaffSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép quản lý nhân viên.");
+    return;
+  }
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1743,7 +1752,10 @@ function handleStaffSubmit(event) {
 
 function handleAdminSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép quản lý quản trị viên.");
+    return;
+  }
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const id = data.id.trim().toUpperCase();
@@ -1885,7 +1897,10 @@ function handleReturnSubmit(event) {
 
 async function handleImportSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép thực hiện nhập kho.");
+    return;
+  }
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const quantity = Number(data.quantity);
@@ -1955,7 +1970,10 @@ function toggleImportMode() {
 
 async function handleDocumentFileSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép cập nhật file sách.");
+    return;
+  }
   const form = event.currentTarget;
   const documentItem = ensureManagedDocument(form.documentId.value);
   if (!documentItem) {
@@ -2071,7 +2089,10 @@ function deleteDocument(id) {
 
 function handleExportSubmit(event) {
   event.preventDefault();
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép thực hiện xuất kho.");
+    return;
+  }
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   data.documentId = String(data.documentId || "").trim().toUpperCase();
@@ -2131,8 +2152,8 @@ function applyRoleRestrictions() {
     button.classList.toggle("restricted", !canAccessPage(button.dataset.page));
   });
 
-  byId("documentForm").closest("section").hidden = !canManageLibrary;
-  byId("readerForm").closest("section").hidden = !canManageLibrary;
+  byId("documentForm").closest("section").hidden = !isAdmin;
+  byId("readerForm").closest("section").hidden = !isAdmin;
   document.querySelectorAll(".admin-only").forEach((element) => {
     element.hidden = !isAdmin;
   });
