@@ -234,6 +234,55 @@ function getSearchHaystack(documentItem) {
   return documentItem._searchHaystack;
 }
 
+async function fetchAndSetCoverFromGoogleBooks(documentItem) {
+  if (!documentItem || documentItem.coverImage || documentItem._fetchingCover) return;
+  documentItem._fetchingCover = true;
+
+  try {
+    const title = String(documentItem.title || "")
+      .replace(/^(Giáo trình|Sách tham khảo|Sách khác|Báo\/Tạp chí|Bài nghiên cứu)\s+/i, "")
+      .trim();
+    const author = documentItem.author && documentItem.author !== "Unknown" ? documentItem.author : "";
+    const query = `${title} ${author}`.trim();
+    
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=1`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP error " + res.status);
+    const data = await res.json();
+    
+    if (data.items && data.items.length > 0) {
+      const volumeInfo = data.items[0].volumeInfo;
+      const thumbnail = volumeInfo.imageLinks?.thumbnail || volumeInfo.imageLinks?.smallThumbnail;
+      if (thumbnail) {
+        const secureThumbnail = thumbnail.replace(/^http:/, "https:");
+        
+        const managed = ensureManagedDocument(documentItem.id);
+        if (managed) {
+          managed.coverImage = secureThumbnail;
+          documentItem.coverImage = secureThumbnail;
+          saveState();
+          
+          document.querySelectorAll(`div.generated-cover[data-cover-code="${documentItem.id}"]`).forEach((div) => {
+            const className = div.classList.contains("cover-large") ? "cover-large" : "cover-thumb";
+            const imgMarkup = coverImageMarkup(documentItem, className, secureThumbnail);
+            
+            const temp = document.createElement("div");
+            temp.innerHTML = imgMarkup.trim();
+            const imgEl = temp.firstChild;
+            if (imgEl) {
+              div.replaceWith(imgEl);
+            }
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to fetch cover from Google Books for", documentItem.title, err);
+  } finally {
+    documentItem._fetchingCover = false;
+  }
+}
+
 function coverCell(documentItem) {
   if (documentItem.coverImage) {
     return coverImageMarkup(documentItem, "cover-thumb", documentItem.coverImage);
@@ -246,10 +295,9 @@ function coverCell(documentItem) {
   if (gutenbergUrl) {
     return coverImageMarkup(documentItem, "cover-thumb", gutenbergUrl);
   }
-  if (isSourceOnlyCatalogItem(documentItem)) {
-    return generatedCover(documentItem, "cover-thumb");
-  }
-  return `<span class="cover-thumb" aria-hidden="true"></span>`;
+  
+  fetchAndSetCoverFromGoogleBooks(documentItem);
+  return generatedCover(documentItem, "cover-thumb");
 }
 
 function coverImageMarkup(documentItem, className, imageUrl) {
@@ -312,6 +360,7 @@ function generatedCover(documentItem, className) {
   
   return `
     <div class="${escapeHtml(className)} generated-cover" 
+         data-cover-code="${escapeHtml(documentItem.id)}"
          style="background: ${style.background}; border-left: ${style.borderLeft}; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);" 
          aria-label="Bìa ${escapeHtml(title)}">
       <span>${escapeHtml(label)}</span>
@@ -2068,31 +2117,21 @@ function openDocumentModal(id) {
   const coverLargeUrl = documentItem.coverImage || openLibraryCoverUrl(documentItem) || gutenbergCoverUrl(documentItem);
   const coverLargeMarkup = coverLargeUrl
     ? coverImageMarkup(documentItem, "cover-large", coverLargeUrl)
-    : isSourceOnlyCatalogItem(documentItem)
-      ? generatedCover(documentItem, "cover-large")
-      : `<div class="cover-large"></div>`;
+    : generatedCover(documentItem, "cover-large");
+
+  if (!documentItem.coverImage) {
+    fetchAndSetCoverFromGoogleBooks(documentItem);
+  }
 
   const canDelete = currentUser && currentUser.role === "admin";
   const deleteMarkup = canDelete
     ? `<button class="secondary-button" style="margin-top: 15px; border-color: var(--rose); color: var(--rose); width: 100%;" onclick="deleteDocument('${escapeHtml(id)}')">Xóa tài liệu</button>`
     : "";
 
-  const fileUrl = documentFileUrl(documentItem);
-  const fileMarkup = fileUrl
-    ? `<div style="margin-top: 15px;">
-         <a href="${escapeHtml(fileUrl)}" target="_blank" class="primary-button" style="text-align: center; text-decoration: none; display: block; width: 100%;">
-           📖 Đọc / Tải file PDF
-         </a>
-       </div>`
-    : `<div style="margin-top: 15px; text-align: center; color: var(--text-muted); font-size: 0.9em;" class="muted">
-         (Chưa đính kèm file PDF)
-       </div>`;
-
   byId("documentModalContent").innerHTML = `
     <div class="document-detail">
       <div>
         ${coverLargeMarkup}
-        ${fileMarkup}
         ${deleteMarkup}
       </div>
       <div>
