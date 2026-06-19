@@ -18,11 +18,13 @@ const ROLE_HOME = {
 
 const ROLE_PAGES = {
   admin: new Set(["dashboard", "documents", "readers", "loans", "inventory", "transactions"]),
-  staff: new Set(["dashboard", "documents", "loans", "transactions"]),
+  staff: new Set(["dashboard", "documents", "loans", "inventory", "transactions"]),
   reader: new Set(["readerPortal", "documents"])
 };
 
 let currentUser = null;
+let _cachedCatalogDocuments = null;
+let _cachedAllDocuments = null;
 
 const KINDS = {
   TEXTBOOK: "Giáo trình",
@@ -274,13 +276,44 @@ function gutenbergCoverUrl(documentItem) {
   return `https://www.gutenberg.org/cache/epub/${encodedId}/pg${encodedId}.cover.medium.jpg`;
 }
 
+function getBookCoverStyle(documentItem) {
+  const title = String(documentItem.title || "");
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) {
+    hash = title.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  const gradients = [
+    "linear-gradient(135deg, #1e3a8a, #3b82f6)", // Deep blue
+    "linear-gradient(135deg, #064e3b, #059669)", // Emerald
+    "linear-gradient(135deg, #4c0519, #be123c)", // Crimson
+    "linear-gradient(135deg, #7c2d12, #ea580c)", // Terracotta
+    "linear-gradient(135deg, #2e1065, #7c3aed)", // Indigo/Purple
+    "linear-gradient(135deg, #4a044e, #db2777)", // Violet/Pink
+    "linear-gradient(135deg, #134e5a, #008080)", // Dark teal
+    "linear-gradient(135deg, #0f172a, #334155)", // Slate
+    "linear-gradient(135deg, #78350f, #d97706)", // Bronze/Amber
+    "linear-gradient(135deg, #030712, #1f2937)"  // Matte black
+  ];
+  
+  const index = Math.abs(hash) % gradients.length;
+  return {
+    background: gradients[index],
+    borderLeft: "3px solid rgba(255, 255, 255, 0.45)"
+  };
+}
+
 function generatedCover(documentItem, className) {
   const title = documentItem.title || "Sách";
   const label = documentSubtypeLabel(documentItem) || documentItem.kind || "Sách";
   const isLarge = className.includes("cover-large");
   const coverTitle = isLarge ? cleanBookTitle(title) : coverTitleSnippet(title);
+  const style = getBookCoverStyle(documentItem);
+  
   return `
-    <div class="${escapeHtml(className)} generated-cover" aria-label="Bìa ${escapeHtml(title)}">
+    <div class="${escapeHtml(className)} generated-cover" 
+         style="background: ${style.background}; border-left: ${style.borderLeft}; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);" 
+         aria-label="Bìa ${escapeHtml(title)}">
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(coverTitle)}</strong>
       <em>${escapeHtml(documentItem.id)}</em>
@@ -289,9 +322,16 @@ function generatedCover(documentItem, className) {
 }
 
 function handleCoverError(img) {
+  const id = img.dataset.coverCode || "";
+  const titleText = img.dataset.coverTitle || (img.alt ? img.alt.replace("Bìa ", "") : "Sách");
+  const style = getBookCoverStyle({ id, title: titleText });
+
   const placeholder = document.createElement("div");
   placeholder.className = `${img.className || "cover-thumb"} generated-cover`;
   placeholder.setAttribute("aria-label", img.alt || "Bìa sách");
+  placeholder.style.background = style.background;
+  placeholder.style.borderLeft = style.borderLeft;
+  placeholder.style.boxShadow = "inset 0 0 15px rgba(0, 0, 0, 0.3)";
 
   const label = document.createElement("span");
   label.textContent = img.dataset.coverLabel || "Sách";
@@ -801,6 +841,7 @@ const viewState = {
 };
 
 function saveState() {
+  _cachedAllDocuments = null;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     return true;
@@ -880,14 +921,17 @@ function findDocument(id) {
 }
 
 function catalogDocuments() {
+  if (_cachedCatalogDocuments) return _cachedCatalogDocuments;
   const catalogs = [];
   if (Array.isArray(window.GUTENBERG_CATALOG) && window.GUTENBERG_CATALOG.length) {
     catalogs.push(...window.GUTENBERG_CATALOG);
   }
-  return catalogs.map(normalizeSourceDocument);
+  _cachedCatalogDocuments = catalogs.map(normalizeSourceDocument);
+  return _cachedCatalogDocuments;
 }
 
 function allDocuments() {
+  if (_cachedAllDocuments) return _cachedAllDocuments;
   const rows = [];
   const seenIds = new Set();
   const seenUrls = new Set();
@@ -905,7 +949,8 @@ function allDocuments() {
     rows.push(documentItem);
   });
 
-  return rows;
+  _cachedAllDocuments = rows;
+  return _cachedAllDocuments;
 }
 
 function ensureManagedDocument(id) {
@@ -1970,8 +2015,8 @@ function toggleImportMode() {
 
 async function handleDocumentFileSubmit(event) {
   event.preventDefault();
-  if (!currentUser || currentUser.role !== "admin") {
-    showToast("Chỉ có Quản trị viên mới được phép cập nhật file sách.");
+  if (!currentUser || (currentUser.role !== "admin" && currentUser.role !== "staff")) {
+    showToast("Chỉ có Quản trị viên hoặc Nhân viên mới được phép cập nhật file sách.");
     return;
   }
   const form = event.currentTarget;
@@ -2032,10 +2077,22 @@ function openDocumentModal(id) {
     ? `<button class="secondary-button" style="margin-top: 15px; border-color: var(--rose); color: var(--rose); width: 100%;" onclick="deleteDocument('${escapeHtml(id)}')">Xóa tài liệu</button>`
     : "";
 
+  const fileUrl = documentFileUrl(documentItem);
+  const fileMarkup = fileUrl
+    ? `<div style="margin-top: 15px;">
+         <a href="${escapeHtml(fileUrl)}" target="_blank" class="primary-button" style="text-align: center; text-decoration: none; display: block; width: 100%;">
+           📖 Đọc / Tải file PDF
+         </a>
+       </div>`
+    : `<div style="margin-top: 15px; text-align: center; color: var(--text-muted); font-size: 0.9em;" class="muted">
+         (Chưa đính kèm file PDF)
+       </div>`;
+
   byId("documentModalContent").innerHTML = `
     <div class="document-detail">
       <div>
         ${coverLargeMarkup}
+        ${fileMarkup}
         ${deleteMarkup}
       </div>
       <div>
@@ -2159,6 +2216,16 @@ function applyRoleRestrictions() {
   });
 
   byId("resetDataBtn").hidden = !isAdmin;
+  
+  const importForm = byId("importForm");
+  const exportForm = byId("exportForm");
+  if (importForm && exportForm) {
+    const importExportContainer = importForm.closest(".two-column");
+    if (importExportContainer) {
+      importExportContainer.hidden = !isAdmin;
+    }
+  }
+
   document.querySelectorAll('[data-jump="loans"]').forEach((button) => {
     button.hidden = isReader;
   });
