@@ -1230,6 +1230,87 @@ function documentMatchesFilters(documentItem) {
 
 function renderDocuments() {
   renderDocumentSubtypeOptions();
+
+  const keyword = plainText(byId("documentSearch").value.trim());
+  const topicKeyword = plainText(byId("documentTopicSearch")?.value.trim() || "");
+  
+  const queryMatchedDocs = allDocuments().filter((doc) => {
+    const haystack = plainText([
+      doc.id,
+      doc.title,
+      doc.author,
+      doc.publisher,
+      doc.kind,
+      doc.category,
+      doc.year,
+      documentDetail(doc),
+      documentSubtypeLabel(doc),
+      ...documentTopicValues(doc)
+    ].filter(Boolean).join(" "));
+    const keywords = keyword.split(/\s+/).filter(Boolean);
+    const matchKeyword = !keywords.length || keywords.every((kw) => haystack.includes(kw));
+
+    const topicKeywords = topicKeyword.split(/\s+/).filter(Boolean);
+    const matchTopicKeyword = !topicKeywords.length || topicKeywords.every((kw) => documentTopicHaystack(doc).includes(kw));
+
+    return matchKeyword && matchTopicKeyword;
+  });
+
+  const breakdownDiv = byId("searchCategoryBreakdown");
+  if (breakdownDiv) {
+    if ((keyword || topicKeyword) && queryMatchedDocs.length > 0) {
+      const breakdown = {};
+      queryMatchedDocs.forEach((doc) => {
+        const cat = documentTopicLabel(doc) || "Khác";
+        breakdown[cat] = (breakdown[cat] || 0) + 1;
+      });
+
+      const sortedCats = Object.entries(breakdown).sort((a, b) => b[1] - a[1]);
+      const currentTopicFilter = byId("otherBookTypeFilter").value;
+
+      breakdownDiv.innerHTML = `
+        <div class="search-category-title">Phân loại thể loại kết quả (${queryMatchedDocs.length} tài liệu):</div>
+        <div class="category-chips-list">
+          <button type="button" class="category-chip ${currentTopicFilter === "all" ? "active" : ""}" data-facet-value="all">
+            Tất cả <span class="count">${queryMatchedDocs.length}</span>
+          </button>
+          ${sortedCats.map(([cat, count]) => `
+            <button type="button" class="category-chip ${currentTopicFilter === cat ? "active" : ""}" data-facet-value="${escapeHtml(cat)}">
+              ${escapeHtml(cat)} <span class="count">${count}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+      breakdownDiv.style.display = "flex";
+
+      if (!breakdownDiv.dataset.hasListener) {
+        breakdownDiv.addEventListener("click", (e) => {
+          const chip = e.target.closest(".category-chip");
+          if (!chip) return;
+          const facetValue = chip.dataset.facetValue;
+          if (facetValue === "all") {
+            byId("documentTypeFilter").value = "all";
+            renderDocumentSubtypeOptions();
+            byId("otherBookTypeFilter").value = "all";
+          } else {
+            const docWithCat = allDocuments().find((doc) => documentTopicLabel(doc) === facetValue);
+            if (docWithCat) {
+              byId("documentTypeFilter").value = docWithCat.kind;
+              renderDocumentSubtypeOptions();
+            }
+            byId("otherBookTypeFilter").value = facetValue;
+          }
+          viewState.documentPage = 1;
+          renderDocuments();
+        });
+        breakdownDiv.dataset.hasListener = "true";
+      }
+    } else {
+      breakdownDiv.innerHTML = "";
+      breakdownDiv.style.display = "none";
+    }
+  }
+
   const rows = allDocuments().filter(documentMatchesFilters);
   viewState.documentPage = clampPage(viewState.documentPage, rows.length);
   const visibleRows = pageRows(rows, viewState.documentPage);
