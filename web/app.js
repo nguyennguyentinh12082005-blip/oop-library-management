@@ -2009,7 +2009,7 @@ function openDocumentModal(id) {
       ? generatedCover(documentItem, "cover-large")
       : `<div class="cover-large"></div>`;
 
-  const canDelete = currentUser && currentUser.role !== "reader";
+  const canDelete = currentUser && currentUser.role === "admin";
   const deleteMarkup = canDelete
     ? `<button class="secondary-button" style="margin-top: 15px; border-color: var(--rose); color: var(--rose); width: 100%;" onclick="deleteDocument('${escapeHtml(id)}')">Xóa tài liệu</button>`
     : "";
@@ -2039,7 +2039,10 @@ function closeDocumentModal() {
 }
 
 function deleteDocument(id) {
-  if (!guardLibraryAction()) return;
+  if (!currentUser || currentUser.role !== "admin") {
+    showToast("Chỉ có Quản trị viên mới được phép xóa tài liệu.");
+    return;
+  }
   
   const documentItem = findDocument(id);
   if (!documentItem) {
