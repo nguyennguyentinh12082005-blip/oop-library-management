@@ -891,10 +891,22 @@ function ensureManagedDocument(id) {
 
 function documentOptionsMarkup(documents, query = "") {
   const needle = plainText(query);
-  const source = needle
+  const needleKeywords = needle.split(/\s+/).filter(Boolean);
+  const source = needleKeywords.length
     ? documents.filter((documentItem) => {
-      const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author}`);
-      return haystack.includes(needle);
+      const haystack = plainText([
+        documentItem.id,
+        documentItem.title,
+        documentItem.author,
+        documentItem.publisher,
+        documentItem.kind,
+        documentItem.category,
+        documentItem.year,
+        documentDetail(documentItem),
+        documentSubtypeLabel(documentItem),
+        ...documentTopicValues(documentItem)
+      ].filter(Boolean).join(" "));
+      return needleKeywords.every((kw) => haystack.includes(kw));
     })
     : documents;
   return source.slice(0, DOCUMENT_OPTION_LIMIT).map((documentItem) => (
@@ -1195,11 +1207,24 @@ function documentMatchesFilters(documentItem) {
   const type = byId("documentTypeFilter").value;
   const topic = byId("otherBookTypeFilter").value;
   const topicKeyword = plainText(byId("documentTopicSearch")?.value.trim() || "");
-  const haystack = plainText(`${documentItem.id} ${documentItem.title} ${documentItem.author} ${documentItem.publisher} ${documentDetail(documentItem)} ${documentSubtypeLabel(documentItem)} ${documentTopicValues(documentItem).join(" ")}`);
-  const matchKeyword = !keyword || haystack.includes(keyword);
+  const haystack = plainText([
+    documentItem.id,
+    documentItem.title,
+    documentItem.author,
+    documentItem.publisher,
+    documentItem.kind,
+    documentItem.category,
+    documentItem.year,
+    documentDetail(documentItem),
+    documentSubtypeLabel(documentItem),
+    ...documentTopicValues(documentItem)
+  ].filter(Boolean).join(" "));
+  const keywords = keyword.split(/\s+/).filter(Boolean);
+  const matchKeyword = !keywords.length || keywords.every((kw) => haystack.includes(kw));
   const matchType = type === "all" || documentItem.kind === type;
   const matchTopic = topic === "all" || documentTopicValues(documentItem).includes(topic);
-  const matchTopicKeyword = !topicKeyword || documentTopicHaystack(documentItem).includes(topicKeyword);
+  const topicKeywords = topicKeyword.split(/\s+/).filter(Boolean);
+  const matchTopicKeyword = !topicKeywords.length || topicKeywords.every((kw) => documentTopicHaystack(documentItem).includes(kw));
   return matchKeyword && matchType && matchTopic && matchTopicKeyword;
 }
 
