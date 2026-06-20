@@ -791,70 +791,150 @@ function sampleState() {
     documents: [
       {
         id: "GT001",
-        title: "Lập trình hướng đối tượng C++",
+        title: "The C++ Programming Language",
         kind: "Giáo trình",
-        year: 2024,
-        quantity: 8,
-        author: "Trần Văn Tuấn",
-        publisher: "NXB Giáo Dục",
+        year: 2013,
+        quantity: 50,
+        author: "Bjarne Stroustrup",
+        publisher: "Addison-Wesley",
         category: "Công nghệ thông tin",
+        coverImage: "assets/covers/GT001.jpg",
         extra: {
           maMonHoc: "Lập trình Hướng đối tượng (C++)",
           boMon: "Giáo trình Chuyên ngành"
         }
       },
       {
+        id: "GT002",
+        title: "Introduction to Algorithms",
+        kind: "Giáo trình",
+        year: 2009,
+        quantity: 45,
+        author: "Thomas H. Cormen",
+        publisher: "MIT Press",
+        category: "Công nghệ thông tin",
+        coverImage: "assets/covers/GT002.jpg",
+        extra: {
+          maMonHoc: "Cấu trúc dữ liệu và Giải thuật",
+          boMon: "Giáo trình Chuyên ngành"
+        }
+      },
+      {
         id: "TK001",
-        title: "Cấu trúc dữ liệu và giải thuật",
+        title: "Clean Code",
         kind: "Sách tham khảo",
-        year: 2023,
-        quantity: 5,
-        author: "Nguyễn Đức Nghĩa",
-        publisher: "NXB Đại học Quốc gia",
+        year: 2008,
+        quantity: 40,
+        author: "Robert C. Martin",
+        publisher: "Prentice Hall",
         category: "Sách chuyên khảo",
+        coverImage: "assets/covers/TK001.jpg",
+        extra: {
+          referenceSubtype: "Sách chuyên khảo"
+        }
+      },
+      {
+        id: "TK002",
+        title: "The C Programming Language",
+        kind: "Sách tham khảo",
+        year: 1988,
+        quantity: 38,
+        author: "Brian W. Kernighan, Dennis M. Ritchie",
+        publisher: "Prentice Hall",
+        category: "Sách chuyên khảo",
+        coverImage: "assets/covers/TK002.jpg",
         extra: {
           referenceSubtype: "Sách chuyên khảo"
         }
       },
       {
         id: "SK001",
-        title: "Kỹ năng học tập đại học",
+        title: "Đắc nhân tâm",
         kind: "Sách khác",
-        year: 2022,
-        quantity: 4,
-        author: "Nhiều tác giả",
-        publisher: "NXB Trẻ",
+        year: 2020,
+        quantity: 60,
+        author: "Dale Carnegie",
+        publisher: "NXB Tổng hợp TP.HCM",
         category: "Kỹ năng",
+        coverImage: "assets/covers/SK001.jpg",
         extra: {
           loaiSachKhac: "Phát triển bản thân / Kỹ năng sống"
         }
       },
       {
-        id: "BC001",
-        title: "Tạp chí Khoa học Trẻ",
-        kind: "Báo/tạp chí",
-        year: 2026,
-        quantity: 12,
-        author: "Tòa soạn",
-        publisher: "NXB Trẻ",
-        category: "Tạp chí Khoa học & Chuyên ngành",
+        id: "SK002",
+        title: "Nhà giả kim",
+        kind: "Sách khác",
+        year: 2020,
+        quantity: 55,
+        author: "Paulo Coelho",
+        publisher: "NXB Văn học",
+        category: "Văn học",
+        coverImage: "assets/covers/SK002.jpg",
         extra: {
-          soPhatHanh: 6,
+          loaiSachKhac: "Văn học / Tiểu thuyết"
+        }
+      },
+      {
+        id: "BC001",
+        title: "Scientific American: Mathematical Puzzles & Diversions",
+        kind: "Báo/tạp chí",
+        year: 2020,
+        quantity: 80,
+        author: "Martin Gardner",
+        publisher: "Scientific American",
+        category: "Tạp chí Khoa học & Chuyên ngành",
+        coverImage: "assets/covers/BC001.jpg",
+        extra: {
+          soPhatHanh: 1,
+          thangPhatHanh: 6,
+          magazineSubtype: "Tạp chí Khoa học & Chuyên ngành"
+        }
+      },
+      {
+        id: "BC002",
+        title: "The 2nd Scientific American Book of Mathematical Puzzles",
+        kind: "Báo/tạp chí",
+        year: 2020,
+        quantity: 75,
+        author: "Martin Gardner",
+        publisher: "Scientific American",
+        category: "Tạp chí Khoa học & Chuyên ngành",
+        coverImage: "assets/covers/BC002.jpg",
+        extra: {
+          soPhatHanh: 2,
           thangPhatHanh: 6,
           magazineSubtype: "Tạp chí Khoa học & Chuyên ngành"
         }
       },
       {
         id: "NC001",
-        title: "Ứng dụng AI trong thư viện",
+        title: "Deep Learning",
         kind: "Bài nghiên cứu",
-        year: 2025,
-        quantity: 2,
-        author: "Nhóm nghiên cứu A",
-        publisher: "HUTECH",
+        year: 2016,
+        quantity: 30,
+        author: "Ian Goodfellow, Yoshua Bengio, Aaron Courville",
+        publisher: "MIT Press",
         category: "Báo cáo khoa học / Đề tài NCKH",
+        coverImage: "assets/covers/NC001.jpg",
         extra: {
-          coQuanChuQuan: "HUTECH",
+          coQuanChuQuan: "MIT Press",
+          researchSubtype: "Báo cáo khoa học / Đề tài NCKH",
+          linhVuc: "Báo cáo khoa học / Đề tài NCKH"
+        }
+      },
+      {
+        id: "NC002",
+        title: "Artificial Intelligence: A Modern Approach",
+        kind: "Bài nghiên cứu",
+        year: 2010,
+        quantity: 28,
+        author: "Stuart Russell, Peter Norvig",
+        publisher: "Pearson",
+        category: "Báo cáo khoa học / Đề tài NCKH",
+        coverImage: "assets/covers/NC002.jpg",
+        extra: {
+          coQuanChuQuan: "Pearson",
           researchSubtype: "Báo cáo khoa học / Đề tài NCKH",
           linhVuc: "Báo cáo khoa học / Đề tài NCKH"
         }
