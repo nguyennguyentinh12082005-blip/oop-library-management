@@ -244,6 +244,18 @@ button {
 
 .page.active {
   display: block;
+  animation: pageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dashboard-grid {
@@ -903,10 +915,10 @@ body:has(.login-overlay:not(.hidden)) {
 .login-logo {
   display: block;
   width: min(160px, 62%);
-  aspect-ratio: 1024 / 559;
+  aspect-ratio: 1 / 1;
   margin: 0 auto 12px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
 }
 
@@ -1297,4 +1309,88 @@ body:has(.login-overlay:not(.hidden)) {
 .category-chip.active .count {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
+}
+
+/* ===== USER PROFILE AVATAR ===== */
+.user-avatar-container {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user-avatar-container:hover {
+  border-color: #f2b84b;
+  transform: scale(1.05);
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.change-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  border: none;
+  font-size: 0.62rem;
+  padding: 3px 0 4px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user-avatar-container:hover .change-avatar-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== LANGUAGE SELECTOR ===== */
+.lang-switch {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.lang-switch select,
+.lang-select-sidebar {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lang-switch select:hover,
+.lang-select-sidebar:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary);
+}
+
+.lang-select-sidebar {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lang-select-sidebar option {
+  background: #1e293b;
+  color: #fff;
 }

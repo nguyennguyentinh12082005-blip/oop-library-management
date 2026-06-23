@@ -10,10 +10,7 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <div class="login-brand">
-        <picture>
-          <source srcset="logo.webp" type="image/webp">
-          <img src="logo.png" alt="Logo thư viện" class="login-logo" width="512" height="280">
-        </picture>
+        <img src="logo.png" alt="Logo thư viện" class="login-logo" width="512" height="280">
         <h1>Thư viện OOP</h1>
         <p>Hệ thống quản lý thư viện C++</p>
       </div>
@@ -35,9 +32,9 @@
           <p class="login-error" id="loginError"></p>
         </form>
         <div class="login-hint">
-          <p><strong>Tài khoản mẫu:</strong></p>
+          <p><strong id="lblSampleAccounts">Tài khoản mẫu:</strong></p>
           <table class="hint-table">
-            <tr><td>Quản trị viên</td><td><code>admin</code></td><td><code>admin</code></td></tr>
+            <tr><td id="lblRoleAdmin">Quản trị viên</td><td><code>admin</code></td><td><code>admin</code></td></tr>
           </table>
         </div>
       </div>
@@ -79,6 +76,12 @@
           <p class="login-error" id="signupError"></p>
         </form>
       </div>
+      <div class="lang-switch">
+        <select id="langSelector" onchange="setLanguage(this.value)">
+          <option value="vi">Tiếng Việt 🇻🇳</option>
+          <option value="en">English 🇬🇧</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -96,15 +99,26 @@
         <button class="nav-item active" type="button" data-page="dashboard"><span>Tổng quan</span></button>
         <button class="nav-item" type="button" data-page="readerPortal"><span>Trang độc giả</span></button>
         <button class="nav-item" type="button" data-page="documents"><span>Tài liệu</span></button>
-        <button class="nav-item" type="button" data-page="readers"><span>Con người</span></button>
+        <button class="nav-item" type="button" data-page="readers" style="display: flex; align-items: center; justify-content: space-between; width: 100%;"><span>Thành viên</span> <span class="badge" id="pendingApprovalsBadge" style="display: none; background: #ef4444; color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.72rem; font-weight: bold;">0</span></button>
         <button class="nav-item" type="button" data-page="loans"><span>Mượn / Trả</span></button>
         <button class="nav-item" type="button" data-page="inventory"><span>Nhập / Xuất</span></button>
         <button class="nav-item" type="button" data-page="transactions"><span>Giao dịch</span></button>
       </nav>
 
       <div class="sidebar-footer" id="sidebarUser">
+        <div class="user-avatar-container" onclick="triggerAvatarUpload()">
+          <img id="userAvatar" src="assets/default_avatar.svg" alt="Avatar" class="user-avatar">
+          <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+          <div class="change-avatar-btn">📷 Đổi ảnh</div>
+        </div>
         <span id="userRole">Chưa đăng nhập</span>
         <strong id="userName">---</strong>
+        <div style="margin: 8px 0 6px;">
+          <select id="langSelectorSidebar" onchange="setLanguage(this.value)" class="lang-select-sidebar">
+            <option value="vi">Tiếng Việt 🇻🇳</option>
+            <option value="en">English 🇬🇧</option>
+          </select>
+        </div>
         <button class="logout-btn" type="button" id="logoutBtn">Đăng xuất</button>
       </div>
     </aside>
@@ -324,8 +338,6 @@
               <label>Nhà xuất bản <input name="publisher" required></label>
               <label>Thể loại <input name="category" required></label>
               <label>Ảnh bìa <input name="coverImage" type="file" accept="image/*" required></label>
-              <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub"></label>
-              <label>Đường dẫn/link file sách <input name="fileUrl" placeholder="Có thể bổ sung sau"></label>
               <div id="documentExtraFields" class="extra-fields"></div>
               <button class="primary-button" type="submit">Thêm tài liệu</button>
             </form>
@@ -333,7 +345,7 @@
         </div>
       </section>
 
-      <section class="page" id="readersPage" data-title="Con người">
+      <section class="page" id="readersPage" data-title="Thành viên">
         <div class="two-column wide-left">
           <section class="panel table-panel">
             <div class="section-heading">
@@ -396,6 +408,25 @@
               </div>
               <button class="primary-button" type="submit">Đăng ký người đọc</button>
             </form>
+          </section>
+
+          <section class="panel" id="pendingApprovalsPanel" style="margin-top: 16px;">
+            <div class="section-heading">
+              <h2>Tài khoản chờ duyệt</h2>
+              <span class="counter" id="pendingApprovalsCount">0</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tên đăng nhập</th>
+                    <th>Độc giả</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="pendingApprovalsTable"></tbody>
+              </table>
+            </div>
           </section>
         </div>
 
@@ -581,8 +612,6 @@
                 <label>Nhà xuất bản <input name="publisher" disabled required></label>
                 <label>Thể loại <input name="category" disabled required></label>
                 <label>Ảnh bìa <input name="coverImage" type="file" accept="image/*" disabled required></label>
-                <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub" disabled></label>
-                <label>Đường dẫn/link file sách <input name="fileUrl" placeholder="Có thể bổ sung sau" disabled></label>
                 <div id="importExtraFields" class="extra-fields"></div>
               </div>
               <div class="form-grid">
@@ -618,24 +647,6 @@
             <p class="form-note" id="exportHint"></p>
           </section>
         </div>
-
-        <section class="panel">
-          <div class="section-heading">
-            <h2>Cập nhật file sách</h2>
-          </div>
-          <form id="documentFileForm" class="stacked-form">
-            <label>Mã tài liệu
-              <input name="documentId" id="fileDocumentInput" list="fileDocumentSelect" placeholder="Nhập mã tài liệu cần cập nhật file" required autocomplete="off">
-              <datalist id="fileDocumentSelect"></datalist>
-            </label>
-            <div class="form-grid">
-              <label>File sách/PDF <input name="bookFile" type="file" accept=".pdf,.doc,.docx,.epub"></label>
-              <label>Đường dẫn/link file sách <input name="fileUrl" placeholder="Dán link hoặc đường dẫn file"></label>
-            </div>
-            <button class="primary-button" type="submit">Cập nhật file sách</button>
-          </form>
-          <p class="form-note" id="fileUpdateHint"></p>
-        </section>
 
         <section class="panel table-panel">
           <div class="section-heading">
@@ -695,6 +706,7 @@
       <div id="documentModalContent"></div>
     </section>
   </div>
+  <script src="gutenberg-catalog.js"></script>
   <script src="app.js?v=20260620-curated"></script>
 </body>
 </html>

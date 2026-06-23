@@ -10,6 +10,247 @@ const DEFAULT_ACCOUNTS = {
   }
 };
 
+const TRANSLATIONS = {
+  vi: {
+    brand_title: "Thư viện OOP",
+    brand_subtitle: "Hệ thống quản lý thư viện C++",
+    tab_login: "Đăng nhập",
+    tab_signup: "Đăng ký độc giả",
+    lbl_username: "Tài khoản",
+    lbl_password: "Mật khẩu",
+    lbl_username_placeholder: "Nhập tài khoản",
+    lbl_password_placeholder: "Nhập mật khẩu",
+    lbl_sample_accounts: "Tài khoản mẫu:",
+    lbl_role_admin: "Quản trị viên",
+    lbl_reader_group: "Nhóm người đọc",
+    lbl_reader_id: "Mã độc giả",
+    lbl_identifier: "Mã định danh (MSSV / MSCB)",
+    lbl_fullname: "Họ tên",
+    lbl_dob: "Ngày sinh",
+    lbl_gender: "Giới tính",
+    lbl_phone: "Số điện thoại",
+    lbl_address: "Địa chỉ",
+    btn_login: "Đăng nhập",
+    btn_signup: "Tạo tài khoản độc giả",
+    nav_dashboard: "Tổng quan",
+    nav_portal: "Trang độc giả",
+    nav_documents: "Tài liệu",
+    nav_readers: "Thành viên",
+    nav_loans: "Mượn / Trả",
+    nav_inventory: "Nhập / Xuất",
+    nav_transactions: "Giao dịch",
+    btn_logout: "Đăng xuất",
+    lbl_gender_male: "Nam",
+    lbl_gender_female: "Nữ",
+    lbl_gender_other: "Khác",
+    reader_type_student: "Sinh viên",
+    reader_type_employee: "Viên chức",
+    reader_type_lecturer: "Giảng viên",
+    reader_type_researcher: "Nghiên cứu viên",
+    reader_type_postgraduate: "Học viên cao học",
+    reader_type_guest: "Khách ngoài trường",
+    role_admin: "Quản trị viên",
+    role_staff: "Nhân viên",
+    role_reader: "Độc giả",
+    role_student: "Sinh viên",
+    role_employee: "Viên chức",
+    toast_welcome: "Xin chào, ",
+    toast_pending_count: "Có {count} tài khoản độc giả đang chờ duyệt!",
+    toast_new_signup: "Độc giả mới đăng ký: {name} ({username})",
+    toast_pending_approval: "Đăng ký thành công! Vui lòng chờ Admin duyệt tài khoản.",
+    eyebrow_admin: "Quản trị viên - Toàn quyền",
+    eyebrow_staff: "Nhân viên thư viện",
+    eyebrow_reader: "Độc giả - Tra cứu và theo dõi mượn trả",
+    error_not_approved: "Tài khoản chưa được duyệt.",
+    error_wrong_auth: "Tài khoản hoặc mật khẩu không đúng.",
+    error_exists: "Tài khoản đã tồn tại.",
+    error_password_len: "Mật khẩu phải có ít nhất 3 ký tự.",
+    error_id_exists: "Mã độc giả đã tồn tại."
+  },
+  en: {
+    brand_title: "OOP Library",
+    brand_subtitle: "C++ Library Management System",
+    tab_login: "Sign In",
+    tab_signup: "Sign Up",
+    lbl_username: "Username",
+    lbl_password: "Password",
+    lbl_username_placeholder: "Enter username",
+    lbl_password_placeholder: "Enter password",
+    lbl_sample_accounts: "Sample Accounts:",
+    lbl_role_admin: "Admin",
+    lbl_reader_group: "Reader Group",
+    lbl_reader_id: "Reader ID",
+    lbl_identifier: "Student/Staff ID Card",
+    lbl_fullname: "Full Name",
+    lbl_dob: "Date of Birth",
+    lbl_gender: "Gender",
+    lbl_phone: "Phone Number",
+    lbl_address: "Address",
+    btn_login: "Sign In",
+    btn_signup: "Create Reader Account",
+    nav_dashboard: "Dashboard",
+    nav_portal: "Reader Portal",
+    nav_documents: "Catalog",
+    nav_readers: "Members",
+    nav_loans: "Loans & Returns",
+    nav_inventory: "Stock In/Out",
+    nav_transactions: "Logs",
+    btn_logout: "Log Out",
+    lbl_gender_male: "Male",
+    lbl_gender_female: "Female",
+    lbl_gender_other: "Other",
+    reader_type_student: "Student",
+    reader_type_employee: "Staff",
+    reader_type_lecturer: "Lecturer",
+    reader_type_researcher: "Researcher",
+    reader_type_postgraduate: "Postgraduate",
+    reader_type_guest: "Guest",
+    role_admin: "Administrator",
+    role_staff: "Librarian",
+    role_reader: "Reader",
+    role_student: "Student Reader",
+    role_employee: "Staff Reader",
+    toast_welcome: "Welcome, ",
+    toast_pending_count: "There are {count} reader accounts pending approval!",
+    toast_new_signup: "New reader registered: {name} ({username})",
+    toast_pending_approval: "Sign up successful! Please wait for Admin approval.",
+    eyebrow_admin: "Administrator - Full Access",
+    eyebrow_staff: "Library Staff",
+    eyebrow_reader: "Reader - Search & Borrow Tracking",
+    error_not_approved: "Account is pending approval.",
+    error_wrong_auth: "Incorrect username or password.",
+    error_exists: "Username already exists.",
+    error_password_len: "Password must be at least 3 characters.",
+    error_id_exists: "Reader ID already exists."
+  }
+};
+
+let currentLang = localStorage.getItem("library_lang") || "vi";
+
+window.setLanguage = function(lang) {
+  currentLang = lang;
+  localStorage.setItem("library_lang", lang);
+  updateLanguageUI();
+};
+
+function updateLanguageUI() {
+  const t = (key) => TRANSLATIONS[currentLang][key] || key;
+  
+  const brandH1 = document.querySelector(".login-brand h1");
+  if (brandH1) brandH1.textContent = t("brand_title");
+  const brandP = document.querySelector(".login-brand p");
+  if (brandP) brandP.textContent = t("brand_subtitle");
+
+  const tabLogin = document.querySelector('[data-auth-tab="login"]');
+  if (tabLogin) tabLogin.textContent = t("tab_login");
+  const tabSignup = document.querySelector('[data-auth-tab="signup"]');
+  if (tabSignup) tabSignup.textContent = t("tab_signup");
+
+  const loginForm = document.querySelector("#loginForm");
+  if (loginForm) {
+    const labels = loginForm.querySelectorAll("label");
+    if (labels[0]) labels[0].firstChild.textContent = t("lbl_username") + " ";
+    if (labels[1]) labels[1].firstChild.textContent = t("lbl_password") + " ";
+    const btn = loginForm.querySelector("button");
+    if (btn) btn.textContent = t("btn_login");
+
+    const usernameInput = loginForm.querySelector("#loginUsername");
+    if (usernameInput) usernameInput.placeholder = t("lbl_username_placeholder");
+    const passwordInput = loginForm.querySelector("#loginPassword");
+    if (passwordInput) passwordInput.placeholder = t("lbl_password_placeholder");
+  }
+
+  const lblSampleAccounts = byId("lblSampleAccounts");
+  if (lblSampleAccounts) lblSampleAccounts.textContent = t("lbl_sample_accounts");
+  const lblRoleAdmin = byId("lblRoleAdmin");
+  if (lblRoleAdmin) lblRoleAdmin.textContent = t("lbl_role_admin");
+
+  const signupForm = document.querySelector("#publicReaderForm");
+  if (signupForm) {
+    const labels = signupForm.querySelectorAll("label");
+    if (labels[0]) labels[0].firstChild.textContent = t("lbl_reader_group") + " ";
+    if (labels[1]) labels[1].firstChild.textContent = t("lbl_reader_id") + " ";
+    if (labels[2]) labels[2].firstChild.textContent = t("lbl_identifier") + " ";
+    if (labels[3]) labels[3].firstChild.textContent = t("lbl_fullname") + " ";
+    if (labels[4]) labels[4].firstChild.textContent = t("lbl_dob") + " ";
+    if (labels[5]) labels[5].firstChild.textContent = t("lbl_gender") + " ";
+    if (labels[6]) labels[6].firstChild.textContent = t("lbl_phone") + " ";
+    if (labels[7]) labels[7].firstChild.textContent = t("lbl_address") + " ";
+    if (labels[8]) labels[8].firstChild.textContent = t("lbl_username") + " ";
+    if (labels[9]) labels[9].firstChild.textContent = t("lbl_password") + " ";
+    
+    const genderSelect = signupForm.querySelector('select[name="gender"]');
+    if (genderSelect) {
+      genderSelect.options[0].textContent = t("lbl_gender_male");
+      genderSelect.options[1].textContent = t("lbl_gender_female");
+      genderSelect.options[2].textContent = t("lbl_gender_other");
+    }
+
+    const typeSelect = signupForm.querySelector('select[name="type"]');
+    if (typeSelect) {
+      typeSelect.options[0].textContent = t("reader_type_student");
+      typeSelect.options[1].textContent = t("reader_type_employee");
+      typeSelect.options[2].textContent = t("reader_type_lecturer");
+      typeSelect.options[3].textContent = t("reader_type_researcher");
+      typeSelect.options[4].textContent = t("reader_type_postgraduate");
+      typeSelect.options[5].textContent = t("reader_type_guest");
+    }
+
+    const btn = signupForm.querySelector("button");
+    if (btn) btn.textContent = t("btn_signup");
+  }
+
+  const navPages = {
+    dashboard: "nav_dashboard",
+    readerPortal: "nav_portal",
+    documents: "nav_documents",
+    readers: "nav_readers",
+    loans: "nav_loans",
+    inventory: "nav_inventory",
+    transactions: "nav_transactions"
+  };
+  Object.entries(navPages).forEach(([page, key]) => {
+    const el = document.querySelector(`.nav-item[data-page="${page}"] span`);
+    if (el) el.textContent = t(key);
+  });
+
+  const logoutBtn = byId("logoutBtn");
+  if (logoutBtn) logoutBtn.textContent = t("btn_logout");
+
+  if (currentUser) {
+    const roleEl = byId("userRole");
+    if (roleEl) {
+      if (currentUser.title === "Quản trị viên") roleEl.textContent = t("role_admin");
+      else if (currentUser.title === "Nhân viên") roleEl.textContent = t("role_staff");
+      else if (currentUser.title === "Độc giả") roleEl.textContent = t("role_reader");
+      else if (currentUser.title === "Sinh viên") roleEl.textContent = t("role_student");
+      else if (currentUser.title === "Viên chức") roleEl.textContent = t("role_employee");
+      else roleEl.textContent = currentUser.title;
+    }
+    
+    const eyebrow = document.querySelector(".topbar .eyebrow");
+    if (eyebrow) {
+      if (currentUser.role === "admin") eyebrow.textContent = t("eyebrow_admin");
+      else if (currentUser.role === "staff") eyebrow.textContent = t("eyebrow_staff");
+      else if (currentUser.role === "reader") eyebrow.textContent = t("eyebrow_reader");
+    }
+  }
+
+  const activePage = document.querySelector(".page.active");
+  if (activePage) {
+    const pageName = activePage.id.replace("Page", "");
+    const titleKey = navPages[pageName];
+    if (titleKey) {
+      byId("pageTitle").textContent = t(titleKey);
+    }
+  }
+
+  const sel = byId("langSelector");
+  if (sel) sel.value = currentLang;
+  const selSidebar = byId("langSelectorSidebar");
+  if (selSidebar) selSidebar.value = currentLang;
+}
+
 const ROLE_HOME = {
   admin: "dashboard",
   staff: "dashboard",
@@ -353,50 +594,19 @@ function getBookCoverStyle(documentItem) {
 
 function generatedCover(documentItem, className) {
   const title = documentItem.title || "Sách";
-  const label = documentSubtypeLabel(documentItem) || documentItem.kind || "Sách";
-  const isLarge = className.includes("cover-large");
-  const coverTitle = isLarge ? cleanBookTitle(title) : coverTitleSnippet(title);
-  const style = getBookCoverStyle(documentItem);
-  
   return `
-    <div class="${escapeHtml(className)} generated-cover" 
-         data-cover-code="${escapeHtml(documentItem.id)}"
-         style="background: ${style.background}; border-left: ${style.borderLeft}; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);" 
-         aria-label="Bìa ${escapeHtml(title)}">
-      <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(coverTitle)}</strong>
-      <em>${escapeHtml(documentItem.id)}</em>
-    </div>
+    <img src="assets/covers/default_cover.svg" 
+         class="${escapeHtml(className)}" 
+         alt="Bìa ${escapeHtml(title)}"
+         data-cover-code="${escapeHtml(documentItem.id)}">
   `;
 }
 
 function handleCoverError(img) {
-  const id = img.dataset.coverCode || "";
-  const titleText = img.dataset.coverTitle || (img.alt ? img.alt.replace("Bìa ", "") : "Sách");
-  const style = getBookCoverStyle({ id, title: titleText });
-
-  const placeholder = document.createElement("div");
-  placeholder.className = `${img.className || "cover-thumb"} generated-cover`;
-  placeholder.setAttribute("aria-label", img.alt || "Bìa sách");
-  placeholder.style.background = style.background;
-  placeholder.style.borderLeft = style.borderLeft;
-  placeholder.style.boxShadow = "inset 0 0 15px rgba(0, 0, 0, 0.3)";
-
-  const label = document.createElement("span");
-  label.textContent = img.dataset.coverLabel || "Sách";
-  placeholder.appendChild(label);
-
-  const title = document.createElement("strong");
-  title.textContent = img.dataset.coverTitle || img.dataset.coverCode || "Sách";
-  placeholder.appendChild(title);
-
-  if (img.dataset.coverCode) {
-    const code = document.createElement("em");
-    code.textContent = img.dataset.coverCode;
-    placeholder.appendChild(code);
+  if (img.src.includes("default_cover.svg")) {
+    return;
   }
-
-  img.replaceWith(placeholder);
+  img.src = "assets/covers/default_cover.svg";
 }
 
 function documentFileUrl(documentItem) {
@@ -717,14 +927,16 @@ function sampleState() {
     role: "reader",
     name: "Nguyễn Văn An",
     title: "Sinh viên",
-    readerId: "SV001"
+    readerId: "SV001",
+    approved: true
   };
   accounts["vc001"] = {
     password: "123",
     role: "reader",
     name: "Trần Thị Bình",
     title: "Viên chức",
-    readerId: "VC001"
+    readerId: "VC001",
+    approved: true
   };
 
   return {
@@ -1371,16 +1583,105 @@ function renderReaders() {
   byId("readerCount").textContent = `${state.readers.length} người`;
   byId("readersTable").innerHTML = state.readers.map((reader) => {
     const expired = reader.expires < todayISO();
+    const avatarUrl = reader.avatar || "assets/default_avatar.svg";
     return `
       <tr>
         <td><strong>${escapeHtml(reader.id)}</strong></td>
-        <td>${escapeHtml(reader.name)}<br><span class="muted">${escapeHtml(reader.phone)} - ${escapeHtml(reader.address)}</span></td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${avatarUrl}" alt="Avatar" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); background: var(--bg);">
+            <div>
+              <strong>${escapeHtml(reader.name)}</strong><br>
+              <span class="muted" style="font-size: 0.8rem;">${escapeHtml(reader.phone)} - ${escapeHtml(reader.address)}</span>
+            </div>
+          </div>
+        </td>
         <td>${escapeHtml(reader.type)}<br><span class="muted">${escapeHtml(reader.code)}</span></td>
         <td><span class="status ${expired ? "bad" : "ok"}">${expired ? "Hết hạn" : "Còn hạn"}</span></td>
         <td>${escapeHtml(reader.borrowed)}/${escapeHtml(reader.limit)}</td>
       </tr>
     `;
   }).join("");
+  renderPendingApprovals();
+  updatePendingBadge();
+}
+
+function renderPendingApprovals() {
+  const pending = Object.entries(state.accounts || {}).filter(([username, acc]) => acc.role === "reader" && acc.approved === false);
+  byId("pendingApprovalsCount").textContent = pending.length;
+  
+  if (pending.length === 0) {
+    byId("pendingApprovalsTable").innerHTML = `
+      <tr>
+        <td colspan="3" class="muted text-center" style="padding: 15px 0;">Không có tài khoản chờ duyệt</td>
+      </tr>
+    `;
+    return;
+  }
+  
+  byId("pendingApprovalsTable").innerHTML = pending.map(([username, acc]) => {
+    const avatarUrl = acc.avatar || "assets/default_avatar.svg";
+    return `
+      <tr>
+        <td><strong>${escapeHtml(username)}</strong></td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${avatarUrl}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); background: var(--bg);">
+            <div>
+              <strong>${escapeHtml(acc.name)}</strong><br>
+              <span class="muted" style="font-size: 0.8rem;">${escapeHtml(acc.readerId)}</span>
+            </div>
+          </div>
+        </td>
+        <td>
+          <button class="primary-button" style="padding: 4px 8px; font-size: 0.8rem;" onclick="approveAccount('${escapeHtml(username)}')">Duyệt</button>
+          <button class="secondary-button" style="padding: 4px 8px; font-size: 0.8rem; border-color: var(--rose); color: var(--rose); margin-left: 5px;" onclick="rejectAccount('${escapeHtml(username)}')">Từ chối</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function updatePendingBadge() {
+  const badge = byId("pendingApprovalsBadge");
+  if (!badge) return;
+  
+  if (currentUser && currentUser.role === "admin") {
+    const pendingCount = Object.values(state.accounts || {}).filter(acc => acc.role === "reader" && acc.approved === false).length;
+    if (pendingCount > 0) {
+      badge.textContent = pendingCount;
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+function approveAccount(username) {
+  if (state.accounts[username]) {
+    state.accounts[username].approved = true;
+    saveState();
+    renderReaders();
+    showToast(`Đã duyệt tài khoản ${username}.`);
+  }
+}
+
+function rejectAccount(username) {
+  if (confirm(`Bạn có chắc chắn muốn từ chối và xóa yêu cầu đăng ký của tài khoản ${username}?`)) {
+    if (state.accounts[username]) {
+      const readerId = state.accounts[username].readerId;
+      delete state.accounts[username];
+      const readerIndex = state.readers.findIndex(r => r.id === readerId);
+      if (readerIndex !== -1) {
+        state.readers.splice(readerIndex, 1);
+      }
+      saveState();
+      renderReaders();
+      showToast(`Đã từ chối và xóa tài khoản ${username}.`);
+    }
+  }
 }
 
 function renderPeople() {
@@ -1728,7 +2029,8 @@ function handleReaderSubmit(event) {
     name: data.name.trim(),
     title: "Độc giả",
     personId: id,
-    readerId: id
+    readerId: id,
+    approved: true
   };
 
   saveState();
@@ -2211,9 +2513,10 @@ function applyRoleRestrictions() {
 
   const eyebrow = document.querySelector(".topbar .eyebrow");
   if (eyebrow) {
-    if (isAdmin) eyebrow.textContent = "Quản trị viên - Toàn quyền";
-    if (isStaff) eyebrow.textContent = "Nhân viên thư viện";
-    if (isReader) eyebrow.textContent = "Độc giả - Tra cứu và theo dõi mượn trả";
+    const t = (key) => TRANSLATIONS[currentLang][key] || key;
+    if (isAdmin) eyebrow.textContent = t("eyebrow_admin");
+    if (isStaff) eyebrow.textContent = t("eyebrow_staff");
+    if (isReader) eyebrow.textContent = t("eyebrow_reader");
   }
 
   document.querySelectorAll('input[name="staffId"]').forEach((input) => {
@@ -2223,16 +2526,35 @@ function applyRoleRestrictions() {
 }
 
 function enterApp(user, username) {
-  currentUser = { ...user, username };
+  const latestUser = state.accounts[username] || user;
+  currentUser = { ...latestUser, username };
+  
   byId("loginOverlay").classList.add("hidden");
   byId("appShell").style.display = "";
   byId("userName").textContent = currentUser.name;
   byId("userRole").textContent = currentUser.title;
 
+  const avatarEl = byId("userAvatar");
+  if (avatarEl) {
+    avatarEl.src = currentUser.avatar || "assets/default_avatar.svg";
+  }
+
   applyRoleRestrictions();
   setPage(homePage());
   renderAll();
-  showToast("Xin chào, " + currentUser.name + "!");
+  updateLanguageUI();
+  
+  const t = (key) => TRANSLATIONS[currentLang][key] || key;
+  showToast(t("toast_welcome") + currentUser.name + "!");
+
+  if (currentUser.role === "admin") {
+    const pendingCount = Object.values(state.accounts || {}).filter(acc => acc.role === "reader" && acc.approved === false).length;
+    if (pendingCount > 0) {
+      setTimeout(() => {
+        showToast(t("toast_pending_count").replace("{count}", pendingCount));
+      }, 1500);
+    }
+  }
 }
 
 function handleLogin(event) {
@@ -2240,11 +2562,19 @@ function handleLogin(event) {
   const username = byId("loginUsername").value.trim().toLowerCase();
   const password = byId("loginPassword").value;
   const error = byId("loginError");
+  error.style.color = ""; // reset to default CSS color
+  const t = (key) => TRANSLATIONS[currentLang][key] || key;
 
   const user = state.accounts[username];
   if (!user || user.password !== password) {
-    error.textContent = "Tài khoản hoặc mật khẩu không đúng.";
+    error.textContent = t("error_wrong_auth");
     byId("loginPassword").value = "";
+    return;
+  }
+
+  // Check reader approval status
+  if (user.role === "reader" && user.approved === false) {
+    error.textContent = t("error_not_approved");
     return;
   }
 
@@ -2259,20 +2589,21 @@ function handlePublicReaderSignup(event) {
   const id = data.id.trim().toUpperCase();
   const username = data.username.trim().toLowerCase();
   const error = byId("signupError");
+  const t = (key) => TRANSLATIONS[currentLang][key] || key;
 
   if (state.accounts[username]) {
-    error.textContent = "Tài khoản đã tồn tại.";
+    error.textContent = t("error_exists");
     return;
   }
   if (!data.password || data.password.length < 3) {
-    error.textContent = "Mật khẩu phải có ít nhất 3 ký tự.";
+    error.textContent = t("error_password_len");
     return;
   }
 
   const existingReader = findReader(id);
   if (personIdExists(id)) {
     if (!existingReader || readerHasAccount(id)) {
-      error.textContent = "Mã độc giả đã tồn tại.";
+      error.textContent = t("error_id_exists");
       return;
     }
 
@@ -2282,13 +2613,22 @@ function handlePublicReaderSignup(event) {
       name: existingReader.name,
       title: "Độc giả",
       personId: id,
-      readerId: id
+      readerId: id,
+      approved: false
     };
 
     saveState();
     error.textContent = "";
     form.reset();
-    enterApp(state.accounts[username], username);
+    
+    // Switch to login tab and show success message
+    document.querySelector('[data-auth-tab="login"]').click();
+    showToast(t("toast_pending_approval"));
+    const loginErrorEl = byId("loginError");
+    if (loginErrorEl) {
+      loginErrorEl.textContent = t("toast_pending_approval");
+      loginErrorEl.style.color = "#10b981"; // Success green
+    }
     return;
   }
 
@@ -2318,13 +2658,22 @@ function handlePublicReaderSignup(event) {
     name: data.name.trim(),
     title: "Độc giả",
     personId: id,
-    readerId: id
+    readerId: id,
+    approved: false
   };
 
   saveState();
   error.textContent = "";
   form.reset();
-  enterApp(state.accounts[username], username);
+  
+  // Switch to login tab and show success message
+  document.querySelector('[data-auth-tab="login"]').click();
+  showToast(t("toast_pending_approval"));
+  const loginErrorEl = byId("loginError");
+  if (loginErrorEl) {
+    loginErrorEl.textContent = t("toast_pending_approval");
+    loginErrorEl.style.color = "#10b981"; // Success green
+  }
 }
 
 function handleLogout() {
@@ -2336,6 +2685,57 @@ function handleLogout() {
   byId("loginError").textContent = "";
   document.querySelectorAll(".nav-item").forEach((button) => button.classList.remove("restricted"));
   setPage("dashboard");
+}
+
+window.triggerAvatarUpload = function() {
+  const input = byId("avatarFileInput");
+  if (input) input.click();
+};
+
+async function handleAvatarChange(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const dataUrl = await readImageAsThumb(file);
+  if (!dataUrl) {
+    showToast("Không thể tải ảnh. Hãy chọn ảnh khác.");
+    return;
+  }
+
+  // Update account avatar
+  const username = currentUser.username;
+  if (state.accounts[username]) {
+    state.accounts[username].avatar = dataUrl;
+    currentUser.avatar = dataUrl;
+  }
+
+  // Update specific role collections
+  const role = currentUser.role;
+  const personId = currentUser.personId || currentUser.readerId;
+  
+  if (role === "reader") {
+    const reader = state.readers.find(r => r.id === personId);
+    if (reader) reader.avatar = dataUrl;
+  } else if (role === "staff") {
+    const staff = state.staffs.find(s => s.id === personId);
+    if (staff) staff.avatar = dataUrl;
+  } else if (role === "admin") {
+    if (Array.isArray(state.admins)) {
+      const admin = state.admins.find(a => a.id === personId || a.username === username);
+      if (admin) admin.avatar = dataUrl;
+    }
+  }
+
+  saveState();
+  
+  // Update UI immediately
+  const avatarEl = byId("userAvatar");
+  if (avatarEl) {
+    avatarEl.src = dataUrl;
+  }
+
+  renderAll();
+  showToast("Cập nhật ảnh đại diện thành công!");
 }
 
 function renderDocumentSubtypeOptions() {
@@ -2443,8 +2843,7 @@ function bindEvents() {
   byId("importDocumentInput").addEventListener("input", () => refreshDocumentDatalist("importDocumentInput", "importDocumentSelect"));
   byId("exportForm").addEventListener("submit", handleExportSubmit);
   byId("exportDocumentInput").addEventListener("input", () => refreshDocumentDatalist("exportDocumentInput", "exportDocumentSelect"));
-  byId("documentFileForm").addEventListener("submit", handleDocumentFileSubmit);
-  byId("fileDocumentInput").addEventListener("input", () => refreshDocumentDatalist("fileDocumentInput", "fileDocumentSelect"));
+  byId("avatarFileInput").addEventListener("change", handleAvatarChange);
 
   byId("documentsTable").addEventListener("click", (event) => {
     const button = event.target.closest("[data-detail]");
@@ -2491,3 +2890,38 @@ renderDocumentSubtypeOptions();
 toggleImportMode();
 setDefaultDates();
 bindEvents();
+updateLanguageUI();
+
+window.addEventListener("storage", (e) => {
+  if (e.key === STORAGE_KEY) {
+    state = loadState();
+    updatePendingBadge();
+    
+    const readersPage = document.querySelector("#readersPage");
+    if (readersPage && !readersPage.hidden) {
+      renderReaders();
+    }
+    
+    if (currentUser && currentUser.role === "admin" && e.oldValue && e.newValue) {
+      try {
+        const oldState = JSON.parse(e.oldValue);
+        const newState = JSON.parse(e.newValue);
+        if (oldState.accounts && newState.accounts) {
+          const oldPending = Object.keys(oldState.accounts).filter(k => oldState.accounts[k].role === "reader" && oldState.accounts[k].approved === false);
+          const newPending = Object.keys(newState.accounts).filter(k => newState.accounts[k].role === "reader" && newState.accounts[k].approved === false);
+          
+          const added = newPending.filter(x => !oldPending.includes(x));
+          if (added.length > 0) {
+            const t = (key) => TRANSLATIONS[currentLang][key] || key;
+            added.forEach(username => {
+              const acc = newState.accounts[username];
+              showToast(t("toast_new_signup").replace("{name}", acc.name).replace("{username}", username));
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error parsing storage change:", err);
+      }
+    }
+  }
+});
