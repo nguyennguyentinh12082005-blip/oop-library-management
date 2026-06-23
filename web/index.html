@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Quản lý Thư viện OOP C++</title>
-  <link rel="stylesheet" href="styles.css?v=20260623-v6">
+  <link rel="stylesheet" href="styles.css?v=20260623-v7">
 </head>
 <body>
   <div class="login-overlay" id="loginOverlay">
@@ -58,7 +58,10 @@
             <label>Mã độc giả <input name="id" required autocomplete="off"></label>
             <label>Mã định danh <input name="code" required autocomplete="off"></label>
           </div>
-          <label>Họ tên <input name="name" required autocomplete="name"></label>
+          <div class="form-grid">
+            <label>Họ tên <input name="name" required autocomplete="name"></label>
+            <label>Email (Gmail) <input name="email" type="email" placeholder="example@gmail.com" required autocomplete="email"></label>
+          </div>
           <div class="form-grid">
             <label>Ngày sinh <input name="birth" type="date" required></label>
             <label>Giới tính
@@ -69,9 +72,10 @@
               </select>
             </label>
           </div>
-          <label>Số điện thoại <input name="phone" required autocomplete="tel"></label>
-          <label>Địa chỉ <input name="address" required autocomplete="street-address"></label>
-          <label>Email (Gmail) <input name="email" type="email" placeholder="example@gmail.com" required autocomplete="email"></label>
+          <div class="form-grid">
+            <label>Số điện thoại <input name="phone" required autocomplete="tel"></label>
+            <label>Địa chỉ <input name="address" required autocomplete="street-address"></label>
+          </div>
           <div class="form-grid">
             <label>Tài khoản <input name="username" required autocomplete="off"></label>
             <label>Mật khẩu <input name="password" type="password" required></label>

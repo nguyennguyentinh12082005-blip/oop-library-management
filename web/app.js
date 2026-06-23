@@ -258,11 +258,11 @@ function updateLanguageUI() {
     if (labels[1]) labels[1].firstChild.textContent = t("lbl_reader_id") + " ";
     if (labels[2]) labels[2].firstChild.textContent = t("lbl_identifier") + " ";
     if (labels[3]) labels[3].firstChild.textContent = t("lbl_fullname") + " ";
-    if (labels[4]) labels[4].firstChild.textContent = t("lbl_dob") + " ";
-    if (labels[5]) labels[5].firstChild.textContent = t("lbl_gender") + " ";
-    if (labels[6]) labels[6].firstChild.textContent = t("lbl_phone") + " ";
-    if (labels[7]) labels[7].firstChild.textContent = t("lbl_address") + " ";
-    if (labels[8]) labels[8].firstChild.textContent = t("lbl_forgot_email") + " ";
+    if (labels[4]) labels[4].firstChild.textContent = t("lbl_forgot_email") + " ";
+    if (labels[5]) labels[5].firstChild.textContent = t("lbl_dob") + " ";
+    if (labels[6]) labels[6].firstChild.textContent = t("lbl_gender") + " ";
+    if (labels[7]) labels[7].firstChild.textContent = t("lbl_phone") + " ";
+    if (labels[8]) labels[8].firstChild.textContent = t("lbl_address") + " ";
     if (labels[9]) labels[9].firstChild.textContent = t("lbl_username") + " ";
     if (labels[10]) labels[10].firstChild.textContent = t("lbl_password") + " ";
     
