@@ -1,5 +1,26 @@
 const STORAGE_KEY = "oop-library-web-v6";
 
+// Initialize Firebase Realtime Database for multi-machine synchronization
+const firebaseConfig = {
+  apiKey: "AIzaSyB8z_G46XN2L-w3P1n7xN6H3Fp-Dq123",
+  authDomain: "oop-library-db-db36d.firebaseapp.com",
+  databaseURL: "https://oop-library-db-db36d-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "oop-library-db-db36d",
+  storageBucket: "oop-library-db-db36d.appspot.com",
+  appId: "1:297836182937:web:b12f6723891d89c"
+};
+
+let db = null;
+try {
+  if (typeof firebase !== "undefined") {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  }
+} catch (e) {
+  console.error("Firebase failed to initialize:", e);
+}
+
+
 const DEFAULT_ACCOUNTS = {
   admin: {
     password: "admin",
@@ -1091,6 +1112,26 @@ function loadState() {
 }
 
 let state = loadState();
+
+// Sync with Firebase Realtime Database in real-time
+if (db) {
+  db.ref("libraryState").on("value", (snapshot) => {
+    const val = snapshot.val();
+    if (val) {
+      state = val;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (currentUser) {
+        renderAll();
+      } else {
+        updateLanguageUI();
+      }
+    } else {
+      // If Firebase is empty (first launch), seed it with our local state
+      db.ref("libraryState").set(state).catch((e) => console.error("Firebase seed failed:", e));
+    }
+  });
+}
+
 const viewState = {
   documentPage: 1,
   inventoryPage: 1
@@ -1100,6 +1141,9 @@ function saveState() {
   _cachedAllDocuments = null;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (db) {
+      db.ref("libraryState").set(state).catch((e) => console.error("Firebase save failed:", e));
+    }
     return true;
   } catch {
     if (document.querySelector("#toast")) {
