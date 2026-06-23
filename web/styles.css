@@ -1101,7 +1101,7 @@ body:has(.login-overlay:not(.hidden)) {
 
 /* ===== NAV RESTRICTED ===== */
 .nav-item.restricted {
-  display: none;
+  display: none !important;
 }
 
 .toast {
