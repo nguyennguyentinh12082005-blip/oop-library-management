@@ -30,7 +30,8 @@ const DEFAULT_ACCOUNTS = {
     role: "admin",
     name: "Quản trị viên",
     title: "Quản trị viên",
-    personId: "AD001"
+    personId: "AD001",
+    email: "admin@gmail.com"
   }
 };
 
@@ -40,9 +41,9 @@ const TRANSLATIONS = {
     brand_subtitle: "Hệ thống quản lý thư viện C++",
     tab_login: "Đăng nhập",
     tab_signup: "Đăng ký độc giả",
-    lbl_username: "Tài khoản",
+    lbl_username: "Tài khoản hoặc Gmail",
     lbl_password: "Mật khẩu",
-    lbl_username_placeholder: "Nhập tài khoản",
+    lbl_username_placeholder: "Nhập tài khoản hoặc Gmail",
     lbl_password_placeholder: "Nhập mật khẩu",
     lbl_sample_accounts: "Tài khoản mẫu:",
     lbl_role_admin: "Quản trị viên",
@@ -86,19 +87,33 @@ const TRANSLATIONS = {
     eyebrow_staff: "Nhân viên thư viện",
     eyebrow_reader: "Độc giả - Tra cứu và theo dõi mượn trả",
     error_not_approved: "Tài khoản chưa được duyệt.",
-    error_wrong_auth: "Tài khoản hoặc mật khẩu không đúng.",
+    error_wrong_auth: "Tài khoản/Gmail hoặc mật khẩu không đúng.",
     error_exists: "Tài khoản đã tồn tại.",
     error_password_len: "Mật khẩu phải có ít nhất 3 ký tự.",
-    error_id_exists: "Mã độc giả đã tồn tại."
+    error_id_exists: "Mã độc giả đã tồn tại.",
+    forgot_password_link: "Quên mật khẩu?",
+    forgot_btn_send: "Gửi mã xác nhận",
+    forgot_btn_verify: "Xác thực mã",
+    forgot_btn_reset: "Đổi mật khẩu",
+    forgot_back_login: "← Quay lại đăng nhập",
+    forgot_step1_desc: "Nhập địa chỉ Email (Gmail) đăng ký của bạn để nhận mã xác thực OTP thiết lập lại mật khẩu.",
+    forgot_step2_desc: "Mã xác thực đã được gửi tới email của bạn. Vui lòng nhập mã OTP gồm 6 chữ số dưới đây.",
+    forgot_step3_desc: "Mã xác thực chính xác! Vui lòng thiết lập mật khẩu mới.",
+    lbl_forgot_email: "Email (Gmail)",
+    lbl_forgot_otp: "Mã xác thực OTP",
+    lbl_forgot_new_pass: "Mật khẩu mới",
+    lbl_forgot_confirm_pass: "Xác nhận mật khẩu mới",
+    btn_delete_self: "Xóa tài khoản",
+    lbl_header_action: "Hành động"
   },
   en: {
     brand_title: "OOP Library",
     brand_subtitle: "C++ Library Management System",
     tab_login: "Sign In",
     tab_signup: "Sign Up",
-    lbl_username: "Username",
+    lbl_username: "Username or Gmail",
     lbl_password: "Password",
-    lbl_username_placeholder: "Enter username",
+    lbl_username_placeholder: "Enter username or Gmail",
     lbl_password_placeholder: "Enter password",
     lbl_sample_accounts: "Sample Accounts:",
     lbl_role_admin: "Admin",
@@ -142,10 +157,24 @@ const TRANSLATIONS = {
     eyebrow_staff: "Library Staff",
     eyebrow_reader: "Reader - Search & Borrow Tracking",
     error_not_approved: "Account is pending approval.",
-    error_wrong_auth: "Incorrect username or password.",
+    error_wrong_auth: "Incorrect username/Gmail or password.",
     error_exists: "Username already exists.",
     error_password_len: "Password must be at least 3 characters.",
-    error_id_exists: "Reader ID already exists."
+    error_id_exists: "Reader ID already exists.",
+    forgot_password_link: "Forgot password?",
+    forgot_btn_send: "Send Code",
+    forgot_btn_verify: "Verify Code",
+    forgot_btn_reset: "Reset Password",
+    forgot_back_login: "← Back to Login",
+    forgot_step1_desc: "Enter your registered Email (Gmail) address to receive an OTP verification code to reset your password.",
+    forgot_step2_desc: "The verification code has been sent to your email. Please enter the 6-digit OTP code below.",
+    forgot_step3_desc: "Verification successful! Please set your new password.",
+    lbl_forgot_email: "Email (Gmail)",
+    lbl_forgot_otp: "OTP Code",
+    lbl_forgot_new_pass: "New Password",
+    lbl_forgot_confirm_pass: "Confirm Password",
+    btn_delete_self: "Delete Account",
+    lbl_header_action: "Action"
   }
 };
 
@@ -184,6 +213,39 @@ function updateLanguageUI() {
     if (passwordInput) passwordInput.placeholder = t("lbl_password_placeholder");
   }
 
+  const forgotLink = byId("forgotPasswordLink");
+  if (forgotLink) forgotLink.textContent = t("forgot_password_link");
+  const step1Desc = byId("forgotStep1Desc");
+  if (step1Desc) step1Desc.textContent = t("forgot_step1_desc");
+  const lblForgotEmail = byId("lblForgotEmail");
+  if (lblForgotEmail) lblForgotEmail.firstChild.textContent = t("lbl_forgot_email") + " ";
+  const btnSendOtp = byId("btnSendOtp");
+  if (btnSendOtp) btnSendOtp.textContent = t("forgot_btn_send");
+
+  const step2Desc = byId("forgotStep2Desc");
+  if (step2Desc) step2Desc.textContent = t("forgot_step2_desc");
+  const lblForgotOtp = byId("lblForgotOtp");
+  if (lblForgotOtp) lblForgotOtp.firstChild.textContent = t("lbl_forgot_otp") + " ";
+  const btnVerifyOtp = byId("btnVerifyOtp");
+  if (btnVerifyOtp) btnVerifyOtp.textContent = t("forgot_btn_verify");
+
+  const step3Desc = byId("forgotStep3Desc");
+  if (step3Desc) step3Desc.textContent = t("forgot_step3_desc");
+  const lblForgotNewPass = byId("lblForgotNewPass");
+  if (lblForgotNewPass) lblForgotNewPass.firstChild.textContent = t("lbl_forgot_new_pass") + " ";
+  const lblForgotConfirmPass = byId("lblForgotConfirmPass");
+  if (lblForgotConfirmPass) lblForgotConfirmPass.firstChild.textContent = t("lbl_forgot_confirm_pass") + " ";
+  const btnResetPassword = byId("btnResetPassword");
+  if (btnResetPassword) btnResetPassword.textContent = t("forgot_btn_reset");
+
+  const backLogin = byId("backToLoginLink");
+  if (backLogin) backLogin.textContent = t("forgot_back_login");
+
+  const hdrReader = byId("lblHeaderActionReader");
+  if (hdrReader) hdrReader.textContent = t("lbl_header_action");
+  const hdrPeople = byId("lblHeaderActionPeople");
+  if (hdrPeople) hdrPeople.textContent = t("lbl_header_action");
+
   const lblSampleAccounts = byId("lblSampleAccounts");
   if (lblSampleAccounts) lblSampleAccounts.textContent = t("lbl_sample_accounts");
   const lblRoleAdmin = byId("lblRoleAdmin");
@@ -200,8 +262,9 @@ function updateLanguageUI() {
     if (labels[5]) labels[5].firstChild.textContent = t("lbl_gender") + " ";
     if (labels[6]) labels[6].firstChild.textContent = t("lbl_phone") + " ";
     if (labels[7]) labels[7].firstChild.textContent = t("lbl_address") + " ";
-    if (labels[8]) labels[8].firstChild.textContent = t("lbl_username") + " ";
-    if (labels[9]) labels[9].firstChild.textContent = t("lbl_password") + " ";
+    if (labels[8]) labels[8].firstChild.textContent = t("lbl_forgot_email") + " ";
+    if (labels[9]) labels[9].firstChild.textContent = t("lbl_username") + " ";
+    if (labels[10]) labels[10].firstChild.textContent = t("lbl_password") + " ";
     
     const genderSelect = signupForm.querySelector('select[name="gender"]');
     if (genderSelect) {
@@ -944,7 +1007,8 @@ function sampleState() {
     role: "staff",
     name: "Lê Minh Châu",
     title: "Nhân viên",
-    personId: "NV001"
+    personId: "NV001",
+    email: "staff@gmail.com"
   };
   accounts["sv001"] = {
     password: "123",
@@ -952,7 +1016,8 @@ function sampleState() {
     name: "Nguyễn Văn An",
     title: "Sinh viên",
     readerId: "SV001",
-    approved: true
+    approved: true,
+    email: "sv001@gmail.com"
   };
   accounts["vc001"] = {
     password: "123",
@@ -960,7 +1025,8 @@ function sampleState() {
     name: "Trần Thị Bình",
     title: "Viên chức",
     readerId: "VC001",
-    approved: true
+    approved: true,
+    email: "vc001@gmail.com"
   };
 
   return {
@@ -982,7 +1048,8 @@ function sampleState() {
         address: "TP. Hồ Chí Minh",
         code: "22110001",
         borrowed: 0,
-        limit: 5
+        limit: 5,
+        email: "sv001@gmail.com"
       },
       {
         id: "VC001",
@@ -996,7 +1063,8 @@ function sampleState() {
         address: "TP. Hồ Chí Minh",
         code: "CB2026",
         borrowed: 0,
-        limit: 10
+        limit: 10,
+        email: "vc001@gmail.com"
       }
     ],
     staffs: [
@@ -1008,7 +1076,8 @@ function sampleState() {
         phone: "0901000003",
         address: "TP. Hồ Chí Minh",
         position: "Thủ thư",
-        shift: "Sáng"
+        shift: "Sáng",
+        email: "staff@gmail.com"
       }
     ],
     admins: [
@@ -1020,7 +1089,8 @@ function sampleState() {
         phone: "0901000004",
         address: "TP. Hồ Chí Minh",
         username: "admin",
-        permission: "Full"
+        permission: "Full",
+        email: "admin@gmail.com"
       }
     ],
     documents: [
@@ -1686,6 +1756,7 @@ function renderReaders() {
   byId("readersTable").innerHTML = state.readers.map((reader) => {
     const expired = reader.expires < todayISO();
     const avatarUrl = reader.avatar || "assets/default_avatar.svg";
+    const deleteBtn = `<button class="secondary-button" style="padding: 4px 8px; font-size: 0.8rem; border-color: var(--rose); color: var(--rose);" onclick="deletePersonAccount('${escapeHtml(reader.id)}', 'reader')">Xóa</button>`;
     return `
       <tr>
         <td><strong>${escapeHtml(reader.id)}</strong></td>
@@ -1701,6 +1772,7 @@ function renderReaders() {
         <td>${escapeHtml(reader.type)}<br><span class="muted">${escapeHtml(reader.code)}</span></td>
         <td><span class="status ${expired ? "bad" : "ok"}">${expired ? "Hết hạn" : "Còn hạn"}</span></td>
         <td>${escapeHtml(reader.borrowed)}/${escapeHtml(reader.limit)}</td>
+        <td>${deleteBtn}</td>
       </tr>
     `;
   }).join("");
@@ -1786,6 +1858,61 @@ function rejectAccount(username) {
   }
 }
 
+function deletePersonAccount(id, type) {
+  const isVi = currentLang === "vi";
+  
+  if (type === "reader") {
+    const activeLoans = state.loans.filter(l => l.readerId === id);
+    if (activeLoans.length > 0) {
+      alert(isVi 
+        ? "Không thể xóa độc giả đang mượn sách. Vui lòng ghi nhận trả sách trước." 
+        : "Cannot delete reader with active loans. Please return books first.");
+      return;
+    }
+    
+    const confirmMsg = isVi 
+      ? `Bạn có chắc chắn muốn xóa vĩnh viễn độc giả ${id}? Hành động này sẽ xóa cả tài khoản đăng nhập đi kèm.`
+      : `Are you sure you want to permanently delete reader ${id}? This will also delete the associated login account.`;
+      
+    if (confirm(confirmMsg)) {
+      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.role === "reader" && acc.readerId === id);
+      if (accountEntry) {
+        delete state.accounts[accountEntry[0]];
+      }
+      state.readers = state.readers.filter(r => r.id !== id);
+      saveState();
+      renderAll();
+      showToast(isVi ? "Đã xóa độc giả thành công." : "Deleted reader successfully.");
+    }
+  } else if (type === "staff") {
+    if (confirm(isVi ? `Bạn có chắc chắn muốn xóa nhân viên ${id}?` : `Are you sure you want to delete staff ${id}?`)) {
+      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.role === "staff" && acc.personId === id);
+      if (accountEntry) {
+        delete state.accounts[accountEntry[0]];
+      }
+      state.staffs = state.staffs.filter(s => s.id !== id);
+      saveState();
+      renderAll();
+      showToast(isVi ? "Đã xóa nhân viên thành công." : "Deleted staff successfully.");
+    }
+  } else if (type === "admin") {
+    if (id === "AD001") {
+      alert(isVi ? "Không thể xóa tài khoản Quản trị viên mặc định." : "Cannot delete default admin.");
+      return;
+    }
+    if (confirm(isVi ? `Bạn có chắc chắn muốn xóa quản trị viên ${id}?` : `Are you sure you want to delete admin ${id}?`)) {
+      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.role === "admin" && acc.personId === id);
+      if (accountEntry) {
+        delete state.accounts[accountEntry[0]];
+      }
+      state.admins = state.admins.filter(a => a.id !== id);
+      saveState();
+      renderAll();
+      showToast(isVi ? "Đã xóa quản trị viên thành công." : "Deleted admin successfully.");
+    }
+  }
+}
+
 function renderPeople() {
   const rows = [
     ...state.readers.map((reader) => ({
@@ -1793,34 +1920,47 @@ function renderPeople() {
       name: reader.name,
       role: reader.type,
       contact: `${reader.phone} - ${reader.address}`,
-      detail: `Thẻ: ${formatDate(reader.registered)} - ${formatDate(reader.expires)}; mượn ${reader.borrowed}/${reader.limit}`
+      detail: `Thẻ: ${formatDate(reader.registered)} - ${formatDate(reader.expires)}; mượn ${reader.borrowed}/${reader.limit}`,
+      type: "reader"
     })),
     ...state.staffs.map((staff) => ({
       id: staff.id,
       name: staff.name,
       role: "Nhân viên",
       contact: `${staff.phone} - ${staff.address}`,
-      detail: `${staff.position}; ca ${staff.shift}`
+      detail: `${staff.position}; ca ${staff.shift}`,
+      type: "staff"
     })),
     ...state.admins.map((admin) => ({
       id: admin.id,
       name: admin.name,
       role: "Quản trị viên",
       contact: `${admin.phone} - ${admin.address}`,
-      detail: `Tài khoản ${admin.username}; quyền ${admin.permission}`
+      detail: `Tài khoản ${admin.username}; quyền ${admin.permission}`,
+      type: "admin",
+      username: admin.username
     }))
   ];
 
   byId("peopleCount").textContent = `${rows.length} người`;
-  byId("peopleTable").innerHTML = rows.map((person) => `
-    <tr>
-      <td><strong>${escapeHtml(person.id)}</strong></td>
-      <td>${escapeHtml(person.name)}</td>
-      <td>${escapeHtml(person.role)}</td>
-      <td>${escapeHtml(person.contact)}</td>
-      <td>${escapeHtml(person.detail)}</td>
-    </tr>
-  `).join("");
+  byId("peopleTable").innerHTML = rows.map((person) => {
+    const isCurrent = currentUser && (person.id === currentUser.personId || (person.username && person.username === currentUsername));
+    const isMasterAdmin = person.id === "AD001" || person.username === "admin";
+    const deleteBtn = (isCurrent || isMasterAdmin)
+      ? `<span class="muted" style="font-size: 0.8rem;">Không thể xóa</span>`
+      : `<button class="secondary-button" style="padding: 4px 8px; font-size: 0.8rem; border-color: var(--rose); color: var(--rose);" onclick="deletePersonAccount('${escapeHtml(person.id)}', '${escapeHtml(person.type)}')">Xóa</button>`;
+    
+    return `
+      <tr>
+        <td><strong>${escapeHtml(person.id)}</strong></td>
+        <td>${escapeHtml(person.name)}</td>
+        <td>${escapeHtml(person.role)}</td>
+        <td>${escapeHtml(person.contact)}</td>
+        <td>${escapeHtml(person.detail)}</td>
+        <td>${deleteBtn}</td>
+      </tr>
+    `;
+  }).join("");
 }
 
 function renderLoanSelects() {
@@ -2138,7 +2278,8 @@ function handleReaderSubmit(event) {
     address: data.address.trim(),
     code: data.code.trim(),
     borrowed: 0,
-    limit: data.type === READER_TYPES.STUDENT ? 5 : 10
+    limit: data.type === READER_TYPES.STUDENT ? 5 : 10,
+    email: data.email.trim()
   });
 
   state.accounts[username] = {
@@ -2148,7 +2289,8 @@ function handleReaderSubmit(event) {
     title: "Độc giả",
     personId: id,
     readerId: id,
-    approved: true
+    approved: true,
+    email: data.email.trim()
   };
 
   saveState();
@@ -2186,14 +2328,16 @@ function handleStaffSubmit(event) {
     phone: data.phone.trim(),
     address: data.address.trim(),
     position: data.position.trim(),
-    shift: data.shift.trim()
+    shift: data.shift.trim(),
+    email: data.email.trim()
   });
   state.accounts[username] = {
     password: data.password,
     role: "staff",
     name: data.name.trim(),
     title: "Nhân viên",
-    personId: id
+    personId: id,
+    email: data.email.trim()
   };
 
   saveState();
@@ -2231,14 +2375,16 @@ function handleAdminSubmit(event) {
     phone: data.phone.trim(),
     address: data.address.trim(),
     username,
-    permission: data.permission.trim()
+    permission: data.permission.trim(),
+    email: data.email.trim()
   });
   state.accounts[username] = {
     password: data.password,
     role: "admin",
     name: data.name.trim(),
     title: "Quản trị viên",
-    personId: id
+    personId: id,
+    email: data.email.trim()
   };
 
   saveState();
@@ -2651,6 +2797,12 @@ function enterApp(user, username) {
   byId("userName").textContent = currentUser.name;
   byId("userRole").textContent = currentUser.title;
 
+  if (currentUser.role === "admin") {
+    byId("deleteSelfBtn").style.display = "none";
+  } else {
+    byId("deleteSelfBtn").style.display = "block";
+  }
+
   const avatarEl = byId("userAvatar");
   if (avatarEl) {
     avatarEl.src = currentUser.avatar || "assets/default_avatar.svg";
@@ -2676,13 +2828,22 @@ function enterApp(user, username) {
 
 function handleLogin(event) {
   event.preventDefault();
-  const username = byId("loginUsername").value.trim().toLowerCase();
+  let username = byId("loginUsername").value.trim().toLowerCase();
   const password = byId("loginPassword").value;
   const error = byId("loginError");
   error.style.color = ""; // reset to default CSS color
   const t = (key) => TRANSLATIONS[currentLang][key] || key;
 
-  const user = state.accounts[username];
+  let user = state.accounts[username];
+  if (!user) {
+    // Try to find by email
+    const entry = Object.entries(state.accounts).find(([uname, acc]) => acc.email && acc.email.toLowerCase() === username);
+    if (entry) {
+      username = entry[0];
+      user = entry[1];
+    }
+  }
+
   if (!user || user.password !== password) {
     error.textContent = t("error_wrong_auth");
     byId("loginPassword").value = "";
@@ -2731,7 +2892,8 @@ function handlePublicReaderSignup(event) {
       title: "Độc giả",
       personId: id,
       readerId: id,
-      approved: false
+      approved: false,
+      email: data.email.trim()
     };
 
     saveState();
@@ -2766,7 +2928,8 @@ function handlePublicReaderSignup(event) {
     address: data.address.trim(),
     code: data.code.trim(),
     borrowed: 0,
-    limit
+    limit,
+    email: data.email.trim()
   });
 
   state.accounts[username] = {
@@ -2776,7 +2939,8 @@ function handlePublicReaderSignup(event) {
     title: "Độc giả",
     personId: id,
     readerId: id,
-    approved: false
+    approved: false,
+    email: data.email.trim()
   };
 
   saveState();
@@ -2800,6 +2964,7 @@ function handleLogout() {
   byId("appShell").classList.remove("staff-view", "reader-view");
   byId("loginForm").reset();
   byId("loginError").textContent = "";
+  byId("deleteSelfBtn").style.display = "none";
   document.querySelectorAll(".nav-item").forEach((button) => button.classList.remove("restricted"));
   setPage("dashboard");
 }
@@ -2999,6 +3164,189 @@ function bindEvents() {
 
   // Public reader signup form
   byId("publicReaderForm").addEventListener("submit", handlePublicReaderSignup);
+
+  // Forgot password link click
+  byId("forgotPasswordLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
+    byId("loginPanel").classList.remove("active");
+    byId("signupPanel").classList.remove("active");
+    byId("forgotPanel").classList.add("active");
+    
+    // Reset steps inside forgot panel
+    byId("forgotStep1").style.display = "block";
+    byId("forgotStep2").style.display = "none";
+    byId("forgotStep3").style.display = "none";
+    byId("forgotError").textContent = "";
+    byId("forgotEmail").value = "";
+    byId("forgotOtp").value = "";
+    byId("forgotNewPassword").value = "";
+    byId("forgotConfirmPassword").value = "";
+    byId("otpSimulationInfo").style.display = "none";
+  });
+
+  // Back to login link click
+  byId("backToLoginLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    // Switch auth tabs
+    document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
+    document.querySelector('[data-auth-tab="login"]').classList.add("active");
+    byId("loginPanel").classList.add("active");
+    byId("signupPanel").classList.remove("active");
+    byId("forgotPanel").classList.remove("active");
+  });
+
+  let forgotTargetUsername = "";
+  let forgotGeneratedOtp = "";
+
+  byId("forgotForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+  });
+
+  // Step 1: Send OTP
+  byId("btnSendOtp").addEventListener("click", (e) => {
+    e.preventDefault();
+    const emailInput = byId("forgotEmail").value.trim().toLowerCase();
+    const errorEl = byId("forgotError");
+    errorEl.textContent = "";
+    
+    if (!emailInput) {
+      errorEl.textContent = currentLang === "vi" ? "Vui lòng nhập địa chỉ email." : "Please enter your email address.";
+      return;
+    }
+    
+    // Find account by email
+    const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.email && acc.email.toLowerCase() === emailInput);
+    if (!accountEntry) {
+      errorEl.textContent = currentLang === "vi" 
+        ? "Không tìm thấy tài khoản nào được đăng ký với email này." 
+        : "No account found registered with this email.";
+      return;
+    }
+    
+    forgotTargetUsername = accountEntry[0];
+    forgotGeneratedOtp = String(Math.floor(100000 + Math.random() * 900000));
+    
+    byId("forgotStep1").style.display = "none";
+    byId("forgotStep2").style.display = "block";
+    
+    const simInfo = byId("otpSimulationInfo");
+    simInfo.style.display = "block";
+    simInfo.innerHTML = `
+      <div style="font-weight: bold; margin-bottom: 5px;">⚡ [Đồng bộ SMTP Gmail]</div>
+      <div id="simProgress" style="width: 0%; height: 4px; background: var(--green); transition: width 1.2s ease; border-radius: 2px; margin-bottom: 8px;"></div>
+      <div id="simLog">Đang kết nối SMTP Server...</div>
+    `;
+    
+    setTimeout(() => {
+      const progress = byId("simProgress");
+      if (progress) progress.style.width = "40%";
+      const log = byId("simLog");
+      if (log) log.textContent = "Đang gửi email qua cổng SMTP:587...";
+    }, 400);
+
+    setTimeout(() => {
+      const progress = byId("simProgress");
+      if (progress) progress.style.width = "80%";
+      const log = byId("simLog");
+      if (log) log.textContent = `Đang mã hóa SSL và chuyển tiếp thư tới ${emailInput}...`;
+    }, 1000);
+
+    setTimeout(() => {
+      const progress = byId("simProgress");
+      if (progress) progress.style.width = "100%";
+      const log = byId("simLog");
+      if (log) {
+        log.innerHTML = `
+          <span style="color: var(--green); font-weight: bold;">✓ Đã gửi mã xác nhận thành công!</span><br>
+          <span style="font-size: 0.76rem; color: var(--muted); margin-top: 4px; display: inline-block;">
+            [Demo client-side] Mã OTP là: <strong style="color: var(--ink); font-size: 0.86rem; background: #fff; padding: 2px 6px; border: 1px dashed var(--line); border-radius: 4px; margin-left: 2px;">${forgotGeneratedOtp}</strong>
+          </span>
+        `;
+      }
+      showToast(currentLang === "vi" ? `Đã gửi mã xác thực tới ${emailInput}!` : `Verification code sent to ${emailInput}!`);
+    }, 1800);
+  });
+
+  // Step 2: Verify OTP
+  byId("btnVerifyOtp").addEventListener("click", () => {
+    const otpInput = byId("forgotOtp").value.trim();
+    const errorEl = byId("forgotError");
+    errorEl.textContent = "";
+    
+    if (otpInput !== forgotGeneratedOtp) {
+      errorEl.textContent = currentLang === "vi" ? "Mã xác thực OTP không chính xác." : "Incorrect OTP verification code.";
+      return;
+    }
+    
+    byId("forgotStep2").style.display = "none";
+    byId("forgotStep3").style.display = "block";
+  });
+
+  // Step 3: Reset Password
+  byId("btnResetPassword").addEventListener("click", () => {
+    const newPass = byId("forgotNewPassword").value;
+    const confirmPass = byId("forgotConfirmPassword").value;
+    const errorEl = byId("forgotError");
+    errorEl.textContent = "";
+    
+    if (newPass.length < 3) {
+      errorEl.textContent = currentLang === "vi" ? "Mật khẩu mới phải có ít nhất 3 ký tự." : "New password must be at least 3 characters.";
+      return;
+    }
+    if (newPass !== confirmPass) {
+      errorEl.textContent = currentLang === "vi" ? "Mật khẩu xác nhận không trùng khớp." : "Confirm password does not match.";
+      return;
+    }
+    
+    state.accounts[forgotTargetUsername].password = newPass;
+    saveState();
+    
+    showToast(currentLang === "vi" ? "Đã đặt lại mật khẩu thành công!" : "Password reset successfully!");
+    
+    // Switch back to login panel and reset tabs
+    byId("forgotPanel").classList.remove("active");
+    document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
+    document.querySelector('[data-auth-tab="login"]').classList.add("active");
+    byId("loginPanel").classList.add("active");
+  });
+
+  // Self delete account
+  byId("deleteSelfBtn").addEventListener("click", () => {
+    if (!currentUser) return;
+    
+    const isVi = currentLang === "vi";
+    if (currentUser.role === "reader") {
+      const activeLoans = state.loans.filter(l => l.readerId === currentUser.readerId);
+      if (activeLoans.length > 0) {
+        alert(isVi 
+          ? "Bạn không thể tự xóa tài khoản khi đang mượn sách. Vui lòng ghi nhận trả sách trước." 
+          : "You cannot delete your account while you have active loans. Please return books first.");
+        return;
+      }
+    }
+    
+    const confirmMsg = isVi 
+      ? "CẢNH BÁO: Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản của mình? Mọi dữ liệu sẽ bị xóa và hành động này không thể hoàn tác!"
+      : "WARNING: Are you sure you want to permanently delete your account? All data will be deleted and this action cannot be undone!";
+      
+    if (confirm(confirmMsg)) {
+      const uname = currentUsername;
+      const pid = currentUser.personId || currentUser.readerId;
+      const role = currentUser.role;
+      
+      if (role === "reader") {
+        state.readers = state.readers.filter(r => r.id !== pid);
+      } else if (role === "staff") {
+        state.staffs = state.staffs.filter(s => s.id !== pid);
+      }
+      
+      delete state.accounts[uname];
+      saveState();
+      handleLogout();
+      showToast(isVi ? "Tài khoản của bạn đã bị xóa vĩnh viễn." : "Your account has been permanently deleted.");
+    }
+  });
 }
 
 migrateStoredCatalogCodes();
