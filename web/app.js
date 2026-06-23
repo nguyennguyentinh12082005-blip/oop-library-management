@@ -1111,73 +1111,89 @@ function sampleState() {
   };
 }
 
+// Vá lại các khoá gốc bị thiếu/hỏng. Dùng chung cho loadState() và đồng bộ Firebase.
+// Lưu ý: Firebase Realtime Database KHÔNG lưu mảng rỗng/null, nên sau khi xoá phần tử
+// cuối của một danh sách, snapshot trả về sẽ thiếu khoá đó -> phải gán lại [] ở đây,
+// nếu không các hàm render gọi .map()/.filter() trên undefined sẽ văng lỗi.
+function normalizeState(loaded) {
+  if (!loaded || typeof loaded !== "object") {
+    return { state: sampleState(), changed: true };
+  }
+
+  let changed = false;
+
+  if (!loaded.accounts || typeof loaded.accounts !== "object") {
+    loaded.accounts = sampleState().accounts;
+    changed = true;
+  }
+  if (!loaded.accounts.admin) {
+    loaded.accounts.admin = sampleState().accounts.admin;
+    changed = true;
+  }
+  if (!loaded.accounts.staff) {
+    loaded.accounts.staff = sampleState().accounts.staff;
+    changed = true;
+  }
+  if (!Array.isArray(loaded.documents)) {
+    loaded.documents = sampleState().documents;
+    changed = true;
+  }
+  if (!Array.isArray(loaded.readers)) {
+    loaded.readers = [];
+    changed = true;
+  }
+  if (!Array.isArray(loaded.staffs)) {
+    loaded.staffs = [];
+    changed = true;
+  }
+  if (!Array.isArray(loaded.admins)) {
+    loaded.admins = sampleState().admins;
+    changed = true;
+  }
+  if (!Array.isArray(loaded.loans)) {
+    loaded.loans = [];
+    changed = true;
+  }
+  if (!Array.isArray(loaded.transactions)) {
+    loaded.transactions = [];
+    changed = true;
+  }
+  if (!loaded.counters || typeof loaded.counters !== "object") {
+    loaded.counters = { loan: 1, transaction: 1 };
+    changed = true;
+  }
+
+  if (loaded.documents.length === 0) {
+    const sample = sampleState();
+    loaded.documents = sample.documents;
+    loaded.readers = sample.readers;
+    loaded.staffs = sample.staffs;
+    loaded.accounts = { ...loaded.accounts, ...sample.accounts };
+    changed = true;
+  }
+
+  return { state: loaded, changed };
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    let loaded = raw ? JSON.parse(raw) : null;
-    
+    const loaded = raw ? JSON.parse(raw) : null;
+
     if (!loaded) {
       return sampleState();
     }
-    
-    let changed = false;
-    
-    // Auto-heal missing or corrupted root keys
-    if (!loaded.accounts || typeof loaded.accounts !== "object") {
-      loaded.accounts = sampleState().accounts;
-      changed = true;
-    }
-    if (!loaded.accounts.admin) {
-      loaded.accounts.admin = sampleState().accounts.admin;
-      changed = true;
-    }
-    if (!loaded.accounts.staff) {
-      loaded.accounts.staff = sampleState().accounts.staff;
-      changed = true;
-    }
-    if (!Array.isArray(loaded.documents)) {
-      loaded.documents = sampleState().documents;
-      changed = true;
-    }
-    if (!Array.isArray(loaded.readers)) {
-      loaded.readers = [];
-      changed = true;
-    }
-    if (!Array.isArray(loaded.staffs)) {
-      loaded.staffs = [];
-      changed = true;
-    }
-    if (!Array.isArray(loaded.loans)) {
-      loaded.loans = [];
-      changed = true;
-    }
-    if (!Array.isArray(loaded.transactions)) {
-      loaded.transactions = [];
-      changed = true;
-    }
-    if (!loaded.counters || typeof loaded.counters !== "object") {
-      loaded.counters = { loan: 1, transaction: 1 };
-      changed = true;
-    }
-    
-    if (loaded.documents.length === 0) {
-      const sample = sampleState();
-      loaded.documents = sample.documents;
-      loaded.readers = sample.readers;
-      loaded.staffs = sample.staffs;
-      loaded.accounts = { ...loaded.accounts, ...sample.accounts };
-      changed = true;
-    }
-    
+
+    const { state: healed, changed } = normalizeState(loaded);
     if (changed) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(healed));
       } catch (e) {
         console.error("Failed to save healed state:", e);
       }
     }
-    
-    return loaded;
+
+    return healed;
   } catch (err) {
     console.error("Error loading state, falling back to sample state:", err);
     return sampleState();
@@ -1191,7 +1207,9 @@ if (db) {
   db.ref("libraryState").on("value", (snapshot) => {
     const val = snapshot.val();
     if (val) {
-      state = val;
+      // Vá dữ liệu thô từ Firebase (Firebase loại bỏ mảng rỗng/null) trước khi dùng,
+      // nếu không state.staffs/admins/... có thể là undefined và làm render văng lỗi.
+      state = normalizeState(val).state;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       if (currentUser) {
         renderAll();
@@ -1215,7 +1233,14 @@ function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     if (db) {
-      db.ref("libraryState").set(state).catch((e) => console.error("Firebase save failed:", e));
+      db.ref("libraryState").set(state).catch((e) => {
+        // Thường gặp khi username chứa ký tự Firebase cấm trong key (. # $ [ ] /):
+        // ghi server thất bại, thay đổi không đồng bộ -> đừng để im lặng.
+        console.error("Firebase save failed:", e);
+        if (document.querySelector("#toast")) {
+          showToast("Đồng bộ máy chủ thất bại (kiểm tra tên đăng nhập có chứa . # $ [ ] /).");
+        }
+      });
     }
     return true;
   } catch {
@@ -1915,7 +1940,7 @@ function deletePersonAccount(id, type) {
 
 function renderPeople() {
   const rows = [
-    ...state.readers.map((reader) => ({
+    ...(state.readers || []).map((reader) => ({
       id: reader.id,
       name: reader.name,
       role: reader.type,
@@ -1923,7 +1948,7 @@ function renderPeople() {
       detail: `Thẻ: ${formatDate(reader.registered)} - ${formatDate(reader.expires)}; mượn ${reader.borrowed}/${reader.limit}`,
       type: "reader"
     })),
-    ...state.staffs.map((staff) => ({
+    ...(state.staffs || []).map((staff) => ({
       id: staff.id,
       name: staff.name,
       role: "Nhân viên",
@@ -1931,7 +1956,7 @@ function renderPeople() {
       detail: `${staff.position}; ca ${staff.shift}`,
       type: "staff"
     })),
-    ...state.admins.map((admin) => ({
+    ...(state.admins || []).map((admin) => ({
       id: admin.id,
       name: admin.name,
       role: "Quản trị viên",
