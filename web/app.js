@@ -1337,7 +1337,7 @@ function findReader(id) {
 }
 
 function findDocument(id) {
-  const managed = state.documents.find((documentItem) => documentItem.id === id);
+  const managed = (state.documents || []).find((documentItem) => documentItem && documentItem.id === id);
   if (managed && !isDigitalLibraryDocument(managed)) return normalizeManagedDocument(managed);
   return catalogDocuments().find((documentItem) => documentItem.id === id);
 }
@@ -1360,7 +1360,7 @@ function allDocuments() {
   const deletedIds = new Set(state.deletedCatalogIds || []);
 
   [
-    ...state.documents.map(normalizeManagedDocument).filter((documentItem) => !isDigitalLibraryDocument(documentItem)),
+    ...(state.documents || []).filter(Boolean).map(normalizeManagedDocument).filter((documentItem) => !isDigitalLibraryDocument(documentItem)),
     ...catalogDocuments()
   ].forEach((documentItem) => {
     if (deletedIds.has(documentItem.id)) return;
@@ -1377,7 +1377,7 @@ function allDocuments() {
 
 function ensureManagedDocument(id) {
   id = String(id || "").trim().toUpperCase();
-  const managed = state.documents.find((documentItem) => documentItem.id === id);
+  const managed = (state.documents || []).find((documentItem) => documentItem && documentItem.id === id);
   if (managed && !isDigitalLibraryDocument(managed)) return normalizeManagedDocument(managed);
 
   const catalogItem = catalogDocuments().find((documentItem) => documentItem.id === id);
@@ -2723,7 +2723,7 @@ function deleteDocument(id) {
   }
   
   // 1. Remove from state.documents if it exists there
-  state.documents = state.documents.filter(doc => doc.id !== id);
+  state.documents = (state.documents || []).filter(doc => doc && doc.id !== id);
   
   // 2. Add to deletedCatalogIds to hide from catalog listing
   state.deletedCatalogIds = state.deletedCatalogIds || [];
@@ -2808,7 +2808,8 @@ function applyRoleRestrictions() {
     element.hidden = !isAdmin;
   });
 
-  byId("resetDataBtn").hidden = !isAdmin;
+  const resetBtn = byId("resetDataBtn");
+  if (resetBtn) resetBtn.hidden = !isAdmin;
   
   const importForm = byId("importForm");
   const exportForm = byId("exportForm");
@@ -3189,13 +3190,16 @@ function bindEvents() {
     if (event.key === "Escape" && !byId("documentModal").hidden) closeDocumentModal();
   });
 
-  byId("resetDataBtn").addEventListener("click", () => {
-    state = sampleState();
-    saveState();
-    setDefaultDates();
-    renderAll();
-    showToast("Đã nạp lại dữ liệu mẫu.");
-  });
+  const resetBtn = byId("resetDataBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      state = sampleState();
+      saveState();
+      setDefaultDates();
+      renderAll();
+      showToast("Đã nạp lại dữ liệu mẫu.");
+    });
+  }
 
   byId("loginForm").addEventListener("submit", handleLogin);
   byId("logoutBtn").addEventListener("click", handleLogout);
