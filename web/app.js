@@ -3159,6 +3159,7 @@ function bindEvents() {
       const target = tab.dataset.authTab;
       byId("loginPanel").classList.toggle("active", target === "login");
       byId("signupPanel").classList.toggle("active", target === "signup");
+      byId("forgotPanel").classList.remove("active");
     });
   });
 
