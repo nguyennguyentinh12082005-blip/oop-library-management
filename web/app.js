@@ -1944,7 +1944,7 @@ function renderPeople() {
 
   byId("peopleCount").textContent = `${rows.length} người`;
   byId("peopleTable").innerHTML = rows.map((person) => {
-    const isCurrent = currentUser && (person.id === currentUser.personId || (person.username && person.username === currentUsername));
+    const isCurrent = currentUser && (person.id === currentUser.personId || (person.username && person.username === currentUser.username));
     const isMasterAdmin = person.id === "AD001" || person.username === "admin";
     const deleteBtn = (isCurrent || isMasterAdmin)
       ? `<span class="muted" style="font-size: 0.8rem;">Không thể xóa</span>`
@@ -3332,7 +3332,7 @@ function bindEvents() {
       : "WARNING: Are you sure you want to permanently delete your account? All data will be deleted and this action cannot be undone!";
       
     if (confirm(confirmMsg)) {
-      const uname = currentUsername;
+      const uname = currentUser.username;
       const pid = currentUser.personId || currentUser.readerId;
       const role = currentUser.role;
       
