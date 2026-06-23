@@ -1781,7 +1781,7 @@ function renderReaders() {
 }
 
 function renderPendingApprovals() {
-  const pending = Object.entries(state.accounts || {}).filter(([username, acc]) => acc.role === "reader" && acc.approved === false);
+  const pending = Object.entries(state.accounts || {}).filter(([username, acc]) => acc && acc.role === "reader" && acc.approved === false);
   byId("pendingApprovalsCount").textContent = pending.length;
   
   if (pending.length === 0) {
@@ -1821,7 +1821,7 @@ function updatePendingBadge() {
   if (!badge) return;
   
   if (currentUser && currentUser.role === "admin") {
-    const pendingCount = Object.values(state.accounts || {}).filter(acc => acc.role === "reader" && acc.approved === false).length;
+    const pendingCount = Object.values(state.accounts || {}).filter(acc => acc && acc.role === "reader" && acc.approved === false).length;
     if (pendingCount > 0) {
       badge.textContent = pendingCount;
       badge.style.display = "inline-block";
@@ -1875,7 +1875,7 @@ function deletePersonAccount(id, type) {
       : `Are you sure you want to permanently delete reader ${id}? This will also delete the associated login account.`;
       
     if (confirm(confirmMsg)) {
-      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.role === "reader" && acc.readerId === id);
+      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc && acc.role === "reader" && acc.readerId === id);
       if (accountEntry) {
         delete state.accounts[accountEntry[0]];
       }
@@ -1886,7 +1886,7 @@ function deletePersonAccount(id, type) {
     }
   } else if (type === "staff") {
     if (confirm(isVi ? `Bạn có chắc chắn muốn xóa nhân viên ${id}?` : `Are you sure you want to delete staff ${id}?`)) {
-      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.role === "staff" && acc.personId === id);
+      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc && acc.role === "staff" && acc.personId === id);
       if (accountEntry) {
         delete state.accounts[accountEntry[0]];
       }
@@ -1901,7 +1901,7 @@ function deletePersonAccount(id, type) {
       return;
     }
     if (confirm(isVi ? `Bạn có chắc chắn muốn xóa quản trị viên ${id}?` : `Are you sure you want to delete admin ${id}?`)) {
-      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.role === "admin" && acc.personId === id);
+      const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc && acc.role === "admin" && acc.personId === id);
       if (accountEntry) {
         delete state.accounts[accountEntry[0]];
       }
@@ -2817,7 +2817,7 @@ function enterApp(user, username) {
   showToast(t("toast_welcome") + currentUser.name + "!");
 
   if (currentUser.role === "admin") {
-    const pendingCount = Object.values(state.accounts || {}).filter(acc => acc.role === "reader" && acc.approved === false).length;
+    const pendingCount = Object.values(state.accounts || {}).filter(acc => acc && acc.role === "reader" && acc.approved === false).length;
     if (pendingCount > 0) {
       setTimeout(() => {
         showToast(t("toast_pending_count").replace("{count}", pendingCount));
@@ -2837,7 +2837,7 @@ function handleLogin(event) {
   let user = state.accounts[username];
   if (!user) {
     // Try to find by email
-    const entry = Object.entries(state.accounts).find(([uname, acc]) => acc.email && acc.email.toLowerCase() === username);
+    const entry = Object.entries(state.accounts).find(([uname, acc]) => acc && acc.email && acc.email.toLowerCase() === username);
     if (entry) {
       username = entry[0];
       user = entry[1];
@@ -3217,7 +3217,7 @@ function bindEvents() {
     }
     
     // Find account by email
-    const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc.email && acc.email.toLowerCase() === emailInput);
+    const accountEntry = Object.entries(state.accounts).find(([uname, acc]) => acc && acc.email && acc.email.toLowerCase() === emailInput);
     if (!accountEntry) {
       errorEl.textContent = currentLang === "vi" 
         ? "Không tìm thấy tài khoản nào được đăng ký với email này." 
