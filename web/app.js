@@ -2,13 +2,16 @@ const STORAGE_KEY = "oop-library-web-v6";
 
 // Initialize Firebase Realtime Database for multi-machine synchronization
 const firebaseConfig = {
-  apiKey: "AIzaSyB8z_G46XN2L-w3P1n7xN6H3Fp-Dq123",
-  authDomain: "oop-library-db-db36d.firebaseapp.com",
-  databaseURL: "https://oop-library-db-db36d-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "oop-library-db-db36d",
-  storageBucket: "oop-library-db-db36d.appspot.com",
-  appId: "1:297836182937:web:b12f6723891d89c"
+  apiKey: "AIzaSyD08ByrRNUvpVo6JIRUHC77q37dltFnP1E",
+  authDomain: "oop-tl.firebaseapp.com",
+  databaseURL: "https://oop-tl-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "oop-tl",
+  storageBucket: "oop-tl.firebasestorage.app",
+  messagingSenderId: "553315785442",
+  appId: "1:553315785442:web:92605f152f3b0c5ccbdcbb",
+  measurementId: "G-XGMBX4M9Y0"
 };
+
 
 let db = null;
 try {
