@@ -23,6 +23,30 @@ try {
   console.error("Firebase failed to initialize:", e);
 }
 
+// ====== Cấu hình gửi OTP qua email (EmailJS) ======
+// HƯỚNG DẪN LẤY 3 KHOÁ (làm 1 lần, miễn phí ~200 mail/tháng):
+//   1) Tạo tài khoản tại https://www.emailjs.com
+//   2) Email Services  -> Add New Service -> chọn Gmail -> kết nối Gmail của bạn -> lấy "Service ID"
+//   3) Email Templates -> Create -> trong tab Settings đặt "To Email" = {{email}};
+//        nội dung (Content) chèn mã: "Mã OTP của bạn là: {{otp}} (hết hạn sau {{time}})" -> lấy "Template ID"
+//   4) Account -> General -> lấy "Public Key"
+// Dán 3 giá trị vào dưới đây rồi lưu. Khi 3 khoá còn rỗng, hệ thống KHÔNG hiện OTP
+// trên trang mà chỉ in ra Console (F12) để tiện chạy thử.
+const EMAILJS_CONFIG = {
+  publicKey: "PAZh8cpFybA7utp03",   // Account > General > Public Key
+  serviceId: "service_f0tns3e",   // Email Services > Service ID
+  templateId: "template_7wa6u55"   // Email Templates > Template ID
+};
+
+function isEmailConfigured() {
+  return Boolean(
+    EMAILJS_CONFIG.publicKey &&
+    EMAILJS_CONFIG.serviceId &&
+    EMAILJS_CONFIG.templateId &&
+    typeof emailjs !== "undefined"
+  );
+}
+
 
 const DEFAULT_ACCOUNTS = {
   admin: {
@@ -3252,46 +3276,56 @@ function bindEvents() {
     
     forgotTargetUsername = accountEntry[0];
     forgotGeneratedOtp = String(Math.floor(100000 + Math.random() * 900000));
-    
-    byId("forgotStep1").style.display = "none";
-    byId("forgotStep2").style.display = "block";
-    
+
+    const isVi = currentLang === "vi";
     const simInfo = byId("otpSimulationInfo");
     simInfo.style.display = "block";
-    simInfo.innerHTML = `
-      <div style="font-weight: bold; margin-bottom: 5px;">⚡ [Đồng bộ SMTP Gmail]</div>
-      <div id="simProgress" style="width: 0%; height: 4px; background: var(--green); transition: width 1.2s ease; border-radius: 2px; margin-bottom: 8px;"></div>
-      <div id="simLog">Đang kết nối SMTP Server...</div>
-    `;
-    
-    setTimeout(() => {
-      const progress = byId("simProgress");
-      if (progress) progress.style.width = "40%";
-      const log = byId("simLog");
-      if (log) log.textContent = "Đang gửi email qua cổng SMTP:587...";
-    }, 400);
 
-    setTimeout(() => {
-      const progress = byId("simProgress");
-      if (progress) progress.style.width = "80%";
-      const log = byId("simLog");
-      if (log) log.textContent = `Đang mã hóa SSL và chuyển tiếp thư tới ${emailInput}...`;
-    }, 1000);
+    const goToStep2 = () => {
+      byId("forgotStep1").style.display = "none";
+      byId("forgotStep2").style.display = "block";
+    };
 
-    setTimeout(() => {
-      const progress = byId("simProgress");
-      if (progress) progress.style.width = "100%";
-      const log = byId("simLog");
-      if (log) {
-        log.innerHTML = `
-          <span style="color: var(--green); font-weight: bold;">✓ Đã gửi mã xác nhận thành công!</span><br>
-          <span style="font-size: 0.76rem; color: var(--muted); margin-top: 4px; display: inline-block;">
-            [Demo client-side] Mã OTP là: <strong style="color: var(--ink); font-size: 0.86rem; background: #fff; padding: 2px 6px; border: 1px dashed var(--line); border-radius: 4px; margin-left: 2px;">${forgotGeneratedOtp}</strong>
-          </span>
-        `;
-      }
-      showToast(currentLang === "vi" ? `Đã gửi mã xác thực tới ${emailInput}!` : `Verification code sent to ${emailInput}!`);
-    }, 1800);
+    if (isEmailConfigured()) {
+      // Gửi OTP THẬT qua EmailJS -> không hiển thị mã trên trang.
+      simInfo.innerHTML = `<div id="simLog">${isVi ? "Đang gửi mã tới email..." : "Sending code to your email..."}</div>`;
+      const btn = byId("btnSendOtp");
+      btn.disabled = true;
+      emailjs
+        .send(
+          EMAILJS_CONFIG.serviceId,
+          EMAILJS_CONFIG.templateId,
+          {
+            email: emailInput,
+            to_email: emailInput,
+            otp: forgotGeneratedOtp,
+            passcode: forgotGeneratedOtp,
+            time: isVi ? "15 phút" : "15 minutes"
+          },
+          { publicKey: EMAILJS_CONFIG.publicKey }
+        )
+        .then(() => {
+          goToStep2();
+          simInfo.innerHTML =
+            `<span style="color: var(--green); font-weight: bold;">✓ ${isVi ? "Đã gửi mã xác nhận tới " : "Code sent to "}${emailInput}</span><br>` +
+            `<span style="font-size: 0.76rem; color: var(--muted);">${isVi ? "Vui lòng kiểm tra hộp thư (kể cả mục Spam/Quảng cáo)." : "Please check your inbox (including Spam/Promotions)."}</span>`;
+          showToast(isVi ? `Đã gửi mã xác thực tới ${emailInput}!` : `Verification code sent to ${emailInput}!`);
+        })
+        .catch((err) => {
+          console.error("EmailJS send failed:", err);
+          simInfo.innerHTML = `<span style="color: var(--rose); font-weight: bold;">${isVi ? "Gửi email thất bại. Vui lòng thử lại." : "Failed to send email. Please try again."}</span>`;
+        })
+        .finally(() => {
+          btn.disabled = false;
+        });
+    } else {
+      // CHƯA cấu hình EmailJS: KHÔNG hiện OTP trên trang, chỉ in ra Console (F12) để dev test.
+      console.warn(`[DEV] Chưa cấu hình EmailJS. OTP cho ${emailInput} = ${forgotGeneratedOtp}`);
+      goToStep2();
+      simInfo.innerHTML =
+        `<span style="color: var(--rose); font-weight: bold;">${isVi ? "⚠ Chưa cấu hình gửi email (EmailJS)." : "⚠ Email sending not configured (EmailJS)."}</span><br>` +
+        `<span style="font-size: 0.76rem; color: var(--muted);">${isVi ? "Hãy điền 3 khoá EMAILJS_CONFIG trong app.js. Tạm thời mã OTP được in ở Console (F12)." : "Set EMAILJS_CONFIG in app.js. OTP is printed to Console (F12) for now."}</span>`;
+    }
   });
 
   // Step 2: Verify OTP
