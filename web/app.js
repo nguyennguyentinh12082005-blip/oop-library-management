@@ -984,7 +984,6 @@ function sampleState() {
         phone: "0901000003",
         address: "TP. Hồ Chí Minh",
         position: "Thủ thư",
-        salary: 9000000,
         shift: "Sáng"
       }
     ],
@@ -1754,7 +1753,7 @@ function renderPeople() {
       name: staff.name,
       role: "Nhân viên",
       contact: `${staff.phone} - ${staff.address}`,
-      detail: `${staff.position}; ca ${staff.shift}; lương ${money(staff.salary)}`
+      detail: `${staff.position}; ca ${staff.shift}`
     })),
     ...state.admins.map((admin) => ({
       id: admin.id,
@@ -1951,6 +1950,22 @@ function setPage(pageName) {
   page.classList.add("active");
   byId("pageTitle").textContent = page.dataset.title || "";
   document.querySelector(`[data-page="${nextPage}"]`)?.classList.add("active");
+
+  // Re-render contents dynamically on page switch to ensure fresh data display
+  if (nextPage === "readers") {
+    renderReaders();
+    renderPeople();
+  } else if (nextPage === "dashboard") {
+    renderDashboard();
+  } else if (nextPage === "documents") {
+    renderDocuments();
+  } else if (nextPage === "loans") {
+    renderLoans();
+  } else if (nextPage === "inventory") {
+    renderInventory();
+  } else if (nextPage === "transactions") {
+    renderTransactions();
+  }
 }
 
 function setupTextbookExtraFieldsEvents(prefix) {
@@ -2124,7 +2139,6 @@ function handleStaffSubmit(event) {
     phone: data.phone.trim(),
     address: data.address.trim(),
     position: data.position.trim(),
-    salary: Number(data.salary),
     shift: data.shift.trim()
   });
   state.accounts[username] = {
@@ -2953,9 +2967,25 @@ window.addEventListener("storage", (e) => {
     state = loadState();
     updatePendingBadge();
     
-    const readersPage = document.querySelector("#readersPage");
-    if (readersPage && !readersPage.hidden) {
-      renderReaders();
+    if (currentUser) {
+      const activePage = document.querySelector(".page.active");
+      if (activePage) {
+        const pageName = activePage.id.replace("Page", "");
+        if (pageName === "readers") {
+          renderReaders();
+          renderPeople();
+        } else if (pageName === "dashboard") {
+          renderDashboard();
+        } else if (pageName === "documents") {
+          renderDocuments();
+        } else if (pageName === "loans") {
+          renderLoans();
+        } else if (pageName === "inventory") {
+          renderInventory();
+        } else if (pageName === "transactions") {
+          renderTransactions();
+        }
+      }
     }
     
     if (currentUser && currentUser.role === "admin" && e.oldValue && e.newValue) {
