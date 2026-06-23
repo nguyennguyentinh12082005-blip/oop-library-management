@@ -1021,16 +1021,72 @@ function sampleState() {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    const loaded = raw ? JSON.parse(raw) : sampleState();
-    if (loaded && Array.isArray(loaded.documents) && loaded.documents.length === 0) {
+    let loaded = raw ? JSON.parse(raw) : null;
+    
+    if (!loaded) {
+      return sampleState();
+    }
+    
+    let changed = false;
+    
+    // Auto-heal missing or corrupted root keys
+    if (!loaded.accounts || typeof loaded.accounts !== "object") {
+      loaded.accounts = sampleState().accounts;
+      changed = true;
+    }
+    if (!loaded.accounts.admin) {
+      loaded.accounts.admin = sampleState().accounts.admin;
+      changed = true;
+    }
+    if (!loaded.accounts.staff) {
+      loaded.accounts.staff = sampleState().accounts.staff;
+      changed = true;
+    }
+    if (!Array.isArray(loaded.documents)) {
+      loaded.documents = sampleState().documents;
+      changed = true;
+    }
+    if (!Array.isArray(loaded.readers)) {
+      loaded.readers = [];
+      changed = true;
+    }
+    if (!Array.isArray(loaded.staffs)) {
+      loaded.staffs = [];
+      changed = true;
+    }
+    if (!Array.isArray(loaded.loans)) {
+      loaded.loans = [];
+      changed = true;
+    }
+    if (!Array.isArray(loaded.transactions)) {
+      loaded.transactions = [];
+      changed = true;
+    }
+    if (!loaded.counters || typeof loaded.counters !== "object") {
+      loaded.counters = { loan: 1, transaction: 1 };
+      changed = true;
+    }
+    
+    if (loaded.documents.length === 0) {
       const sample = sampleState();
       loaded.documents = sample.documents;
       loaded.readers = sample.readers;
       loaded.staffs = sample.staffs;
       loaded.accounts = { ...loaded.accounts, ...sample.accounts };
+      changed = true;
     }
+    
+    if (changed) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+      } catch (e) {
+        console.error("Failed to save healed state:", e);
+      }
+    }
+    
     return loaded;
-  } catch {
+  } catch (err) {
+    console.error("Error loading state, falling back to sample state:", err);
     return sampleState();
   }
 }
