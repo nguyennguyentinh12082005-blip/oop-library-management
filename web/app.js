@@ -534,7 +534,7 @@ function formatDate(dateText) {
 }
 
 function money(value) {
-  return new Intl.NumberFormat("vi-VN").format(value || 0);
+  return new Intl.NumberFormat("vi-VN").format(value || 0) + " VNĐ";
 }
 
 function plainText(value) {
@@ -2539,7 +2539,7 @@ function handleReturnSubmit(event) {
 
   saveState();
   renderAll();
-  byId("returnHint").textContent = `Trễ ${lateDays} ngày, tiền phạt ${money(fine)} VND.`;
+  byId("returnHint").textContent = `Trễ ${lateDays} ngày, tiền phạt ${money(fine)}.`;
   showToast("Đã xác nhận trả tài liệu.");
 }
 
