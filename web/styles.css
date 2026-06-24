@@ -248,6 +248,13 @@ button {
   animation: pageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+#dashboardPage.active {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 130px);
+  gap: clamp(12px, 2vh, 24px);
+}
+
 @keyframes pageFadeIn {
   from {
     opacity: 0;
