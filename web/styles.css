@@ -64,17 +64,17 @@ button {
 
 .brand {
   display: flex;
-  gap: 12px;
+  gap: clamp(4px, 1vh, 12px);
   align-items: center;
-  padding: 8px 4px 22px;
+  padding: clamp(4px, 1vh, 8px) 4px clamp(8px, 2vh, 22px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: clamp(32px, 5vh, 44px);
+  height: clamp(32px, 5vh, 44px);
   border-radius: var(--radius);
   background: #f2b84b;
   color: #152033;
@@ -94,16 +94,16 @@ button {
 
 .nav-list {
   display: grid;
-  gap: 8px;
-  padding: 24px 0;
+  gap: clamp(2px, 1vh, 8px);
+  padding: clamp(8px, 2vh, 24px) 0;
 }
 
 .nav-item {
   width: 100%;
-  min-height: 42px;
+  min-height: clamp(32px, 5vh, 42px);
   border: 1px solid transparent;
   border-radius: var(--radius);
-  padding: 10px 12px;
+  padding: clamp(6px, 1vh, 10px) 12px;
   background: transparent;
   color: #dbe5f2;
   text-align: left;
