@@ -2,8 +2,8 @@
   --bg: #f3f7fc;
   --surface: #ffffff;
   --surface-soft: #fafcff;
-  --sidebar: linear-gradient(180deg, #3f80f4 0%, #1f54cd 100%);
-  --sidebar-2: #163fb0;
+  --sidebar: #0b2a5e;
+  --sidebar-2: rgba(255, 255, 255, 0.1);
   --ink: #182233;
   --muted: #66758a;
   --line: #d9e1ec;

@@ -1,0 +1,167 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="adminFlow" name="Luong xu ly Quan Tri">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1360" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="LUONG XU LY - TRANG QUAN TRI (dung lam gi / sai lam gi)" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=18;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="430" y="15" width="780" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LOGIN ===== -->
+        <mxCell id="start" value="Dang nhap (admin / staff)" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="580" y="60" width="260" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="decLogin" value="Tai khoan &amp; mat khau dung?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="errLogin" value="SAI: Bao loi, xoa mat khau" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="145" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="enterApp" value="enterApp() + applyRoleRestrictions()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="260" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="trangQT" value="TRANG QUAN TRI" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="360" width="220" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LANE 1: THEM TAI LIEU ===== -->
+        <mxCell id="h1" value="Quan ly tai lieu:&#10;Them tai lieu (handleDocumentSubmit)" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="70" y="475" width="240" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="l1d1" value="La Quan tri vien?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="100" y="580" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l1e1" value="Loi: Chi Quan tri vien" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="585" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l1d2" value="Ma tai lieu da ton tai?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="100" y="700" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l1e2" value="Loi: Ma tai lieu da ton tai" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="705" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l1a1" value="Tao tai lieu + attachFiles&#10;state.documents.push()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="80" y="820" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l1a2" value="saveState() + renderAll()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="80" y="920" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="l1end" value="DUNG: Da them tai lieu moi" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1010" width="180" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LANE 2: THEM NGUOI ===== -->
+        <mxCell id="h2" value="Quan ly con nguoi:&#10;Them doc gia / nhan vien / quan tri" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="590" y="475" width="240" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="l2d1" value="La Quan tri vien?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="580" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l2e1" value="Loi: Chi Quan tri vien" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="830" y="585" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l2d2" value="Ma nguoi da ton tai?&#10;(personIdExists)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="700" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l2e2" value="Loi: Ma nguoi da ton tai" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="830" y="705" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l2d3" value="Tai khoan da ton tai?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="820" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l2e3" value="Loi: Tai khoan da ton tai" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="830" y="825" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l2d4" value="Mat khau &gt;= 3 ky tu?&#10;(chi doc gia)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="940" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l2e4" value="Loi: Mat khau &lt; 3 ky tu" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="830" y="945" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l2a1" value="push readers/staffs/admins&#10;+ tao account (state.accounts)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1060" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l2a2" value="saveState() + renderAll()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1160" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="l2end" value="DUNG: Da them nguoi" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="620" y="1250" width="180" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LANE 3: NHAP KHO ===== -->
+        <mxCell id="h3" value="Quan ly nhap / xuat:&#10;Nhap kho (handleImportSubmit)" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="475" width="240" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="l3d1" value="La Quan tri vien?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="580" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="l3e1" value="Loi: Chi Quan tri vien" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="585" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l3d2" value="Tai lieu hop le?&#10;(moi: ma chua co / co san: tim thay)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="700" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="l3e2" value="Loi: Ma trung hoac&#10;khong tim thay tai lieu" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="710" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l3a1" value="quantity += so luong&#10;Tao GiaoDich 'Nhap'" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="830" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l3a2" value="saveState() + renderAll()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="930" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="l3end" value="DUNG: Da nhap kho" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="1020" width="180" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EDGES login ===== -->
+        <mxCell id="g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="start" target="decLogin"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g2" value="Sai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="decLogin" target="errLogin"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g3" value="Dung" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="decLogin" target="enterApp"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="enterApp" target="trangQT"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- bus to 3 lanes -->
+        <mxCell id="b1" value="documents" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="trangQT" target="h1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="710" y="440" /><mxPoint x="190" y="440" /></Array></mxGeometry></mxCell>
+        <mxCell id="b2" value="readers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="trangQT" target="h2">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="710" y="440" /></Array></mxGeometry></mxCell>
+        <mxCell id="b3" value="inventory" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="trangQT" target="h3">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="710" y="440" /><mxPoint x="1230" y="440" /></Array></mxGeometry></mxCell>
+
+        <!-- lane 1 edges -->
+        <mxCell id="e101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="h1" target="l1d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e102" value="Sai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l1d1" target="l1e1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e103" value="Dung" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l1d1" target="l1d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e104" value="Co" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l1d2" target="l1e2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e105" value="Khong" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l1d2" target="l1a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e106" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l1a1" target="l1a2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e107" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l1a2" target="l1end"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- lane 2 edges -->
+        <mxCell id="e201" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="h2" target="l2d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e202" value="Sai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l2d1" target="l2e1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e203" value="Dung" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l2d1" target="l2d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e204" value="Co" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l2d2" target="l2e2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e205" value="Khong" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l2d2" target="l2d3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e206" value="Co" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l2d3" target="l2e3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e207" value="Khong" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l2d3" target="l2d4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e208" value="Khong" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l2d4" target="l2e4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e209" value="Co" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l2d4" target="l2a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e210" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l2a1" target="l2a2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e211" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l2a2" target="l2end"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- lane 3 edges -->
+        <mxCell id="e301" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="h3" target="l3d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e302" value="Sai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l3d1" target="l3e1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e303" value="Dung" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l3d1" target="l3d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e304" value="Khong" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="l3d2" target="l3e2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e305" value="Co" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;fontColor=#000000;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l3d2" target="l3a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e306" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l3a1" target="l3a2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e307" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l3a2" target="l3end"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

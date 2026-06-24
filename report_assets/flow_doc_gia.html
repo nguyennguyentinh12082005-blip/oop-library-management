@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#ffffff;display:flex;justify-content:center;padding:18px}
+text{font-family:'Segoe UI',Arial,sans-serif}
+.t{fill:#000;font-size:13px;text-anchor:middle;dominant-baseline:central}
+.ts{fill:#000;font-size:11px;text-anchor:middle;dominant-baseline:central}
+.tsb{fill:#000;font-size:11px;text-anchor:middle;dominant-baseline:central;font-weight:bold}
+.lbl{fill:#000;font-size:10.5px;text-anchor:middle;dominant-baseline:central;font-style:italic}
+.title{fill:#000;font-size:18px;text-anchor:middle;font-weight:bold}
+.ln{stroke:#000;stroke-width:1.5;fill:none}
+.sh{stroke:#000;stroke-width:1.5;fill:#ffffff}
+.dm{stroke:#000;stroke-width:1.5;fill:#ffffff}
+.yn{fill:#000;font-size:11px;text-anchor:middle;font-weight:bold}
+</style></head><body>
+<svg width="1000" height="780" viewBox="0 0 1000 780">
+<defs><marker id="a" markerWidth="9" markerHeight="7" refX="8" refY="3" orient="auto"><polygon points="0 0,9 3,0 6" fill="#000"/></marker></defs>
+
+<text x="500" y="26" class="title">So do khoi - Trang Doc Gia (Reader Portal)</text>
+
+<!-- START -->
+<ellipse cx="380" cy="74" rx="105" ry="24" class="sh"/>
+<text x="380" y="68" class="t">Dang nhap thanh cong</text>
+<text x="380" y="84" class="ts">(role = reader)</text>
+<line x1="380" y1="98" x2="380" y2="124" class="ln" marker-end="url(#a)"/>
+
+<!-- enterApp -->
+<rect x="270" y="126" width="220" height="42" rx="3" class="sh"/>
+<text x="380" y="141" class="t">enterApp()</text>
+<text x="380" y="156" class="ts">applyRoleRestrictions()</text>
+<line x1="380" y1="168" x2="380" y2="194" class="ln" marker-end="url(#a)"/>
+
+<!-- setPage homePage + branch sang documents -->
+<rect x="262" y="196" width="236" height="42" rx="3" class="sh"/>
+<text x="380" y="211" class="t">setPage( homePage )</text>
+<text x="380" y="226" class="ts">homePage = 'readerPortal'</text>
+
+<!-- branch RIGHT: quyen truy cap documents -->
+<line x1="498" y1="217" x2="700" y2="217" class="ln" marker-end="url(#a)"/>
+<text x="600" y="205" class="lbl">ROLE_PAGES.reader</text>
+<rect x="700" y="196" width="250" height="42" rx="3" class="sh"/>
+<text x="825" y="211" class="t">Tra cuu tai lieu (documents)</text>
+<text x="825" y="226" class="ts">tim kiem / xem chi tiet sach</text>
+<line x1="825" y1="238" x2="825" y2="262" class="ln" marker-end="url(#a)"/>
+<rect x="690" y="264" width="270" height="42" rx="3" class="sh"/>
+<text x="825" y="279" class="ts">Chi XEM - khong thao tac kho</text>
+<text x="825" y="294" class="ts">Muon/Tra -&gt; guardLibraryAction() chan</text>
+
+<!-- down to decision -->
+<line x1="380" y1="238" x2="380" y2="276" class="ln" marker-end="url(#a)"/>
+<text x="423" y="258" class="lbl">renderReaderPortal()</text>
+
+<!-- decision: co ho so? -->
+<polygon points="380,278 488,318 380,358 272,318" class="dm"/>
+<text x="380" y="312" class="ts">Co ho so doc gia?</text>
+<text x="380" y="326" class="ts">(reader != null)</text>
+
+<!-- NO branch -->
+<line x1="488" y1="318" x2="600" y2="318" class="ln" marker-end="url(#a)"/>
+<text x="544" y="306" class="yn">Khong</text>
+<rect x="600" y="380" width="260" height="40" rx="3" class="sh"/>
+<text x="730" y="400" class="ts">Hien thi: "Khong co ho so doc gia"</text>
+<line x1="600" y1="318" x2="730" y2="318" class="ln"/>
+<line x1="730" y1="318" x2="730" y2="378" class="ln" marker-end="url(#a)"/>
+
+<!-- YES branch down to bus -->
+<line x1="380" y1="358" x2="380" y2="392" class="ln" marker-end="url(#a)"/>
+<text x="362" y="376" class="yn">Co</text>
+
+<!-- distribution bus -->
+<text x="500" y="406" class="lbl">Render 5 khoi du lieu cua doc gia</text>
+<line x1="120" y1="420" x2="880" y2="420" class="ln"/>
+<line x1="380" y1="392" x2="380" y2="420" class="ln"/>
+
+<!-- 5 drops with labels -->
+<line x1="120" y1="420" x2="120" y2="486" class="ln" marker-end="url(#a)"/>
+<text x="120" y="438" class="lbl">render info</text>
+<line x1="310" y1="420" x2="310" y2="486" class="ln" marker-end="url(#a)"/>
+<text x="310" y="438" class="lbl">render stats</text>
+<line x1="500" y1="420" x2="500" y2="486" class="ln" marker-end="url(#a)"/>
+<text x="500" y="438" class="lbl">loans.filter(readerId)</text>
+<line x1="690" y1="420" x2="690" y2="486" class="ln" marker-end="url(#a)"/>
+<text x="690" y="438" class="lbl">allDocuments() &gt;0</text>
+<line x1="880" y1="420" x2="880" y2="486" class="ln" marker-end="url(#a)"/>
+<text x="880" y="438" class="lbl">transactions.filter</text>
+
+<!-- 5 boxes -->
+<rect x="40" y="488" width="160" height="56" rx="3" class="sh"/>
+<text x="120" y="505" class="tsb">Thong tin doc gia</text>
+<text x="120" y="522" class="ts">id, ten, nhom,</text>
+<text x="120" y="536" class="ts">the het han</text>
+
+<rect x="230" y="488" width="160" height="56" rx="3" class="sh"/>
+<text x="310" y="505" class="tsb">Thong ke</text>
+<text x="310" y="522" class="ts">dang muon/gioi han,</text>
+<text x="310" y="536" class="ts">qua han, so giao dich</text>
+
+<rect x="420" y="488" width="160" height="56" rx="3" class="sh"/>
+<text x="500" y="505" class="tsb">Phieu dang muon</text>
+<text x="500" y="522" class="ts">dueDate &lt; today</text>
+<text x="500" y="536" class="ts">=&gt; danh dau Qua han</text>
+
+<rect x="610" y="488" width="160" height="56" rx="3" class="sh"/>
+<text x="690" y="505" class="tsb">Sach trong thu vien</text>
+<text x="690" y="522" class="ts">quantity &gt; 0</text>
+<text x="690" y="536" class="ts">trang thai muon/doc</text>
+
+<rect x="800" y="488" width="160" height="56" rx="3" class="sh"/>
+<text x="880" y="505" class="tsb">Lich su giao dich</text>
+<text x="880" y="522" class="ts">Muon / Tra / Phat</text>
+<text x="880" y="536" class="ts">cua doc gia</text>
+
+<!-- converge to store -->
+<line x1="120" y1="544" x2="120" y2="610" class="ln"/>
+<line x1="120" y1="610" x2="380" y2="610" class="ln" marker-end="url(#a)"/>
+<line x1="310" y1="544" x2="310" y2="600" class="ln"/>
+<line x1="310" y1="600" x2="400" y2="600" class="ln" marker-end="url(#a)"/>
+<line x1="500" y1="544" x2="500" y2="588" class="ln" marker-end="url(#a)"/>
+<line x1="690" y1="544" x2="690" y2="600" class="ln"/>
+<line x1="690" y1="600" x2="600" y2="600" class="ln" marker-end="url(#a)"/>
+<line x1="880" y1="544" x2="880" y2="610" class="ln"/>
+<line x1="880" y1="610" x2="620" y2="610" class="ln" marker-end="url(#a)"/>
+
+<text x="500" y="576" class="lbl">doc du lieu tu LocalStorage (read-only)</text>
+
+<!-- data store cylinder -->
+<ellipse cx="500" cy="616" rx="120" ry="15" class="sh"/>
+<rect x="380" y="616" width="240" height="42" style="stroke:none;fill:#ffffff"/>
+<line x1="380" y1="616" x2="380" y2="658" class="ln"/>
+<line x1="620" y1="616" x2="620" y2="658" class="ln"/>
+<ellipse cx="500" cy="658" rx="120" ry="15" class="sh"/>
+<text x="500" y="638" class="t">state  (LocalStorage)</text>
+
+<!-- END -->
+<line x1="500" y1="673" x2="500" y2="700" class="ln" marker-end="url(#a)"/>
+<ellipse cx="500" cy="724" rx="70" ry="22" class="sh"/>
+<text x="500" y="724" class="t">Ket thuc</text>
+
+</svg></body></html>

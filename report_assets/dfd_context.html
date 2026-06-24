@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0f1a; display: flex; justify-content: center; padding: 30px 10px; }
+.t { fill: #4dd0e1; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; text-anchor: middle; dominant-baseline: central; }
+.ts { fill: #4dd0e1; font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; text-anchor: middle; dominant-baseline: central; }
+.tl { fill: #80cbc4; font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; text-anchor: middle; dominant-baseline: central; font-style: italic; }
+.title { fill: #4dd0e1; font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; text-anchor: middle; font-weight: bold; }
+.ln { stroke: #4dd0e1; stroke-width: 1.3; fill: none; }
+.sh { stroke: #4dd0e1; stroke-width: 1.4; fill: rgba(77,208,225,0.04); }
+.ext { stroke: #e57373; stroke-width: 1.4; fill: rgba(229,115,115,0.06); }
+</style>
+</head>
+<body>
+<svg width="1000" height="580" viewBox="0 0 1000 580">
+    <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4dd0e1"/>
+        </marker>
+    </defs>
+
+    <!-- Title -->
+    <text x="500" y="30" class="title">So do DFD muc ngu canh - He thong Quan ly Thu vien</text>
+
+    <!-- ===== EXTERNAL ENTITIES (rectangles with double border) ===== -->
+    <!-- Độc giả -->
+    <rect x="100" y="90" width="160" height="60" rx="3" class="ext"/>
+    <rect x="105" y="95" width="150" height="50" rx="2" class="ext"/>
+    <text x="180" y="120" class="t" style="fill:#e57373; font-weight:bold; font-size:13px;">DOC GIA</text>
+
+    <!-- Nhân viên -->
+    <rect x="100" y="430" width="160" height="60" rx="3" class="ext"/>
+    <rect x="105" y="435" width="150" height="50" rx="2" class="ext"/>
+    <text x="180" y="460" class="t" style="fill:#e57373; font-weight:bold; font-size:13px;">NHAN VIEN (Thu thu)</text>
+
+    <!-- Quản trị viên -->
+    <rect x="740" y="260" width="160" height="60" rx="3" class="ext"/>
+    <rect x="745" y="265" width="150" height="50" rx="2" class="ext"/>
+    <text x="820" y="290" class="t" style="fill:#e57373; font-weight:bold; font-size:13px;">QUAN TRI VIEN</text>
+
+    <!-- ===== SYSTEM PROCESS 0 (ellipse) ===== -->
+    <ellipse cx="500" cy="290" rx="115" ry="70" class="sh"/>
+    <text x="500" y="265" class="t" style="font-size: 15px; font-weight: bold;">0</text>
+    <text x="500" y="288" class="t" style="font-size: 12.5px; font-weight: bold;">HE THONG QUAN LY</text>
+    <text x="500" y="310" class="t" style="font-size: 12.5px; font-weight: bold;">THU VIEN (WEB)</text>
+
+    <!-- ===== DATA FLOWS (strictly orthogonal or clean straight horizontal) ===== -->
+    
+    <!-- 1. Độc giả -> Hệ thống (Yêu cầu mượn/trả, tra cứu) -->
+    <!-- Out: x=260, y=110. Go to x=400, then down to y=235 -->
+    <path d="M 260 110 H 400 V 230" class="ln" marker-end="url(#arr)"/>
+    <text x="330" y="96" class="tl">Yeu cau muon/tra, tra cuu</text>
+
+    <!-- 2. Hệ thống -> Độc giả (Sách, hạn trả, lịch sử) -->
+    <!-- Out: x=440, y=225. Go up to y=140, then left to x=260 -->
+    <path d="M 440 225 V 140 H 260" class="ln" marker-end="url(#arr)"/>
+    <text x="350" y="152" class="tl">Tai lieu, han tra, lich su muon</text>
+
+    <!-- 3. Nhân viên -> Hệ thống (Xử lý mượn/trả, nhập/xuất) -->
+    <!-- Out: x=260, y=470. Go to x=400, then up to y=345 -->
+    <path d="M 260 470 H 400 V 350" class="ln" marker-end="url(#arr)"/>
+    <text x="330" y="484" class="tl">Xu ly muon/tra, nhap/xuat</text>
+
+    <!-- 4. Hệ thống -> Nhân viên (Kết quả, báo cáo, thống kê) -->
+    <!-- Out: x=440, y=355. Go down to y=440, then left to x=260 -->
+    <path d="M 440 355 V 440 H 260" class="ln" marker-end="url(#arr)"/>
+    <text x="350" y="426" class="tl">Ket qua thuc hien, thong ke</text>
+
+    <!-- 5. Quản trị viên -> Hệ thống (Quản lý tài khoản, phân quyền) -->
+    <!-- Out: x=740, y=280. Straight left to x=615 -->
+    <path d="M 740 280 H 620" class="ln" marker-end="url(#arr)"/>
+    <text x="680" y="268" class="tl">Quan ly tk, phan quyen</text>
+
+    <!-- 6. Hệ thống -> Quản trị viên (Dữ liệu hệ thống, báo cáo) -->
+    <!-- Out: x=615, y=305. Straight right to x=740 -->
+    <path d="M 615 305 H 740" class="ln" marker-end="url(#arr)"/>
+    <text x="680" y="318" class="tl">Du lieu he thong, bao cao</text>
+
+</svg>
+</body>
+</html>

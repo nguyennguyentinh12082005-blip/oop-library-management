@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0f1a; display: flex; justify-content: center; padding: 30px 10px; }
+.node-text { fill: #4dd0e1; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; text-anchor: middle; dominant-baseline: central; }
+.node-text-sm { fill: #4dd0e1; font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; text-anchor: middle; dominant-baseline: central; }
+.label-text { fill: #80cbc4; font-family: 'Segoe UI', Arial, sans-serif; font-size: 9px; text-anchor: middle; dominant-baseline: central; font-style: italic; }
+.title-text { fill: #4dd0e1; font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; text-anchor: middle; dominant-baseline: central; font-weight: bold; }
+.line { stroke: #4dd0e1; stroke-width: 1; fill: none; }
+.shape { stroke: #4dd0e1; stroke-width: 1.3; fill: rgba(77, 208, 225, 0.04); }
+.shape-abs { stroke: #e57373; stroke-width: 1.3; fill: rgba(229, 115, 115, 0.06); stroke-dasharray: 5,3; }
+.shape-tmpl { stroke: #81c784; stroke-width: 1.3; fill: rgba(129, 199, 132, 0.06); }
+.shape-help { stroke: #ffb74d; stroke-width: 1.3; fill: rgba(255, 183, 77, 0.06); }
+.inherit-line { stroke: #4dd0e1; stroke-width: 1; fill: none; }
+</style>
+</head>
+<body>
+<svg width="1100" height="780" viewBox="0 0 1100 780">
+    <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4dd0e1"/>
+        </marker>
+        <marker id="triangle" markerWidth="12" markerHeight="10" refX="0" refY="5" orient="auto">
+            <polygon points="0 0, 12 5, 0 10" fill="none" stroke="#4dd0e1" stroke-width="1"/>
+        </marker>
+    </defs>
+
+    <!-- Title -->
+    <text x="550" y="25" class="title-text">So do mo hinh doi tuong he thong</text>
+
+    <!-- Legend -->
+    <rect x="20" y="50" width="15" height="12" class="shape-abs"/>
+    <text x="95" y="56" class="node-text-sm" text-anchor="start">Lop truu tuong</text>
+    <rect x="20" y="70" width="15" height="12" class="shape"/>
+    <text x="95" y="76" class="node-text-sm" text-anchor="start">Lop con cu the</text>
+    <rect x="20" y="90" width="15" height="12" class="shape-tmpl"/>
+    <text x="95" y="96" class="node-text-sm" text-anchor="start">Template</text>
+    <rect x="20" y="110" width="15" height="12" class="shape-help"/>
+    <text x="95" y="116" class="node-text-sm" text-anchor="start">Lop ho tro</text>
+
+    <!-- ===================== NGUOI GROUP ===================== -->
+    <!-- Nguoi (abstract) -->
+    <rect x="100" y="160" width="160" height="50" rx="3" class="shape-abs"/>
+    <text x="180" y="178" class="node-text" style="fill:#e57373;">Nguoi</text>
+    <text x="180" y="196" class="node-text-sm" style="fill:#e57373;">(abstract)</text>
+
+    <!-- NguoiDoc -->
+    <rect x="30" y="270" width="140" height="50" rx="3" class="shape-abs"/>
+    <text x="100" y="288" class="node-text" style="fill:#e57373;">NguoiDoc</text>
+    <text x="100" y="304" class="node-text-sm" style="fill:#e57373;">(abstract)</text>
+    <line x1="100" y1="270" x2="100" y2="240" class="inherit-line"/>
+    <line x1="100" y1="240" x2="180" y2="240" class="inherit-line"/>
+    <line x1="180" y1="240" x2="180" y2="210" class="inherit-line" marker-end="url(#triangle)"/>
+
+    <!-- NhanVien -->
+    <rect x="190" y="270" width="130" height="40" rx="3" class="shape"/>
+    <text x="255" y="293" class="node-text">NhanVien</text>
+    <line x1="255" y1="270" x2="255" y2="240" class="inherit-line"/>
+    <line x1="255" y1="240" x2="180" y2="240" class="inherit-line"/>
+
+    <!-- QuanTriVien -->
+    <rect x="340" y="270" width="130" height="40" rx="3" class="shape"/>
+    <text x="405" y="293" class="node-text">QuanTriVien</text>
+    <line x1="405" y1="270" x2="405" y2="240" class="inherit-line"/>
+    <line x1="405" y1="240" x2="180" y2="240" class="inherit-line"/>
+
+    <!-- SinhVien -->
+    <rect x="15" y="380" width="110" height="40" rx="3" class="shape"/>
+    <text x="70" y="403" class="node-text">SinhVien</text>
+    <line x1="70" y1="380" x2="70" y2="350" class="inherit-line"/>
+    <line x1="70" y1="350" x2="100" y2="350" class="inherit-line"/>
+    <line x1="100" y1="350" x2="100" y2="320" class="inherit-line" marker-end="url(#triangle)"/>
+
+    <!-- VienChuc -->
+    <rect x="140" y="380" width="110" height="40" rx="3" class="shape"/>
+    <text x="195" y="403" class="node-text">VienChuc</text>
+    <line x1="195" y1="380" x2="195" y2="350" class="inherit-line"/>
+    <line x1="195" y1="350" x2="100" y2="350" class="inherit-line"/>
+
+    <!-- ===================== TAILIEU GROUP ===================== -->
+    <!-- TaiLieu (abstract) -->
+    <rect x="490" y="160" width="160" height="50" rx="3" class="shape-abs"/>
+    <text x="570" y="178" class="node-text" style="fill:#e57373;">TaiLieu</text>
+    <text x="570" y="196" class="node-text-sm" style="fill:#e57373;">(abstract)</text>
+
+    <!-- Sach -->
+    <rect x="420" y="270" width="110" height="40" rx="3" class="shape"/>
+    <text x="475" y="293" class="node-text">Sach</text>
+    <line x1="475" y1="270" x2="475" y2="240" class="inherit-line"/>
+    <line x1="475" y1="240" x2="570" y2="240" class="inherit-line"/>
+    <line x1="570" y1="240" x2="570" y2="210" class="inherit-line" marker-end="url(#triangle)"/>
+
+    <!-- BaoTapChi -->
+    <rect x="550" y="270" width="120" height="40" rx="3" class="shape"/>
+    <text x="610" y="293" class="node-text">BaoTapChi</text>
+    <line x1="610" y1="270" x2="610" y2="240" class="inherit-line"/>
+    <line x1="610" y1="240" x2="570" y2="240" class="inherit-line"/>
+
+    <!-- BaiNghienCuu -->
+    <rect x="690" y="270" width="130" height="40" rx="3" class="shape"/>
+    <text x="755" y="293" class="node-text">BaiNghienCuu</text>
+    <line x1="755" y1="270" x2="755" y2="240" class="inherit-line"/>
+    <line x1="755" y1="240" x2="570" y2="240" class="inherit-line"/>
+
+    <!-- GiaoTrinh -->
+    <rect x="370" y="370" width="110" height="40" rx="3" class="shape"/>
+    <text x="425" y="393" class="node-text">GiaoTrinh</text>
+    <line x1="425" y1="370" x2="425" y2="340" class="inherit-line"/>
+    <line x1="425" y1="340" x2="475" y2="340" class="inherit-line"/>
+    <line x1="475" y1="340" x2="475" y2="310" class="inherit-line" marker-end="url(#triangle)"/>
+
+    <!-- SachThamKhao -->
+    <rect x="490" y="370" width="130" height="40" rx="3" class="shape"/>
+    <text x="555" y="393" class="node-text">SachThamKhao</text>
+    <line x1="555" y1="370" x2="555" y2="340" class="inherit-line"/>
+    <line x1="555" y1="340" x2="475" y2="340" class="inherit-line"/>
+
+    <!-- SachKhac -->
+    <rect x="635" y="370" width="100" height="40" rx="3" class="shape"/>
+    <text x="685" y="393" class="node-text">SachKhac</text>
+    <line x1="685" y1="370" x2="685" y2="340" class="inherit-line"/>
+    <line x1="685" y1="340" x2="475" y2="340" class="inherit-line"/>
+
+    <!-- ===================== GIAO DICH GROUP ===================== -->
+    <!-- GiaoDich (abstract) -->
+    <rect x="840" y="160" width="160" height="50" rx="3" class="shape-abs"/>
+    <text x="920" y="178" class="node-text" style="fill:#e57373;">GiaoDich</text>
+    <text x="920" y="196" class="node-text-sm" style="fill:#e57373;">(abstract)</text>
+
+    <!-- Muon -->
+    <rect x="810" y="270" width="90" height="40" rx="3" class="shape"/>
+    <text x="855" y="293" class="node-text">Muon</text>
+    <line x1="855" y1="270" x2="855" y2="240" class="inherit-line"/>
+    <line x1="855" y1="240" x2="920" y2="240" class="inherit-line"/>
+    <line x1="920" y1="240" x2="920" y2="210" class="inherit-line" marker-end="url(#triangle)"/>
+
+    <!-- Tra -->
+    <rect x="910" y="270" width="90" height="40" rx="3" class="shape"/>
+    <text x="955" y="293" class="node-text">Tra</text>
+    <line x1="955" y1="270" x2="955" y2="240" class="inherit-line"/>
+    <line x1="955" y1="240" x2="920" y2="240" class="inherit-line"/>
+
+    <!-- Nhap -->
+    <rect x="810" y="340" width="90" height="40" rx="3" class="shape"/>
+    <text x="855" y="363" class="node-text">Nhap</text>
+    <line x1="855" y1="340" x2="855" y2="325" class="inherit-line"/>
+    <line x1="855" y1="325" x2="920" y2="325" class="inherit-line"/>
+    <line x1="920" y1="325" x2="920" y2="310" class="inherit-line"/>
+    <line x1="920" y1="310" x2="920" y2="240" class="inherit-line"/>
+
+    <!-- Xuat -->
+    <rect x="910" y="340" width="90" height="40" rx="3" class="shape"/>
+    <text x="955" y="363" class="node-text">Xuat</text>
+    <line x1="955" y1="340" x2="955" y2="325" class="inherit-line"/>
+    <line x1="955" y1="325" x2="920" y2="325" class="inherit-line"/>
+
+    <!-- ===================== HELPER CLASSES ===================== -->
+    <!-- DanhSach<T> -->
+    <rect x="100" y="490" width="180" height="50" rx="3" class="shape-tmpl"/>
+    <text x="190" y="508" class="node-text" style="fill:#81c784;">DanhSach&lt;T&gt;</text>
+    <text x="190" y="526" class="node-text-sm" style="fill:#81c784;">(Template)</text>
+
+    <!-- Date -->
+    <rect x="340" y="490" width="130" height="50" rx="3" class="shape-help"/>
+    <text x="405" y="508" class="node-text" style="fill:#ffb74d;">Date</text>
+    <text x="405" y="526" class="node-text-sm" style="fill:#ffb74d;">(Xu ly ngay thang)</text>
+
+    <!-- PhieuMuonDangMo -->
+    <rect x="530" y="490" width="180" height="50" rx="3" class="shape-help"/>
+    <text x="620" y="508" class="node-text" style="fill:#ffb74d;">PhieuMuonDangMo</text>
+    <text x="620" y="526" class="node-text-sm" style="fill:#ffb74d;">(Theo doi phieu muon)</text>
+
+    <!-- Associations: DanhSach uses all 3 groups -->
+    <line x1="190" y1="490" x2="190" y2="460" class="line" stroke-dasharray="3,3"/>
+    <text x="190" y="450" class="label-text">quan ly</text>
+    <line x1="140" y1="440" x2="180" y2="440" class="line" stroke-dasharray="3,3"/>
+    <line x1="140" y1="440" x2="140" y2="420" class="line" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+    <line x1="240" y1="440" x2="200" y2="440" class="line" stroke-dasharray="3,3"/>
+    <line x1="240" y1="440" x2="570" y2="420" class="line" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+    <!-- Association: PhieuMuonDangMo -> Muon -->
+    <line x1="620" y1="490" x2="620" y2="460" class="line" stroke-dasharray="3,3"/>
+    <line x1="620" y1="460" x2="855" y2="380" class="line" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+    <text x="740" y="415" class="label-text">lien ket</text>
+
+    <!-- Group labels -->
+    <rect x="5" y="145" width="480" height="290" rx="8" fill="none" stroke="#4dd0e1" stroke-width="0.5" stroke-dasharray="8,4" opacity="0.3"/>
+    <text x="245" y="143" class="label-text">Nhom Nguoi</text>
+
+    <rect x="365" y="145" width="470" height="280" rx="8" fill="none" stroke="#4dd0e1" stroke-width="0.5" stroke-dasharray="8,4" opacity="0.3"/>
+    <text x="600" y="143" class="label-text">Nhom Tai lieu</text>
+
+    <rect x="800" y="145" width="210" height="250" rx="8" fill="none" stroke="#4dd0e1" stroke-width="0.5" stroke-dasharray="8,4" opacity="0.3"/>
+    <text x="905" y="143" class="label-text">Nhom Giao dich</text>
+
+    <rect x="90" y="475" width="630" height="80" rx="8" fill="none" stroke="#4dd0e1" stroke-width="0.5" stroke-dasharray="8,4" opacity="0.3"/>
+    <text x="400" y="473" class="label-text">Nhom Ho tro</text>
+</svg>
+</body>
+</html>

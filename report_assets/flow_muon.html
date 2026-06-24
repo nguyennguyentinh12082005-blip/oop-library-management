@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0f1a;display:flex;justify-content:center;padding:20px}
+text{font-family:'Segoe UI',Arial,sans-serif}
+.t{fill:#4dd0e1;font-size:11px;text-anchor:middle;dominant-baseline:central}
+.ts{fill:#4dd0e1;font-size:10px;text-anchor:middle;dominant-baseline:central}
+.tl{fill:#80cbc4;font-size:10px;text-anchor:middle;dominant-baseline:central;font-style:italic}
+.title{fill:#4dd0e1;font-size:15px;text-anchor:middle;font-weight:bold}
+.ln{stroke:#4dd0e1;stroke-width:1.2;fill:none}
+.sh{stroke:#4dd0e1;stroke-width:1.3;fill:rgba(77,208,225,0.04)}
+.dm{stroke:#4dd0e1;stroke-width:1.3;fill:rgba(77,208,225,0.04)}
+.end{stroke:#e57373;stroke-width:1.3;fill:rgba(229,115,115,0.06)}
+.yes{fill:#81c784;font-size:9px;text-anchor:middle}
+.no{fill:#e57373;font-size:9px;text-anchor:middle}
+</style></head><body>
+<svg width="650" height="1350" viewBox="0 0 650 1350">
+<defs><marker id="a" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#4dd0e1"/></marker></defs>
+
+<text x="325" y="22" class="title">Flowchart Muon Tai Lieu</text>
+
+<!-- START -->
+<ellipse cx="325" cy="55" rx="50" ry="18" class="end"/>
+<text x="325" y="55" class="t" style="fill:#e57373">Bat dau</text>
+<line x1="325" y1="73" x2="325" y2="95" class="ln" marker-end="url(#a)"/>
+
+<!-- Nhap ma nguoi doc -->
+<rect x="215" y="100" width="220" height="38" rx="3" class="sh"/>
+<text x="325" y="119" class="t">Nhap ma nguoi doc</text>
+<line x1="325" y1="138" x2="325" y2="160" class="ln" marker-end="url(#a)"/>
+
+<!-- Tim nguoi doc? -->
+<polygon points="325,165 425,200 325,235 225,200" class="dm"/>
+<text x="325" y="197" class="ts">Tim thay</text>
+<text x="325" y="209" class="ts">nguoi doc?</text>
+
+<!-- No -> Ket thuc -->
+<line x1="425" y1="200" x2="530" y2="200" class="ln"/>
+<text x="480" y="193" class="no">Khong</text>
+<rect x="490" y="183" width="120" height="34" rx="3" class="end"/>
+<text x="550" y="200" class="ts" style="fill:#e57373">Thong bao loi</text>
+
+<!-- Yes -> duoc phep muon? -->
+<line x1="325" y1="235" x2="325" y2="260" class="ln" marker-end="url(#a)"/>
+<text x="310" y="250" class="yes">Co</text>
+
+<polygon points="325,265 425,300 325,335 225,300" class="dm"/>
+<text x="325" y="295" class="ts">duocPhep</text>
+<text x="325" y="308" class="ts">MuonSach()?</text>
+
+<line x1="425" y1="300" x2="530" y2="300" class="ln"/>
+<text x="480" y="293" class="no">Khong</text>
+<rect x="490" y="283" width="130" height="34" rx="3" class="end"/>
+<text x="555" y="295" class="ts" style="fill:#e57373">Het han / vuot</text>
+<text x="555" y="308" class="ts" style="fill:#e57373">gioi han sach</text>
+
+<!-- Yes -> Nhap ma tai lieu -->
+<line x1="325" y1="335" x2="325" y2="360" class="ln" marker-end="url(#a)"/>
+<text x="310" y="350" class="yes">Co</text>
+
+<rect x="215" y="365" width="220" height="38" rx="3" class="sh"/>
+<text x="325" y="384" class="t">Nhap ma tai lieu</text>
+<line x1="325" y1="403" x2="325" y2="425" class="ln" marker-end="url(#a)"/>
+
+<!-- Tim tai lieu? -->
+<polygon points="325,430 425,465 325,500 225,465" class="dm"/>
+<text x="325" y="460" class="ts">Tim thay</text>
+<text x="325" y="473" class="ts">tai lieu?</text>
+
+<line x1="425" y1="465" x2="530" y2="465" class="ln"/>
+<text x="480" y="458" class="no">Khong</text>
+<rect x="490" y="448" width="120" height="34" rx="3" class="end"/>
+<text x="550" y="465" class="ts" style="fill:#e57373">Thong bao loi</text>
+
+<!-- Yes -> co the muon ve? -->
+<line x1="325" y1="500" x2="325" y2="525" class="ln" marker-end="url(#a)"/>
+<text x="310" y="515" class="yes">Co</text>
+
+<polygon points="325,530 425,565 325,600 225,565" class="dm"/>
+<text x="325" y="558" class="ts">coTheMuon</text>
+<text x="325" y="571" class="ts">Ve()?</text>
+
+<line x1="425" y1="565" x2="530" y2="565" class="ln"/>
+<text x="480" y="558" class="no">Khong</text>
+<rect x="490" y="548" width="130" height="34" rx="3" class="end"/>
+<text x="555" y="565" class="ts" style="fill:#e57373">Chi doc tai cho</text>
+
+<!-- Yes -> So luong > 0? -->
+<line x1="325" y1="600" x2="325" y2="625" class="ln" marker-end="url(#a)"/>
+<text x="310" y="615" class="yes">Co</text>
+
+<polygon points="325,630 415,660 325,690 235,660" class="dm"/>
+<text x="325" y="655" class="ts">soLuong</text>
+<text x="325" y="668" class="ts">> 0?</text>
+
+<line x1="415" y1="660" x2="530" y2="660" class="ln"/>
+<text x="475" y="653" class="no">Khong</text>
+<rect x="490" y="643" width="120" height="34" rx="3" class="end"/>
+<text x="550" y="660" class="ts" style="fill:#e57373">Het so luong</text>
+
+<!-- Yes -> Trung phieu muon? -->
+<line x1="325" y1="690" x2="325" y2="715" class="ln" marker-end="url(#a)"/>
+<text x="310" y="705" class="yes">Co</text>
+
+<polygon points="325,720 425,755 325,790 225,755" class="dm"/>
+<text x="325" y="748" class="ts">Dang muon</text>
+<text x="325" y="761" class="ts">tai lieu nay?</text>
+
+<line x1="425" y1="755" x2="530" y2="755" class="ln"/>
+<text x="480" y="748" class="yes">Co</text>
+<rect x="490" y="738" width="130" height="34" rx="3" class="end"/>
+<text x="555" y="755" class="ts" style="fill:#e57373">Da muon roi</text>
+
+<!-- Khong -> Thuc hien muon -->
+<line x1="325" y1="790" x2="325" y2="820" class="ln" marker-end="url(#a)"/>
+<text x="310" y="808" class="no">Khong</text>
+
+<!-- Nhap thong tin muon -->
+<rect x="200" y="825" width="250" height="38" rx="3" class="sh"/>
+<text x="325" y="838" class="t">Nhap ma NV, ngay muon</text>
+<text x="325" y="852" class="ts">(readOptionalDate)</text>
+<line x1="325" y1="863" x2="325" y2="888" class="ln" marker-end="url(#a)"/>
+
+<!-- Tinh han muon -->
+<rect x="200" y="893" width="250" height="38" rx="3" class="sh"/>
+<text x="325" y="906" class="t">tinhHanMuon(*nguoiDoc)</text>
+<text x="325" y="920" class="ts">ngayHenTra = addDays()</text>
+<line x1="325" y1="931" x2="325" y2="955" class="ln" marker-end="url(#a)"/>
+
+<!-- Cap nhat du lieu -->
+<rect x="175" y="960" width="300" height="55" rx="3" class="sh"/>
+<text x="325" y="975" class="t">capNhatSoLuong(-1)</text>
+<text x="325" y="990" class="t">tangSoSachMuon()</text>
+<text x="325" y="1005" class="t">Tao PhieuMuonDangMo</text>
+<line x1="325" y1="1015" x2="325" y2="1040" class="ln" marker-end="url(#a)"/>
+
+<!-- Tao giao dich Muon -->
+<rect x="200" y="1045" width="250" height="45" rx="3" class="sh"/>
+<text x="325" y="1060" class="t">Tao GiaoDich Muon</text>
+<text x="325" y="1076" class="ts">dsGiaoDich.them()</text>
+<line x1="325" y1="1090" x2="325" y2="1115" class="ln" marker-end="url(#a)"/>
+
+<!-- In ket qua -->
+<rect x="200" y="1120" width="250" height="38" rx="3" class="sh"/>
+<text x="325" y="1133" class="t">"Muon thanh cong"</text>
+<text x="325" y="1148" class="ts">In han muon + ngay hen tra</text>
+<line x1="325" y1="1158" x2="325" y2="1185" class="ln" marker-end="url(#a)"/>
+
+<!-- END -->
+<ellipse cx="325" cy="1205" rx="50" ry="18" class="end"/>
+<text x="325" y="1205" class="t" style="fill:#e57373">Ket thuc</text>
+
+</svg></body></html>

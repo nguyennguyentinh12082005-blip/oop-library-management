@@ -2552,7 +2552,6 @@ async function handleImportSubmit(event) {
   const form = event.currentTarget;
   const data = Object.fromEntries(new FormData(form).entries());
   const quantity = Number(data.quantity);
-  const unitPrice = Number(data.unitPrice);
   let documentItem;
 
   if (data.importMode === "new") {
@@ -2591,9 +2590,7 @@ async function handleImportSubmit(event) {
     staffId: data.staffId.trim(),
     documentId: documentItem.id,
     quantity,
-    unitPrice,
-    supplier: data.supplier.trim(),
-    amount: quantity * unitPrice
+    supplier: data.supplier.trim()
   });
 
   saveState();
@@ -2748,7 +2745,6 @@ function handleExportSubmit(event) {
   data.documentId = String(data.documentId || "").trim().toUpperCase();
   const documentItem = ensureManagedDocument(data.documentId);
   const quantity = Number(data.quantity);
-  const unitPrice = Number(data.unitPrice);
 
   if (!documentItem) {
     showToast("Không tìm thấy tài liệu cần xuất.");
@@ -2767,9 +2763,7 @@ function handleExportSubmit(event) {
     staffId: data.staffId.trim(),
     documentId: documentItem.id,
     quantity,
-    unitPrice,
-    reason: data.reason.trim(),
-    amount: quantity * unitPrice
+    reason: data.reason.trim()
   });
 
   saveState();
