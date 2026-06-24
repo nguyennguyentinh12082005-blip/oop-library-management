@@ -1625,6 +1625,9 @@ function transactionNote(transaction) {
 }
 
 function renderStats() {
+  const statsGrid = byId("statsGrid");
+  if (!statsGrid) return;
+  
   const documents = allDocuments();
   const totalCopies = documents.reduce((sum, documentItem) => sum + Number(documentItem.quantity), 0);
   const overdue = state.loans.filter((loan) => loan.dueDate < todayISO()).length;
@@ -1635,7 +1638,7 @@ function renderStats() {
     { label: "Quá hạn", value: overdue, tone: "rose" }
   ];
 
-  byId("statsGrid").innerHTML = stats.map((item) => `
+  statsGrid.innerHTML = stats.map((item) => `
     <article class="stat-card" data-tone="${item.tone}">
       <span>${escapeHtml(item.label)}</span>
       <strong>${escapeHtml(item.value)}</strong>
