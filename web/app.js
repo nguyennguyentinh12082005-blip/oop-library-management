@@ -1644,27 +1644,33 @@ function renderStats() {
 }
 
 function renderDashboardLists() {
-  const openLoans = state.loans.slice(0, 4);
-  byId("openLoansList").innerHTML = openLoans.length ? openLoans.map((loan) => {
-    const reader = findReader(loan.readerId);
-    const documentItem = findDocument(loan.documentId);
-    const late = loan.dueDate < todayISO();
-    return `
-      <article class="loan-item">
-        <strong>${escapeHtml(documentItem ? documentItem.title : loan.documentId)}</strong>
-        <span>${escapeHtml(reader ? reader.name : loan.readerId)} - hẹn trả ${escapeHtml(formatDate(loan.dueDate))}</span>
-        <span class="status ${late ? "bad" : "ok"}">${late ? "Quá hạn" : "Đang mượn"}</span>
-      </article>
-    `;
-  }).join("") : `<p class="muted">Không có phiếu mượn đang mở.</p>`;
+  const openLoansList = byId("openLoansList");
+  if (openLoansList) {
+    const openLoans = state.loans.slice(0, 4);
+    openLoansList.innerHTML = openLoans.length ? openLoans.map((loan) => {
+      const reader = findReader(loan.readerId);
+      const documentItem = findDocument(loan.documentId);
+      const late = loan.dueDate < todayISO();
+      return `
+        <article class="loan-item">
+          <strong>${escapeHtml(documentItem ? documentItem.title : loan.documentId)}</strong>
+          <span>${escapeHtml(reader ? reader.name : loan.readerId)} - hẹn trả ${escapeHtml(formatDate(loan.dueDate))}</span>
+          <span class="status ${late ? "bad" : "ok"}">${late ? "Quá hạn" : "Đang mượn"}</span>
+        </article>
+      `;
+    }).join("") : `<p class="muted">Không có phiếu mượn đang mở.</p>`;
+  }
 
-  const recent = state.transactions.slice(-5).reverse();
-  byId("recentTransactions").innerHTML = recent.length ? recent.map((transaction) => `
-    <article class="activity-item">
-      <strong>${escapeHtml(transaction.id)} - ${escapeHtml(transaction.type)}</strong>
-      <span>${escapeHtml(formatDate(transaction.date))} - ${escapeHtml(transactionNote(transaction))}</span>
-    </article>
-  `).join("") : `<p class="muted">Chưa có giao dịch.</p>`;
+  const recentTransactions = byId("recentTransactions");
+  if (recentTransactions) {
+    const recent = state.transactions.slice(-5).reverse();
+    recentTransactions.innerHTML = recent.length ? recent.map((transaction) => `
+      <article class="activity-item">
+        <strong>${escapeHtml(transaction.id)} - ${escapeHtml(transaction.type)}</strong>
+        <span>${escapeHtml(formatDate(transaction.date))} - ${escapeHtml(transactionNote(transaction))}</span>
+      </article>
+    `).join("") : `<p class="muted">Chưa có giao dịch.</p>`;
+  }
 }
 
 function pageCount(total) {
