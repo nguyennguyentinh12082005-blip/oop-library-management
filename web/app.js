@@ -2090,7 +2090,7 @@ function renderTransactions() {
       <td>${escapeHtml(formatDate(transaction.date))}</td>
       <td>${escapeHtml(transaction.staffId)}</td>
       <td>${escapeHtml(transactionNote(transaction))}</td>
-      <td>${transaction.amount ? money(transaction.amount) : "-"}</td>
+      <td>${transaction.type === "Trả" && transaction.amount ? money(transaction.amount) : "-"}</td>
     </tr>
   `).join("") || `<tr><td colspan="6" class="muted">Chưa có giao dịch.</td></tr>`;
 }
@@ -2166,7 +2166,7 @@ function renderReaderPortal() {
         <td>${escapeHtml(transaction.type)}</td>
         <td>${escapeHtml(formatDate(transaction.date))}</td>
         <td>${escapeHtml(documentItem ? documentItem.title : transaction.documentId)}</td>
-        <td>${transaction.amount ? money(transaction.amount) : "-"}</td>
+        <td>${transaction.type === "Trả" && transaction.amount ? money(transaction.amount) : "-"}</td>
       </tr>
     `;
   }).join("") || `<tr><td colspan="5" class="muted">Chưa có giao dịch.</td></tr>`;
