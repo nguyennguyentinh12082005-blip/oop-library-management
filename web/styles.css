@@ -59,6 +59,7 @@ button {
   padding: 18px;
   background: var(--sidebar);
   color: #fff;
+  overflow-y: auto;
 }
 
 .brand {
